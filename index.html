@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Roger - Classic Slot with Bonus</title>
+    <title>Lucky Roger - Classic Slot with Sound</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body {
@@ -34,7 +34,6 @@
             letter-spacing: 2px;
             margin-bottom: 10px;
         }
-        /* Табло */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -49,7 +48,6 @@
         .dash-box { font-size: 11px; color: #94a3b8; }
         .dash-val { color: #22c55e; font-size: 16px; font-weight: bold; text-shadow: 0 0 5px rgba(34,197,94,0.5); }
         
-        /* Экран слота */
         .screen {
             background: #000;
             border: 4px ridge #64748b;
@@ -84,7 +82,6 @@
             justify-content: center;
         }
         
-        /* Панель управления */
         .control-panel {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -123,7 +120,6 @@
             justify-content: center;
         }
 
-        /* Окно оверлея (Риск или Бонус) */
         .overlay {
             display: none;
             position: absolute;
@@ -136,11 +132,7 @@
             padding: 15px;
             text-align: center;
         }
-        .cards-row {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
+        .cards-row { display: flex; gap: 10px; margin: 15px 0; }
         .card {
             width: 50px; height: 75px;
             background: #fff; color: #000;
@@ -151,7 +143,6 @@
         }
         .card.dealer { background: #cbd5e1; cursor: default; }
 
-        /* Стили для сундуков бонус-игры */
         .chests-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -186,7 +177,6 @@
     <div class="screen">
         <div class="reels-grid" id="reelsGrid"></div>
 
-        <!-- Оверлей для Риск-игры и Бонуса -->
         <div class="overlay" id="overlay">
             <h3 id="overlayTitle" style="color: #fbbf24; margin-bottom: 5px;">РАУНД</h3>
             <p id="overlayText" style="font-size: 12px; margin-bottom: 10px; color:#cbd5e1;"></p>
@@ -196,18 +186,117 @@
     </div>
 
     <div class="control-panel">
-        <button class="btn btn-lines" onclick="changeLines()">ЛИНИИ</button>
-        <button class="btn btn-bet" onclick="changeBet()">СТАВКА</button>
-        <button class="btn btn-max" onclick="maxBet()">МАКС СТАВКА</button>
-        <button class="btn btn-risk" onclick="openRiskGame()">РИСК</button>
-        <button class="btn btn-spin" onclick="spin()">ПУСК</button>
-        <button class="btn" onclick="takeWin()">ЗАБРАТЬ</button>
+        <button class="btn btn-lines" onclick="triggerBtn(changeLines)">ЛИНИИ</button>
+        <button class="btn btn-bet" onclick="triggerBtn(changeBet)">СТАВКА</button>
+        <button class="btn btn-max" onclick="triggerBtn(maxBet)">МАКС СТАВКА</button>
+        <button class="btn btn-risk" onclick="triggerBtn(openRiskGame)">РИСК</button>
+        <button class="btn btn-spin" onclick="triggerBtn(spin)">ПУСК</button>
+        <button class="btn" onclick="triggerBtn(takeWin)">ЗАБРАТЬ</button>
     </div>
 
     <div class="msg-bar" id="msg">Добро пожаловать в Lucky Roger! Нажмите ПУСК.</div>
 </div>
 
 <script>
+    // --- WEB AUDIO API ENGINE ---
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playBtnSound() {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function playReelTick() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(120 + Math.random() * 40, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.03);
+    }
+
+    function playWinSound() {
+        initAudio();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.08);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + idx * 0.08);
+            osc.stop(audioCtx.currentTime + idx * 0.08 + 0.25);
+        });
+    }
+
+    function playBonusSound() {
+        initAudio();
+        const notes = [440, 554.37, 659.25, 880];
+        notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + idx * 0.1);
+            osc.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
+        });
+    }
+
+    function playExplosionSound() {
+        initAudio();
+        const bufferSize = audioCtx.sampleRate * 0.3;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        noise.connect(gain);
+        gain.connect(audioCtx.destination);
+        noise.start();
+    }
+
+    function triggerBtn(fn) {
+        playBtnSound();
+        fn();
+    }
+
+    // --- GAME LOGIC ---
     const SYMBOLS = ['🏴‍☠️', '💣', '⚔️', '🪙', '🪙', '🍷', '🦜', '🧭', '🧭'];
     let balance = 1000;
     let betPerLine = 10;
@@ -292,6 +381,7 @@
         let interval = setInterval(() => {
             initMatrix();
             render();
+            playReelTick();
             counter++;
             if (counter > 12) {
                 clearInterval(interval);
@@ -347,6 +437,7 @@
         render();
 
         if (currentWin > 0) {
+            playWinSound();
             document.getElementById('msg').textContent = `ВЫИГРЫШ: ${currentWin}! РИСК или ЗАБРАТЬ`;
         } else {
             document.getElementById('msg').textContent = 'Попробуйте еще раз!';
@@ -362,8 +453,9 @@
         }
     }
 
-    // --- БОНУСНАЯ ИГРА С СУНДУКАМИ ---
+    // --- БОНУСНАЯ ИГРА ---
     function startBonusGame() {
+        playBonusSound();
         document.getElementById('overlay').style.display = 'flex';
         document.getElementById('overlayTitle').textContent = '🏴‍☠️ ПИРАТСКИЙ БОНУС: СУНДУКИ СОКРОВИЩ 🏴‍☠️';
         document.getElementById('overlayText').textContent = 'Выбирайте сундуки! Остерегайтесь пустых бочек!';
@@ -373,7 +465,6 @@
         content.innerHTML = '<div class="chests-grid" id="chestsGrid"></div>';
         
         const grid = document.getElementById('chestsGrid');
-        // Генерируем 6 сундуков, в одном из них спрятана бомба/ловушка
         let trapIndex = Math.floor(Math.random() * 6);
         
         for(let i = 0; i < 6; i++) {
@@ -391,11 +482,13 @@
         chestEl.classList.add('opened');
 
         if (isTrap) {
+            playExplosionSound();
             chestEl.textContent = '💣';
             document.getElementById('overlayText').textContent = 'БУХ! Попалась ловушка! Бонус окончен.';
             document.getElementById('overlayCloseBtn').style.display = 'block';
             document.querySelectorAll('.chest-box').forEach(el => el.onclick = null);
         } else {
+            playWinSound();
             let winCoins = (Math.floor(Math.random() * 5) + 2) * betPerLine * 10;
             currentWin += winCoins;
             render();
@@ -404,7 +497,7 @@
         }
     }
 
-    // --- РИСК-ИГРА НА КАРТЫ ---
+    // --- РИСК-ИГРА ---
     let dealerCardVal = 0;
     function openRiskGame() {
         if (currentWin === 0) {
@@ -441,6 +534,7 @@
         cardEl.className = 'card dealer';
 
         if (playerCardVal > dealerCardVal) {
+            playWinSound();
             currentWin *= 2;
             render();
             setTimeout(() => {
@@ -448,8 +542,10 @@
                 openRiskGame();
             }, 300);
         } else if (playerCardVal === dealerCardVal) {
+            playBtnSound();
             setTimeout(() => { alert('Ничья! Попробуйте еще раз.'); openRiskGame(); }, 300);
         } else {
+            playExplosionSound();
             currentWin = 0;
             render();
             document.getElementById('msg').textContent = 'Дилер победил! Вы проиграли выигрыш.';
