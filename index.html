@@ -11,29 +11,21 @@
 html,body{height:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:radial-gradient(ellipse at top,#1a2744 0%,#0a0e17 70%);background-attachment:fixed;color:var(--text);display:flex;justify-content:center;min-height:100vh;overflow-x:hidden;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
 .app{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px}
-
-/* TOPBAR */
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;gap:6px}
 .lang-switch{display:flex;gap:4px;background:var(--panel);border:1px solid #2c3a52;border-radius:8px;padding:3px}
 .lang-btn{background:transparent;color:var(--muted);border:none;padding:5px 9px;font-size:11px;font-weight:800;border-radius:5px;cursor:pointer}
 .lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--goldD));color:#1a1200;box-shadow:0 0 8px rgba(212,175,55,.4)}
 .sound-btn{background:var(--panel);border:1px solid #2c3a52;color:var(--gold);padding:8px 12px;border-radius:8px;font-size:16px;cursor:pointer}
 .sound-btn.off{color:var(--muted);opacity:.6}
-
-/* TITLE */
 .title-box{text-align:center;padding:4px 0 2px}
 .title{font-size:26px;font-weight:900;letter-spacing:3px;background:linear-gradient(180deg,#ffe9a0 0%,#f0c040 35%,#b8860b 60%,#ffd966 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 3px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(212,175,55,.35));font-family:Georgia,serif;animation:shine 4s linear infinite;background-size:200% 100%}
 @keyframes shine{0%{background-position:0 0}100%{background-position:200% 0}}
-
-/* BALANCE */
 .balance-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
 .stat .val{font-size:17px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .stat.right{text-align:right}
 .stat.win .val{color:var(--green);text-shadow:0 0 10px rgba(39,174,96,.4)}
-
-/* MACHINE */
 .machine{background:radial-gradient(ellipse at 50% 0,rgba(255,217,102,.08),transparent 60%),linear-gradient(180deg,#2d1d0f 0%,#1a0e05 100%);border:3px solid;border-image:linear-gradient(180deg,#ffe9a0,#b8860b,#ffe9a0) 1;border-radius:16px;padding:12px 10px 10px;box-shadow:0 0 0 1px #000,0 10px 30px rgba(0,0,0,.7),inset 0 0 40px rgba(0,0,0,.5);position:relative}
 .machine::before,.machine::after{content:"✦";position:absolute;font-size:20px;color:var(--gold);opacity:.7;text-shadow:0 0 8px rgba(212,175,55,.6)}
 .machine::before{top:4px;left:8px}.machine::after{top:4px;right:8px}
@@ -47,10 +39,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .cell.win::before{content:"";position:absolute;inset:4px;border:2px solid var(--goldL);border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.5),transparent 70%);box-shadow:0 0 14px var(--goldL),inset 0 0 14px rgba(255,217,102,.5);pointer-events:none;animation:winPulse .7s ease-in-out infinite alternate}
 @keyframes winPulse{0%{transform:scale(.95);opacity:.85}100%{transform:scale(1.03);opacity:1}}
-.lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
-.lines-overlay polyline{transition:stroke-dashoffset .45s ease-out}
-
-/* LINES BAR */
+.lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible;transition:opacity .5s}
+.lines-overlay polyline{transition:stroke-dashoffset 1s ease-out}
 .lines-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .lines-row{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center}
 .lines-arrow{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--goldL);border:1px solid #455872;border-radius:8px;width:40px;height:36px;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 2px 0 #0f1722;transition:all .1s;display:flex;align-items:center;justify-content:center}
@@ -64,8 +54,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .lp{background:linear-gradient(180deg,#2c3a52,#1a2333);border:1px solid #3a4a60;color:var(--muted);border-radius:6px;padding:5px 0;font-size:11px;font-weight:800;cursor:pointer;transition:all .1s}
 .lp.active{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 0 8px rgba(212,175,55,.4)}
 .lp:active{transform:scale(.95)}
-
-/* BET */
 .bet-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:10px;display:grid;grid-template-columns:auto auto 1fr auto auto;gap:6px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .bet-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;min-width:42px;box-shadow:0 2px 0 #0f1722;transition:all .1s}
 .bet-btn:active{transform:translateY(2px);box-shadow:none}
@@ -75,15 +63,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .bet-mid .val{font-size:17px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .bet-total{font-size:11px;color:var(--muted);text-align:center;margin-top:4px;font-weight:700}
 .bet-total b{color:var(--goldL);font-size:13px}
-
-/* SPIN */
 .spin-btn{background:linear-gradient(180deg,#e74c3c 0%,#c0392b 45%,#7a1c11 100%);border:2px solid #ff8a7a;color:#fff;font-size:22px;font-weight:900;letter-spacing:3px;padding:16px;border-radius:14px;cursor:pointer;text-shadow:0 2px 2px rgba(0,0,0,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #4d0e07,0 10px 20px rgba(0,0,0,.5),0 0 30px rgba(231,76,60,.4);transition:all .08s;position:relative;overflow:hidden}
 .spin-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);animation:sweep 3s infinite}
 @keyframes sweep{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
 .spin-btn:active:not(:disabled){transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 0 #4d0e07,0 4px 10px rgba(0,0,0,.5)}
 .spin-btn:disabled{filter:grayscale(.7) brightness(.6);cursor:not-allowed}
-
-/* ACTIONS */
 .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .act-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:10px;padding:10px 4px;font-size:10px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 #0f1722,0 4px 8px rgba(0,0,0,.4);transition:all .1s}
 .act-btn:active{transform:translateY(2px);box-shadow:none}
@@ -91,8 +75,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .act-btn.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 3px 0 #5a4410}
 .act-btn.green{background:linear-gradient(180deg,#2ecc71,#1a7d43);border-color:#58e896;box-shadow:0 3px 0 #0f3d22}
 .act-btn.blue{background:linear-gradient(180deg,#3498db,#1a5f8a);border-color:#5dade2;box-shadow:0 3px 0 #0f3d54}
-
-/* MODALS */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:20px}
 .modal.active{opacity:1;pointer-events:auto}
 .modal-box{background:linear-gradient(180deg,var(--panel2),var(--panel));border:3px solid var(--gold);border-radius:18px;padding:22px 18px;max-width:400px;width:100%;box-shadow:0 0 40px rgba(212,175,55,.5),0 20px 60px rgba(0,0,0,.8);text-align:center;transform:scale(.9);transition:transform .25s;max-height:85vh;overflow-y:auto}
@@ -100,16 +82,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .modal-title{font-size:20px;font-weight:900;color:var(--goldL);margin-bottom:12px;text-shadow:0 0 15px rgba(212,175,55,.5);font-family:Georgia,serif}
 .modal-text{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5}
 .modal-close{background:linear-gradient(180deg,#576574,#2c3a52);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;margin-top:14px;width:100%}
-
-/* PAYTABLE */
 .pt-table{width:100%;border-collapse:collapse;font-size:12px}
 .pt-table thead th{color:var(--goldL);padding:6px 4px;border-bottom:1px solid #455872;font-size:10px;text-transform:uppercase}
 .pt-table tbody td{padding:7px 4px;border-bottom:1px solid rgba(69,88,114,.4);font-variant-numeric:tabular-nums}
 .pt-sym{font-size:24px;text-align:left;padding-left:8px !important}
 .pt-val{color:var(--goldL);font-weight:800}
 .pt-val.hi{text-shadow:0 0 8px rgba(255,217,102,.4)}
-
-/* SHOP */
 .shop-grid{display:flex;flex-direction:column;gap:8px}
 .shop-card{background:linear-gradient(135deg,#2a3446,#1a2333);border:2px solid #3a4a60;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .15s}
 .shop-card:hover{border-color:var(--gold);transform:translateY(-1px)}
@@ -120,28 +98,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .shop-coins{font-size:20px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .shop-bonus{font-size:11px;color:var(--green);font-weight:800;margin-top:2px}
 .shop-price{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;padding:10px 16px;border-radius:10px;font-weight:900;font-size:14px;white-space:nowrap}
-
-/* CHESTS */
 .chests{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
 .chest{background:linear-gradient(180deg,#4a3520,#2a1a0e);border:2px solid var(--gold);border-radius:12px;font-size:40px;padding:16px 0;cursor:pointer;transition:transform .15s;box-shadow:inset 0 -4px 0 rgba(0,0,0,.4),0 4px 8px rgba(0,0,0,.4)}
 .chest:active{transform:scale(.92)}
 .chest.opened{background:radial-gradient(circle,#ffd966,#b8860b);border-color:#ffe9a0}
-
-/* RISK */
 .modal-btns{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .modal-btn{padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:800;cursor:pointer;color:#fff;transition:transform .1s}
 .modal-btn:active{transform:scale(.97)}
 .modal-btn.green{background:linear-gradient(180deg,#2ecc71,#1a7d43)}
 .modal-btn.red{background:linear-gradient(180deg,#e74c3c,#7a1c11)}
 .modal-btn.gray{background:linear-gradient(180deg,#576574,#2c3a52)}
-
-/* NOTIF */
 .notif{position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:top .35s cubic-bezier(.3,1.5,.5,1);z-index:999;max-width:90vw;text-align:center;border:2px solid rgba(255,255,255,.3)}
 .notif.show{top:20px}
 .notif.error{background:linear-gradient(180deg,#e74c3c,#7a1c11)}
 .notif.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200}
-
-/* START */
 .start-overlay{position:fixed;inset:0;background:radial-gradient(circle at center,#1a2744,#050810);z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity .35s}
 .start-overlay.hidden{opacity:0;pointer-events:none}
 .start-box{text-align:center;padding:20px;max-width:340px}
@@ -155,7 +125,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 </head>
 <body>
 
-<!-- START -->
 <div class="start-overlay" id="startOverlay">
   <div class="start-box">
     <div class="start-emoji">🏴‍☠️</div>
@@ -175,21 +144,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
     </div>
     <button class="sound-btn" id="soundBtn">🔊</button>
   </div>
-
   <div class="title-box"><div class="title">LUCKY ROGER</div></div>
-
   <div class="balance-bar">
     <div class="stat"><span class="lbl" data-i18n="balance">Баланс</span><span class="val" id="balanceVal">1000 🪙</span></div>
     <div class="stat right win"><span class="lbl" data-i18n="win">Выигрыш</span><span class="val" id="winVal">0 🪙</span></div>
   </div>
-
   <div class="machine">
     <div class="reels-frame" id="reelsFrame">
       <div class="reels" id="reels"></div>
       <svg class="lines-overlay" id="linesOverlay"></svg>
     </div>
   </div>
-
   <div class="lines-bar">
     <div class="lines-row">
       <button class="lines-arrow" id="linesDec">−</button>
@@ -208,7 +173,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
       <button class="lp" data-lines="21">21</button>
     </div>
   </div>
-
   <div class="bet-bar">
     <button class="bet-btn" id="betMin">MIN</button>
     <button class="bet-btn" id="betDec">−</button>
@@ -220,9 +184,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
     <button class="bet-btn" id="betMax">MAX</button>
   </div>
   <div class="bet-total"><span data-i18n="totalBet">Всего</span>: <b id="totalBetVal">9</b> 🪙</div>
-
   <button class="spin-btn" id="spinBtn" data-i18n="spin">КРУТИТЬ</button>
-
   <div class="actions">
     <button class="act-btn gold" id="bonusBtn"><span class="ico">🎁</span><span data-i18n="dailyBonus">Бонус</span></button>
     <button class="act-btn green" id="riskBtn"><span class="ico">🃏</span><span data-i18n="risk">Риск</span></button>
@@ -231,20 +193,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- PAYTABLE -->
 <div class="modal" id="paytableModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="paytableTitle">📋 ТАБЛИЦА ВЫПЛАТ</div>
     <div class="modal-text" data-i18n="paytableHint">Выплаты за 1 монету ставки на линию</div>
-    <table class="pt-table">
-      <thead><tr><th></th><th>×3</th><th>×4</th><th>×5</th></tr></thead>
-      <tbody id="ptBody"></tbody>
-    </table>
+    <table class="pt-table"><thead><tr><th></th><th>×3</th><th>×4</th><th>×5</th></tr></thead><tbody id="ptBody"></tbody></table>
     <button class="modal-close" onclick="closeModal('paytableModal')" data-i18n="close">Закрыть</button>
   </div>
 </div>
 
-<!-- SHOP -->
 <div class="modal" id="shopModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="shopTitle">⭐ МАГАЗИН МОНЕТ</div>
@@ -254,7 +211,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- BONUS -->
 <div class="modal" id="bonusModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="bonusTitle">🏴‍☠️ ПИРАТСКИЙ КЛАД</div>
@@ -267,7 +223,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- RISK -->
 <div class="modal" id="riskModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="riskTitle">🃏 РИСК-ИГРА</div>
@@ -283,9 +238,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 <div class="notif" id="notif"></div>
 
 <script>
-/* ============================================================
-   CONFIG — только endpoint (бот-токен в Cloudflare Secrets)
-   ============================================================ */
 const CONFIG = {
   invoiceEndpoint: '/api/invoice',
   packages: [
@@ -296,56 +248,41 @@ const CONFIG = {
   ]
 };
 
-/* ============================================================
-   CONSTANTS
-   ============================================================ */
 const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
 const WEIGHTS={'🏴‍☠️':2,'💎':4,'🦜':6,'🗺️':8,'⚓':12,'🗡️':14,'🪙':18,'💣':18};
 const PAYTABLE={'🏴‍☠️':[10,40,150],'💎':[5,20,60],'🦜':[3,12,40],'🗺️':[2,8,25],'⚓':[2,6,20],'🗡️':[1,4,12],'🪙':[1,3,8],'💣':[1,2,6]};
-
-// 21 классическая линия
-const PAYLINES = [
-  [[0,0],[1,0],[2,0],[3,0],[4,0]], // 1 top
-  [[0,1],[1,1],[2,1],[3,1],[4,1]], // 2 mid
-  [[0,2],[1,2],[2,2],[3,2],[4,2]], // 3 bot
-  [[0,0],[1,1],[2,2],[3,1],[4,0]], // 4 V
-  [[0,2],[1,1],[2,0],[3,1],[4,2]], // 5 inv V
-  [[0,0],[1,0],[2,1],[3,2],[4,2]], // 6 TL-BR
-  [[0,2],[1,2],[2,1],[3,0],[4,0]], // 7 BL-TR
-  [[0,1],[1,0],[2,0],[3,0],[4,1]], // 8 bump up
-  [[0,1],[1,2],[2,2],[3,2],[4,1]], // 9 bump down
-  [[0,0],[1,1],[2,0],[3,1],[4,0]], // 10 zig top
-  [[0,2],[1,1],[2,2],[3,1],[4,2]], // 11 zig bot
-  [[0,0],[1,2],[2,0],[3,2],[4,0]], // 12 M
-  [[0,2],[1,0],[2,2],[3,0],[4,2]], // 13 W
-  [[0,0],[1,1],[2,1],[3,1],[4,0]], // 14 top mid
-  [[0,2],[1,1],[2,1],[3,1],[4,2]], // 15 bot mid
-  [[0,1],[1,0],[2,1],[3,0],[4,1]], // 16 wave top
-  [[0,1],[1,2],[2,1],[3,2],[4,1]], // 17 wave bot
-  [[0,0],[1,0],[2,0],[3,1],[4,2]], // 18 top+diag
-  [[0,2],[1,2],[2,2],[3,1],[4,0]], // 19 bot+diag
-  [[0,0],[1,1],[2,2],[3,2],[4,2]], // 20 diag top
-  [[0,2],[1,1],[2,0],[3,0],[4,0]]  // 21 diag bot
+const PAYLINES=[
+  [[0,0],[1,0],[2,0],[3,0],[4,0]],
+  [[0,1],[1,1],[2,1],[3,1],[4,1]],
+  [[0,2],[1,2],[2,2],[3,2],[4,2]],
+  [[0,0],[1,1],[2,2],[3,1],[4,0]],
+  [[0,2],[1,1],[2,0],[3,1],[4,2]],
+  [[0,0],[1,0],[2,1],[3,2],[4,2]],
+  [[0,2],[1,2],[2,1],[3,0],[4,0]],
+  [[0,1],[1,0],[2,0],[3,0],[4,1]],
+  [[0,1],[1,2],[2,2],[3,2],[4,1]],
+  [[0,0],[1,1],[2,0],[3,1],[4,0]],
+  [[0,2],[1,1],[2,2],[3,1],[4,2]],
+  [[0,0],[1,2],[2,0],[3,2],[4,0]],
+  [[0,2],[1,0],[2,2],[3,0],[4,2]],
+  [[0,0],[1,1],[2,1],[3,1],[4,0]],
+  [[0,2],[1,1],[2,1],[3,1],[4,2]],
+  [[0,1],[1,0],[2,1],[3,0],[4,1]],
+  [[0,1],[1,2],[2,1],[3,2],[4,1]],
+  [[0,0],[1,0],[2,0],[3,1],[4,2]],
+  [[0,2],[1,2],[2,2],[3,1],[4,0]],
+  [[0,0],[1,1],[2,2],[3,2],[4,2]],
+  [[0,2],[1,1],[2,0],[3,0],[4,0]]
 ];
-
-const LINE_COLORS=[
-  '#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be',
-  '#30b0ff','#5856d6','#af52de','#ff2d95','#ff6b6b',
-  '#ffd93d','#6bcf7f','#4ecdc4','#95e1d3','#a8e6cf',
-  '#c7ceea','#e2a4d1','#f6d365','#b5eaea','#e0aaff',
-  '#ffb4a2'
-];
+const LINE_COLORS=['#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be','#30b0ff','#5856d6','#af52de','#ff2d95','#ff6b6b','#ffd93d','#6bcf7f','#4ecdc4','#95e1d3','#a8e6cf','#c7ceea','#e2a4d1','#f6d365','#b5eaea','#e0aaff','#ffb4a2'];
 const POOL=[];Object.entries(WEIGHTS).forEach(([s,w])=>{for(let i=0;i<w;i++)POOL.push(s)});
 
-/* ============================================================
-   I18N
-   ============================================================ */
 const I18N={
   ru:{balance:'Баланс',win:'Выигрыш',bet:'Ставка',betPerLine:'Ставка / линия',totalBet:'Всего',lines:'Линии',spin:'КРУТИТЬ',spinActive:'КРУТИМ...',
     dailyBonus:'Бонус',risk:'Риск',shop:'Магазин',paytable:'Выплаты',startSub:'Пиратский слот с сокровищами',startSound:'Играть со звуком',startMute:'🔇 Без звука',
     notEnough:'Недостаточно монет',bonusTitle:'🏴‍☠️ ПИРАТСКИЙ КЛАД',bonusText:'Выберите сундук:',
-    bonusWon:'Сундук: +{n} 🪙!',riskTitle:'🃏 РИСК-ИГРА',riskText:'Рискнуть выигрышем {n} 🪙? Удвойте или потеряйте!',
+    bonusWon:'Сундук: +{n} 🪙!',riskTitle:'🃏 РИСК-ИГРА',riskText:'Рискнуть {n} 🪙? Удвойте или потеряйте!',
     riskHigher:'ВЫШЕ',riskLower:'НИЖЕ',riskTake:'Забрать',riskWin:'🎉 Победа! +{n}',
     riskLose:'❌ Не повезло.',riskNoWin:'Сначала выиграйте!',winMsg:'Выигрыш: +{n} 🪙',
     bigWin:'🔥 БОЛЬШОЙ ВЫИГРЫШ: +{n} 🪙!',dailyClaimed:'Бонус уже получен! Ждите 24ч',
@@ -377,9 +314,6 @@ const I18N={
     paySuccess:'⭐ Payment received! +{n} 🪙',payTest:'⭐ Test: +{n} 🪙',payError:'Failed to create invoice'}
 };
 
-/* ============================================================
-   STATE
-   ============================================================ */
 let state={balance:1000,betPerLine:1,lines:9,lang:'ru',sound:true,lastDaily:0};
 let isSpinning=false, pendingRisk=0;
 const reelsEl=document.getElementById('reels');
@@ -391,140 +325,252 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v5',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v5');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_roger_v6',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_roger_v6');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
 /* ============================================================
-   🎵 AUDIO ENGINE — СИНХРОННЫЙ UNLOCK (без await!)
+   🎵 SOUND ENGINE — HTML5 Audio + WAV blobs
+   Работает в iOS Safari / Android Chrome / Telegram WebView
    ============================================================ */
-let ctx=null, masterGain=null, musicGain=null, sfxGain=null;
-let musicOn=false, musicStep=0, musicTimer=null, nextNoteTime=0, audioReady=false;
-const MUSIC_STEP=0.3;
-const MUSIC_PATTERN=[
-  {bass:110, lead:[440,659,880,659]}, // Am
-  {bass:87,  lead:[349,523,698,523]}, // F
-  {bass:131, lead:[523,659,784,659]}, // C
-  {bass:98,  lead:[392,587,784,587]}  // G
-];
+const SFX = {};
+let musicAudio = null;
+let musicUrl = null;
+let tickPool = [];
+let tickPoolIdx = 0;
 
-// КРИТИЧНО: создание контекста + resume СИНХРОННО в обработчике жеста
-function tryInitAudio(){
-  if(!ctx){
-    try{
-      const AC=window.AudioContext||window.webkitAudioContext;
-      if(!AC) return false;
-      ctx=new AC();
-      masterGain=ctx.createGain(); masterGain.gain.value=1; masterGain.connect(ctx.destination);
-      musicGain=ctx.createGain(); musicGain.gain.value=0; musicGain.connect(masterGain);
-      sfxGain=ctx.createGain(); sfxGain.gain.value=0.8; sfxGain.connect(masterGain);
-    }catch(e){ console.warn('[audio] create fail',e); return false; }
+function writeString(view, offset, str) {
+  for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+}
+
+function genWav(duration, sampler) {
+  const sr = 22050;
+  const samples = Math.floor(sr * duration);
+  const buffer = new ArrayBuffer(44 + samples * 2);
+  const view = new DataView(buffer);
+  writeString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + samples * 2, true);
+  writeString(view, 8, 'WAVE');
+  writeString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sr, true);
+  view.setUint32(28, sr * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeString(view, 36, 'data');
+  view.setUint32(40, samples * 2, true);
+  for (let i = 0; i < samples; i++) {
+    const t = i / sr;
+    let s = sampler(t);
+    if (s > 1) s = 1; else if (s < -1) s = -1;
+    view.setInt16(44 + i * 2, s * 0x7FFF, true);
   }
-  // НЕ await — fire & forget
-  if(ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
-  // iOS: silent buffer для разблокировки
-  if(ctx.state==='running'){
-    try{
-      const buf=ctx.createBuffer(1,1,22050);
-      const src=ctx.createBufferSource();
-      src.buffer=buf; src.connect(ctx.destination); src.start(0);
-    }catch(e){}
+  const blob = new Blob([buffer], { type: 'audio/wav' });
+  return URL.createObjectURL(blob);
+}
+
+function buildSounds() {
+  if (SFX._built) return;
+  SFX._built = true;
+
+  SFX.click = genWav(0.06, t => Math.sin(2*Math.PI*800*t) * Math.exp(-t*60) * 0.5);
+
+  SFX.spinStart = genWav(0.22, t => {
+    const f = 160 + t*600;
+    return Math.sin(2*Math.PI*f*t) * Math.exp(-t*6) * 0.5;
+  });
+
+  SFX.reelStop = genWav(0.18, t => {
+    const s = Math.sin(2*Math.PI*180*t) + 0.5*Math.sin(2*Math.PI*90*t);
+    return s * Math.exp(-t*18) * 0.55;
+  });
+
+  SFX.win = genWav(0.55, t => {
+    let v = 0;
+    const notes = [[523,0],[659,0.08],[784,0.16]];
+    notes.forEach(([f,start]) => {
+      if (t >= start) v += Math.sin(2*Math.PI*f*(t-start)) * Math.exp(-(t-start)*7);
+    });
+    return v * 0.42;
+  });
+
+  SFX.bigwin = genWav(1.0, t => {
+    let v = 0;
+    const notes = [[523,0],[659,0.09],[784,0.18],[1047,0.27],[1319,0.36],[1568,0.45]];
+    notes.forEach(([f,start]) => {
+      if (t >= start) v += Math.sin(2*Math.PI*f*(t-start)) * Math.exp(-(t-start)*5);
+    });
+    return v * 0.38;
+  });
+
+  SFX.lose = genWav(0.55, t => {
+    const v1 = t < 0.26 ? Math.sin(2*Math.PI*180*t) * Math.exp(-t*7) : 0;
+    const v2 = t >= 0.26 ? Math.sin(2*Math.PI*140*(t-0.26)) * Math.exp(-(t-0.26)*7) : 0;
+    return (v1 + v2) * 0.42;
+  });
+
+  SFX.bonus = genWav(0.85, t => {
+    let v = 0;
+    const notes = [[784,0],[988,0.1],[1175,0.2],[1568,0.3]];
+    notes.forEach(([f,start]) => {
+      if (t >= start) v += Math.sin(2*Math.PI*f*(t-start)) * Math.exp(-(t-start)*6);
+    });
+    return v * 0.42;
+  });
+
+  SFX.chest = genWav(0.55, t => {
+    let v = 0;
+    const notes = [[400,0],[800,0.08],[1200,0.16]];
+    notes.forEach(([f,start]) => {
+      if (t >= start) v += Math.sin(2*Math.PI*f*(t-start)) * Math.exp(-(t-start)*10);
+    });
+    return v * 0.38;
+  });
+
+  SFX.coin = genWav(0.22, t => {
+    const v1 = Math.sin(2*Math.PI*1568*t) * Math.exp(-t*14);
+    const v2 = t > 0.05 ? Math.sin(2*Math.PI*2093*(t-0.05)) * Math.exp(-(t-0.05)*10) : 0;
+    return (v1 + v2) * 0.4;
+  });
+
+  // Tick — очень короткий, для пула
+  const tickUrl = genWav(0.03, t => (Math.random()*2-1) * Math.exp(-t*120) * 0.35);
+  for (let i = 0; i < 6; i++) {
+    const a = new Audio(tickUrl);
+    a.volume = 0.3;
+    a.preload = 'auto';
+    tickPool.push(a);
   }
-  audioReady=(ctx.state==='running');
-  return audioReady;
 }
 
-// Агрессивная разблокировка на всех событиях
-['pointerdown','touchstart','mousedown','keydown','click'].forEach(ev=>{
-  document.addEventListener(ev,tryInitAudio,{capture:true,passive:true});
-});
+function buildMusic() {
+  if (musicUrl) return;
+  const sr = 11025;
+  const totalDur = 8;
+  const totalSamples = sr * totalDur;
+  const buffer = new ArrayBuffer(44 + totalSamples * 2);
+  const view = new DataView(buffer);
+  writeString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + totalSamples * 2, true);
+  writeString(view, 8, 'WAVE');
+  writeString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sr, true);
+  view.setUint32(28, sr * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeString(view, 36, 'data');
+  view.setUint32(40, totalSamples * 2, true);
 
-// Периодическая попытка — на случай, если контекст уснул
-setInterval(()=>{
-  if(ctx && ctx.state!=='running' && state.sound){
-    try{ ctx.resume(); }catch(e){}
-  }
-},1200);
+  const bars = [
+    { bass: 110, lead: [440, 659, 880, 659] },
+    { bass: 87,  lead: [349, 523, 698, 523] },
+    { bass: 131, lead: [523, 659, 784, 659] },
+    { bass: 98,  lead: [392, 587, 784, 587] }
+  ];
+  const barDur = 2, beatDur = 0.5;
 
-function playTone(freq,dur,type='sine',vol=0.15,delay=0){
-  if(!state.sound||!ctx||ctx.state!=='running') return;
-  const now=ctx.currentTime+delay;
-  const osc=ctx.createOscillator(), g=ctx.createGain();
-  osc.type=type; osc.frequency.setValueAtTime(freq,now);
-  osc.connect(g); g.connect(sfxGain);
-  g.gain.setValueAtTime(0,now);
-  g.gain.linearRampToValueAtTime(vol,now+0.008);
-  g.gain.exponentialRampToValueAtTime(0.001,now+dur);
-  osc.start(now); osc.stop(now+dur+0.02);
-}
-function playTick(progress){
-  if(!state.sound||!ctx||ctx.state!=='running') return;
-  playTone(900+Math.random()*400,0.025,'square',0.02+0.04*(1-progress));
-}
-function sfx(name){
-  if(!state.sound||!ctx||ctx.state!=='running') return;
-  switch(name){
-    case 'click': playTone(800,0.05,'square',0.07); break;
-    case 'spinStart':
-      playTone(160,0.15,'sawtooth',0.14);
-      playTone(220,0.15,'sawtooth',0.12,0.06); break;
-    case 'reelStop': playTone(180,0.09,'triangle',0.2); playTone(90,0.14,'sine',0.18,0.03); break;
-    case 'win': [523,659,784].forEach((f,i)=>playTone(f,0.18,'sine',0.18,i*0.08)); break;
-    case 'bigwin': [523,659,784,1047,1319,1568].forEach((f,i)=>playTone(f,0.22,'triangle',0.2,i*0.09)); break;
-    case 'lose': playTone(180,0.25,'sine',0.12); playTone(140,0.35,'sine',0.1,0.15); break;
-    case 'bonus': [784,988,1175,1568].forEach((f,i)=>playTone(f,0.2,'square',0.15,i*0.09)); break;
-    case 'chest': playTone(400,0.1,'square',0.14); playTone(800,0.1,'square',0.14,0.08); playTone(1200,0.25,'triangle',0.17,0.16); break;
-    case 'coin': playTone(1568,0.06,'sine',0.16); playTone(2093,0.1,'sine',0.12,0.05); break;
-  }
-}
+  for (let i = 0; i < totalSamples; i++) {
+    const t = i / sr;
+    const barIdx = Math.floor(t / barDur) % 4;
+    const bar = bars[barIdx];
+    const tInBar = t - Math.floor(t / barDur) * barDur;
+    const beatIdx = Math.floor(tInBar / beatDur);
+    const tInBeat = tInBar - beatIdx * beatDur;
 
-function startMusic(){
-  if(!ctx||!musicGain||musicOn||ctx.state!=='running') return;
-  musicOn=true; musicStep=0; nextNoteTime=ctx.currentTime+0.1;
-  musicGain.gain.setTargetAtTime(state.sound?0.35:0,ctx.currentTime,0.1);
-  musicTick();
-}
-function stopMusic(){musicOn=false;if(musicTimer){clearTimeout(musicTimer);musicTimer=null}}
-function musicTick(){
-  if(!ctx||!musicOn||ctx.state!=='running') return;
-  const lookahead=0.4;
-  while(nextNoteTime<ctx.currentTime+lookahead){
-    const barIdx=Math.floor(musicStep/4)%4;
-    const beatInBar=musicStep%4;
-    const bar=MUSIC_PATTERN[barIdx];
-    // Bass
-    if(beatInBar===0){
-      const osc=ctx.createOscillator(), g=ctx.createGain();
-      osc.type='sine'; osc.frequency.value=bar.bass;
-      osc.connect(g); g.connect(musicGain);
-      g.gain.setValueAtTime(0,nextNoteTime);
-      g.gain.linearRampToValueAtTime(0.55,nextNoteTime+0.02);
-      g.gain.exponentialRampToValueAtTime(0.01,nextNoteTime+0.5);
-      osc.start(nextNoteTime); osc.stop(nextNoteTime+0.55);
+    let sample = 0;
+
+    // Bass: на beats 0 и 2
+    if (beatIdx === 0 || beatIdx === 2) {
+      const beatStart = beatIdx * beatDur;
+      const tb = tInBar - beatStart;
+      sample += Math.sin(2*Math.PI*bar.bass*tb) * Math.exp(-tb*2.5) * 0.35;
     }
-    // Lead
-    const osc=ctx.createOscillator(), g=ctx.createGain();
-    osc.type='triangle'; osc.frequency.value=bar.lead[beatInBar];
-    osc.connect(g); g.connect(musicGain);
-    g.gain.setValueAtTime(0,nextNoteTime);
-    g.gain.linearRampToValueAtTime(0.32,nextNoteTime+0.02);
-    g.gain.exponentialRampToValueAtTime(0.005,nextNoteTime+MUSIC_STEP*0.9);
-    osc.start(nextNoteTime); osc.stop(nextNoteTime+MUSIC_STEP*0.95);
-    // Hi-hat
-    const bufSize=Math.floor(ctx.sampleRate*0.03);
-    const buf=ctx.createBuffer(1,bufSize,ctx.sampleRate);
-    const data=buf.getChannelData(0);
-    for(let i=0;i<bufSize;i++) data[i]=(Math.random()*2-1)*0.4;
-    const src=ctx.createBufferSource(); src.buffer=buf;
-    const hg=ctx.createGain(); hg.gain.value=0.1;
-    src.connect(hg); hg.connect(musicGain);
-    src.start(nextNoteTime);
-    nextNoteTime+=MUSIC_STEP;
-    musicStep=(musicStep+1)%16;
+
+    // Lead: triangle, 4 ноты в такт
+    const lf = bar.lead[beatIdx];
+    const phase = lf * tInBeat;
+    const tri = 2 * Math.abs(2 * (phase - Math.floor(phase + 0.5))) - 1;
+    sample += tri * Math.exp(-tInBeat*5) * 0.18;
+
+    // Hi-hat: 8-е ноты
+    const eighthIdx = Math.floor(tInBar / 0.25);
+    const tInEighth = tInBar - eighthIdx * 0.25;
+    if (tInEighth < 0.025) sample += (Math.random()*2-1) * Math.exp(-tInEighth*200) * 0.06;
+
+    sample = Math.tanh(sample * 1.5);
+    view.setInt16(44 + i*2, sample * 0x7FFF, true);
   }
-  musicTimer=setTimeout(musicTick,80);
+
+  musicUrl = URL.createObjectURL(new Blob([buffer], { type: 'audio/wav' }));
+  musicAudio = new Audio(musicUrl);
+  musicAudio.loop = true;
+  musicAudio.volume = 0.35;
+  musicAudio.preload = 'auto';
+
+  // Если уже разблокировано и звук включен — стартанём
+  if (state.sound && audioUnlocked) {
+    musicAudio.play().catch(()=>{});
+  }
 }
-function setMusicVolume(v){if(musicGain&&ctx)musicGain.gain.setTargetAtTime(v,ctx.currentTime,0.1)}
+
+// КРИТИЧНО: разблокировка происходит в САМОМ обработчике жеста
+let audioUnlocked = false;
+function unlockAudio() {
+  if (audioUnlocked) return;
+  if (!SFX._built) buildSounds();
+  if (!musicUrl) buildMusic();
+  // Пытаемся запустить музыку (это и есть unlock)
+  if (state.sound && musicAudio) {
+    musicAudio.play().then(() => {
+      audioUnlocked = true;
+    }).catch(e => {
+      console.warn('[audio] unlock fail:', e);
+      // Всё равно помечаем — следующая попытка при следующем клике
+    });
+  } else {
+    audioUnlocked = true;
+  }
+}
+
+function playSfx(name) {
+  if (!state.sound || !SFX[name]) return;
+  try {
+    const a = new Audio(SFX[name]);
+    a.volume = 0.6;
+    a.play().catch(()=>{});
+  } catch(e) {}
+}
+
+function playTick() {
+  if (!state.sound || tickPool.length === 0) return;
+  try {
+    const a = tickPool[tickPoolIdx % tickPool.length];
+    tickPoolIdx++;
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+  } catch(e) {}
+}
+
+function startMusic() {
+  if (!state.sound || !musicAudio) return;
+  if (!musicAudio.paused) return;
+  musicAudio.volume = 0.35;
+  musicAudio.play().catch(e => console.warn('[music] play fail:', e));
+}
+
+function stopMusic() {
+  if (musicAudio && !musicAudio.paused) musicAudio.pause();
+}
+
+function sfx(name) {
+  if (name === 'tick') { playTick(); return; }
+  playSfx(name);
+}
 
 /* ============================================================
    REELS
@@ -547,9 +593,6 @@ function setStatic(grid){
   });
 }
 
-/* ============================================================
-   ANIMATION
-   ============================================================ */
 function animateReel(track,final3,idx){
   return new Promise(resolve=>{
     const filler=32;
@@ -569,7 +612,7 @@ function animateReel(track,final3,idx){
       const eased=1-Math.pow(1-t,5);
       const y=targetY*eased;
       track.style.transform=`translateY(${y}px)`;
-      if(Math.abs(y-lastTickY)>=CELL_H){playTick(t); lastTickY=y}
+      if(Math.abs(y-lastTickY)>=CELL_H){playTick(); lastTickY=y}
       if(t<1){requestAnimationFrame(frame)}
       else{
         track.classList.remove('spinning');
@@ -618,13 +661,29 @@ function calcWins(grid,perLine){
 }
 
 /* ============================================================
-   WIN LINES
+   LINES DRAW + PREVIEW
    ============================================================ */
-function drawWinLines(wins){
+let previewTimeout = null;
+let previewFadeTimeout = null;
+
+function clearLines(){
   overlay.innerHTML='';
+  overlay.style.transition='none';
+  overlay.style.opacity='1';
+  if(previewTimeout){clearTimeout(previewTimeout);previewTimeout=null}
+  if(previewFadeTimeout){clearTimeout(previewFadeTimeout);previewFadeTimeout=null}
+}
+
+function drawLines(wins, opts = {}) {
+  overlay.innerHTML='';
+  overlay.style.transition='none';
+  overlay.style.opacity='1';
   const fRect=frame.getBoundingClientRect();
   overlay.setAttribute('width',fRect.width);
   overlay.setAttribute('height',fRect.height);
+
+  const drawDuration = opts.drawDuration || '0.45s';
+
   wins.forEach(w=>{
     const pts=[];
     for(let i=0;i<w.count;i++){
@@ -639,7 +698,7 @@ function drawWinLines(wins){
     const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');
     poly.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
     poly.setAttribute('stroke',color);
-    poly.setAttribute('stroke-width','5');
+    poly.setAttribute('stroke-width', opts.width || '5');
     poly.setAttribute('fill','none');
     poly.setAttribute('stroke-linecap','round');
     poly.setAttribute('stroke-linejoin','round');
@@ -649,12 +708,73 @@ function drawWinLines(wins){
       const len=poly.getTotalLength();
       poly.style.strokeDasharray=len;
       poly.style.strokeDashoffset=len;
+      poly.style.transition=`stroke-dashoffset ${drawDuration} ease-out`;
       poly.getBoundingClientRect();
       requestAnimationFrame(()=>{poly.style.strokeDashoffset=0});
     }catch(e){}
   });
 }
-function clearLines(){overlay.innerHTML=''}
+
+function drawWinLines(wins){ drawLines(wins, {drawDuration:'0.45s', width:'5'}); }
+
+// 🎯 Анимация предпросмотра линий
+function previewActiveLines(){
+  clearLines();
+  if (state.lines === 0) return;
+
+  const fRect = frame.getBoundingClientRect();
+  overlay.setAttribute('width', fRect.width);
+  overlay.setAttribute('height', fRect.height);
+  overlay.style.opacity = '1';
+  overlay.style.transition = 'none';
+
+  const lines = PAYLINES.slice(0, state.lines);
+  const drawDuration = 1.0; // 1 секунда на отрисовку каждой
+
+  lines.forEach((line, idx) => {
+    const pts = [];
+    for (const [r, row] of line) {
+      const cell = tracks[r].children[row];
+      if (!cell) continue;
+      const cr = cell.getBoundingClientRect();
+      pts.push([cr.left + cr.width/2 - fRect.left, cr.top + cr.height/2 - fRect.top]);
+    }
+    if (pts.length < 2) return;
+
+    const color = LINE_COLORS[idx % LINE_COLORS.length];
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    poly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
+    poly.setAttribute('stroke', color);
+    poly.setAttribute('stroke-width', '3.5');
+    poly.setAttribute('fill', 'none');
+    poly.setAttribute('stroke-linecap', 'round');
+    poly.setAttribute('stroke-linejoin', 'round');
+    poly.style.filter = `drop-shadow(0 0 6px ${color})`;
+    overlay.appendChild(poly);
+
+    try {
+      const len = poly.getTotalLength();
+      poly.style.strokeDasharray = len;
+      poly.style.strokeDashoffset = len;
+      poly.style.transition = `stroke-dashoffset ${drawDuration}s ease-out`;
+      poly.getBoundingClientRect();
+      requestAnimationFrame(() => { poly.style.strokeDashoffset = 0; });
+    } catch(e) {
+      poly.style.opacity = '1';
+    }
+  });
+
+  // 1с отрисовка + 0.6с показ + 0.5с fade
+  previewTimeout = setTimeout(() => {
+    overlay.style.transition = 'opacity 0.5s';
+    overlay.style.opacity = '0';
+    previewFadeTimeout = setTimeout(() => {
+      overlay.innerHTML = '';
+      overlay.style.opacity = '1';
+      overlay.style.transition = 'none';
+    }, 500);
+  }, 1600);
+}
 
 /* ============================================================
    UI
@@ -700,10 +820,10 @@ window.closeModal=closeModal;
    ============================================================ */
 async function spin(){
   if(isSpinning) return;
-  tryInitAudio();
   const bet=totalBet();
   if(state.balance<bet){ notif(t('notEnough'),'error'); sfx('lose'); return; }
-  isSpinning=true; clearLines();
+  isSpinning=true;
+  clearLines();
   document.querySelectorAll('.cell.win').forEach(c=>c.classList.remove('win'));
   state.balance-=bet;
   $('winVal').textContent='0 🪙';
@@ -769,7 +889,6 @@ function buildShop(){
 function openShop(){ buildShop(); $('shopModal').classList.add('active'); }
 
 async function buyPackage(pkg){
-  tryInitAudio();
   const tg=window.Telegram?.WebApp;
   try{
     const res=await fetch(CONFIG.invoiceEndpoint,{
@@ -785,7 +904,6 @@ async function buyPackage(pkg){
     const { invoiceLink, error } = await res.json();
     if(error) throw new Error(error);
     if(!invoiceLink) throw new Error('no invoiceLink');
-
     if(tg?.openInvoice){
       tg.openInvoice(invoiceLink,(status)=>{
         if(status==='paid'){
@@ -799,7 +917,6 @@ async function buyPackage(pkg){
     }
   }catch(e){
     console.error('[buyPackage]',e);
-    // Fallback: тестовая покупка, если бэкенд не подключён
     state.balance+=pkg.coins; save(); refresh(); sfx('coin');
     notif(tF('payTest',{n:fmt(pkg.coins)}),'gold');
     closeModal('shopModal');
@@ -856,93 +973,113 @@ function claimDaily(){
 }
 
 /* ============================================================
+   CHANGE LINES — с предпросмотром
+   ============================================================ */
+function changeLines(newCount, showPreview=true){
+  if (isSpinning) return;
+  newCount = Math.max(1, Math.min(MAX_LINES, newCount));
+  if (newCount === state.lines) {
+    if (showPreview) previewActiveLines();
+    return;
+  }
+  state.lines = newCount;
+  save(); refresh();
+  sfx('click');
+  if (showPreview) previewActiveLines();
+}
+
+/* ============================================================
    EVENTS
    ============================================================ */
 function bind(){
-  // START — синхронный unlock на pointerdown
+  // START
   $('startSound').addEventListener('pointerdown',(e)=>{
     e.preventDefault();
     state.sound=true; save();
-    tryInitAudio(); // синхронно!
-    // Проверка через 100мс — контекст обычно запускается синхронно
+    // Синхронный unlock в gesture handler — гарантированно работает
+    if(!SFX._built) buildSounds();
+    if(!musicUrl) buildMusic();
+    if(musicAudio){
+      musicAudio.play().then(()=>{ audioUnlocked=true; }).catch(err=>{
+        console.warn('[start] music fail:', err);
+        audioUnlocked=true; // всё равно даём продолжить
+      });
+    }
+    sfx('bigwin');
     setTimeout(()=>{
-      if(ctx && ctx.state==='running'){
-        startMusic();
-        sfx('bigwin'); // приветственный бип
-      }else{
-        notif('Audio not ready: '+((ctx&&ctx.state)||'no ctx'),'error');
-      }
       $('startOverlay').classList.add('hidden');
       refresh();
-    },100);
+    }, 60);
   });
   $('startMute').addEventListener('pointerdown',(e)=>{
     e.preventDefault();
     state.sound=false; save();
+    audioUnlocked=true;
+    if(!SFX._built) buildSounds();
     $('startOverlay').classList.add('hidden');
     refresh();
   });
 
-  // LINES
-  $('linesDec').onclick=()=>{ if(isSpinning) return; state.lines=Math.max(1,state.lines-1); tryInitAudio(); sfx('click'); save(); refresh(); };
-  $('linesInc').onclick=()=>{ if(isSpinning) return; state.lines=Math.min(MAX_LINES,state.lines+1); tryInitAudio(); sfx('click'); save(); refresh(); };
+  // LINES — с предпросмотром
+  $('linesDec').onclick=()=>changeLines(state.lines-1);
+  $('linesInc').onclick=()=>changeLines(state.lines+1);
   document.querySelectorAll('.lp').forEach(b=>{
-    b.onclick=()=>{ if(isSpinning) return; state.lines=parseInt(b.dataset.lines); tryInitAudio(); sfx('click'); save(); refresh(); };
+    b.onclick=()=>changeLines(parseInt(b.dataset.lines));
   });
 
   // BET
-  $('betMin').onclick=()=>{ if(!isSpinning){state.betPerLine=1; tryInitAudio(); sfx('click'); save(); refresh()} };
-  $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=100; tryInitAudio(); sfx('click'); save(); refresh()} };
-  $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); tryInitAudio(); sfx('click'); save(); refresh()} };
-  $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); tryInitAudio(); sfx('click'); save(); refresh()} };
+  $('betMin').onclick=()=>{ if(!isSpinning){state.betPerLine=1; sfx('click'); save(); refresh()} };
+  $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=100; sfx('click'); save(); refresh()} };
+  $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); sfx('click'); save(); refresh()} };
+  $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); sfx('click'); save(); refresh()} };
 
   // SPIN
-  $('spinBtn').onclick=()=>{ tryInitAudio(); spin(); };
+  $('spinBtn').onclick=()=>{ spin(); };
 
   // ACTIONS
-  $('bonusBtn').onclick=()=>{ tryInitAudio(); sfx('click'); claimDaily(); };
-  $('riskBtn').onclick=()=>{ tryInitAudio(); sfx('click'); openRisk(); };
-  $('shopBtn').onclick=()=>{ tryInitAudio(); sfx('click'); openShop(); };
-  $('paytableBtn').onclick=()=>{ tryInitAudio(); sfx('click'); openPaytable(); };
+  $('bonusBtn').onclick=()=>{ sfx('click'); claimDaily(); };
+  $('riskBtn').onclick=()=>{ sfx('click'); openRisk(); };
+  $('shopBtn').onclick=()=>{ sfx('click'); openShop(); };
+  $('paytableBtn').onclick=()=>{ sfx('click'); openPaytable(); };
 
   // SOUND TOGGLE
   $('soundBtn').onclick=()=>{
     state.sound=!state.sound;
     if(state.sound){
-      tryInitAudio();
-      setMusicVolume(0.35);
+      if(!SFX._built) buildSounds();
+      if(!musicUrl) buildMusic();
       startMusic();
       sfx('click');
       notif(t('soundOn'));
     }else{
-      setMusicVolume(0);
+      stopMusic();
       notif(t('soundOff'),'error');
     }
     save(); refresh();
   };
 
   // RISK
-  $('riskHigher').onclick=()=>{ tryInitAudio(); riskChoose(true); };
-  $('riskLower').onclick=()=>{ tryInitAudio(); riskChoose(false); };
+  $('riskHigher').onclick=()=>riskChoose(true);
+  $('riskLower').onclick=()=>riskChoose(false);
   $('riskTake').onclick=()=>{ $('riskModal').classList.remove('active'); pendingRisk=0; };
 
   // LANG
   document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.onclick=()=>{ state.lang=b.dataset.lang; save(); applyI18n(); tryInitAudio(); sfx('click'); notif(t('langChanged')); };
+    b.onclick=()=>{ state.lang=b.dataset.lang; save(); applyI18n(); sfx('click'); notif(t('langChanged')); };
   });
 
-  // MODALS BACKDROP CLOSE
+  // MODALS
   document.querySelectorAll('.modal').forEach(m=>{
     m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('active'); });
   });
 
   // RESIZE
-  window.addEventListener('resize',()=>{ if(overlay.innerHTML) clearLines(); });
+  window.addEventListener('resize',()=>{ if(overlay.innerHTML && !isSpinning) clearLines(); });
 
   // VISIBILITY
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){ stopMusic(); }
-    else if(state.sound && ctx && ctx.state==='running'){ startMusic(); }
+    else if(state.sound){ startMusic(); }
   });
 }
 
@@ -959,6 +1096,28 @@ function init(){
     tg.setHeaderColor?.('#0a0e17'); tg.setBackgroundColor?.('#0a0e17');
   }
   buildReels(); bind(); applyI18n();
+
+  // Предгенерируем звуки в фоне, чтобы к моменту клика были готовы
+  setTimeout(()=>{
+    try {
+      buildSounds();
+      // музыка генерируется дольше — отложим дальше
+      setTimeout(buildMusic, 100);
+    } catch(e){ console.warn('prebuild fail:', e); }
+  }, 50);
+
+  // Первый тап в любом месте — unlock (на случай если start overlay пропустили)
+  document.addEventListener('pointerdown', function firstTouch(){
+    if(!audioUnlocked) unlockAudio();
+    document.removeEventListener('pointerdown', firstTouch);
+  }, {capture:true, once:true});
+
+  // Авто-превью текущих линий при старте (после закрытия start overlay)
+  setTimeout(()=>{
+    if($('startOverlay').classList.contains('hidden')){
+      previewActiveLines();
+    }
+  }, 1500);
 }
 init();
 </script>
