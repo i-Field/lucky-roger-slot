@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Roger - Classic Slot with Bonus</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body {
+            background: #050b14;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        .cabinet {
+            background: linear-gradient(180deg, #1e293b 0%, #090d16 100%);
+            border: 6px solid #d97706;
+            border-radius: 12px;
+            padding: 15px;
+            max-width: 540px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(217, 119, 6, 0.4), inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .cabinet-title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            color: #fbbf24;
+            text-shadow: 2px 2px #000;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        /* Табло */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            background: #020617;
+            padding: 8px;
+            border-radius: 6px;
+            border: 2px inset #475569;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .dash-box { font-size: 11px; color: #94a3b8; }
+        .dash-val { color: #22c55e; font-size: 16px; font-weight: bold; text-shadow: 0 0 5px rgba(34,197,94,0.5); }
+        
+        /* Экран слота */
+        .screen {
+            background: #000;
+            border: 4px ridge #64748b;
+            border-radius: 6px;
+            padding: 6px;
+            position: relative;
+            margin-bottom: 12px;
+            height: 180px;
+        }
+        .reels-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            height: 100%;
+            overflow: hidden;
+            background: #0f172a;
+        }
+        .reel {
+            background: #fff;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            border-radius: 3px;
+        }
+        .symbol {
+            font-size: 30px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Панель управления */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .btn {
+            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+            border: 2px outset #60a5fa;
+            color: white;
+            padding: 10px 4px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-shadow: 1px 1px #000;
+        }
+        .btn:active { border-style: inset; transform: translateY(1px); }
+        .btn-lines { background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%); }
+        .btn-bet { background: linear-gradient(180deg, #06b6d4 0%, #0e7490 100%); }
+        .btn-max { background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); }
+        .btn-spin { background: linear-gradient(180deg, #22c55e 0%, #15803d 100%); font-size: 15px; }
+        .btn-risk { background: linear-gradient(180deg, #eab308 0%, #a16207 100%); }
+        
+        .msg-bar {
+            background: #020617;
+            border: 1px solid #334155;
+            color: #38bdf8;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            border-radius: 4px;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Окно оверлея (Риск или Бонус) */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(2, 6, 23, 0.95);
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+        }
+        .cards-row {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .card {
+            width: 50px; height: 75px;
+            background: #fff; color: #000;
+            font-size: 20px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 4px; cursor: pointer;
+            border: 2px solid #cbd5e1;
+        }
+        .card.dealer { background: #cbd5e1; cursor: default; }
+
+        /* Стили для сундуков бонус-игры */
+        .chests-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .chest-box {
+            background: #334155;
+            border: 2px solid #fbbf24;
+            border-radius: 6px;
+            padding: 15px 10px;
+            font-size: 28px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .chest-box:hover { background: #475569; transform: scale(1.05); }
+        .chest-box.opened { opacity: 0.6; cursor: default; transform: none; }
+    </style>
+</head>
+<body>
+
+<div class="cabinet">
+    <div class="cabinet-title">⚓ LUCKY ROGER ⚓</div>
+    
+    <div class="dashboard">
+        <div class="dash-box">КРЕДИТ<div id="balance" class="dash-val">1000</div></div>
+        <div class="dash-box">СТАВКА<div id="bet" class="dash-val">10</div></div>
+        <div class="dash-box">ЛИНИИ<div id="lines" class="dash-val">9</div></div>
+        <div class="dash-box">ВЫИГРЫШ<div id="win" class="dash-val">0</div></div>
+    </div>
+
+    <div class="screen">
+        <div class="reels-grid" id="reelsGrid"></div>
+
+        <!-- Оверлей для Риск-игры и Бонуса -->
+        <div class="overlay" id="overlay">
+            <h3 id="overlayTitle" style="color: #fbbf24; margin-bottom: 5px;">РАУНД</h3>
+            <p id="overlayText" style="font-size: 12px; margin-bottom: 10px; color:#cbd5e1;"></p>
+            <div id="overlayContent"></div>
+            <button class="btn" id="overlayCloseBtn" onclick="closeOverlay()" style="margin-top: 10px; background:#475569; display:none;">ВЫЙТИ ИЗ БОНУСА</button>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <button class="btn btn-lines" onclick="changeLines()">ЛИНИИ</button>
+        <button class="btn btn-bet" onclick="changeBet()">СТАВКА</button>
+        <button class="btn btn-max" onclick="maxBet()">МАКС СТАВКА</button>
+        <button class="btn btn-risk" onclick="openRiskGame()">РИСК</button>
+        <button class="btn btn-spin" onclick="spin()">ПУСК</button>
+        <button class="btn" onclick="takeWin()">ЗАБРАТЬ</button>
+    </div>
+
+    <div class="msg-bar" id="msg">Добро пожаловать в Lucky Roger! Нажмите ПУСК.</div>
+</div>
+
+<script>
+    const SYMBOLS = ['🏴‍☠️', '💣', '⚔️', '🪙', '🪙', '🍷', '🦜', '🧭', '🧭'];
+    let balance = 1000;
+    let betPerLine = 10;
+    let activeLines = 9;
+    let currentWin = 0;
+    let isSpinning = false;
+    let matrix = [];
+
+    function initMatrix() {
+        matrix = [];
+        for(let i=0; i<5; i++) {
+            let col = [];
+            for(let j=0; j<3; j++) {
+                col.push(SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]);
+            }
+            matrix.push(col);
+        }
+    }
+
+    function render() {
+        const grid = document.getElementById('reelsGrid');
+        grid.innerHTML = '';
+        for(let i=0; i<5; i++) {
+            const reelEl = document.createElement('div');
+            reelEl.className = 'reel';
+            for(let j=0; j<3; j++) {
+                const sym = document.createElement('div');
+                sym.className = 'symbol';
+                sym.textContent = matrix[i][j];
+                reelEl.appendChild(sym);
+            }
+            grid.appendChild(reelEl);
+        }
+        document.getElementById('balance').textContent = balance;
+        document.getElementById('bet').textContent = betPerLine;
+        document.getElementById('lines').textContent = activeLines;
+        document.getElementById('win').textContent = currentWin;
+    }
+
+    initMatrix();
+    render();
+
+    function changeLines() {
+        if (isSpinning) return;
+        activeLines = activeLines >= 9 ? 1 : activeLines + 2;
+        render();
+    }
+
+    function changeBet() {
+        if (isSpinning) return;
+        const steps = [1, 2, 5, 10, 20, 50, 100];
+        let idx = steps.indexOf(betPerLine);
+        betPerLine = steps[(idx + 1) % steps.length];
+        render();
+    }
+
+    function maxBet() {
+        if (isSpinning) return;
+        betPerLine = 100;
+        activeLines = 9;
+        render();
+    }
+
+    function spin() {
+        if (isSpinning) return;
+        let totalCost = betPerLine * activeLines;
+        if (balance < totalCost) {
+            document.getElementById('msg').textContent = 'Недостаточно кредитов!';
+            return;
+        }
+
+        if (currentWin > 0) {
+            balance += currentWin;
+            currentWin = 0;
+        }
+
+        balance -= totalCost;
+        isSpinning = true;
+        document.getElementById('msg').textContent = 'Барабаны крутятся...';
+
+        let counter = 0;
+        let interval = setInterval(() => {
+            initMatrix();
+            render();
+            counter++;
+            if (counter > 12) {
+                clearInterval(interval);
+                evaluateWins();
+                isSpinning = false;
+            }
+        }, 70);
+    }
+
+    function evaluateWins() {
+        let totalWin = 0;
+        let bonusCount = 0;
+
+        for(let i=0; i<5; i++) {
+            for(let j=0; j<3; j++) {
+                if (matrix[i][j] === '💣') bonusCount++;
+            }
+        }
+
+        if (bonusCount >= 3) {
+            startBonusGame();
+            return;
+        }
+
+        const lineCoords = [
+            [1,1,1,1,1], [0,0,0,0,0], [2,2,2,2,2],
+            [0,1,2,1,0], [2,1,0,1,2], [0,0,1,2,2],
+            [2,2,1,0,0], [1,0,1,2,1], [1,2,1,0,1]
+        ];
+
+        for (let l = 0; l < activeLines; l++) {
+            let coords = lineCoords[l];
+            let firstSym = matrix[0][coords[0]];
+            let matchCount = 1;
+
+            for (let i = 1; i < 5; i++) {
+                let sym = matrix[i][coords[i]];
+                if (sym === firstSym || sym === '🏴‍☠️' || firstSym === '🏴‍☠️') {
+                    if (firstSym === '🏴‍☠️') firstSym = sym;
+                    matchCount++;
+                } else {
+                    break;
+                }
+            }
+
+            if (matchCount >= 3) {
+                let multiplier = matchCount === 3 ? 10 : (matchCount === 4 ? 50 : 200);
+                totalWin += betPerLine * multiplier;
+            }
+        }
+
+        currentWin = totalWin;
+        render();
+
+        if (currentWin > 0) {
+            document.getElementById('msg').textContent = `ВЫИГРЫШ: ${currentWin}! РИСК или ЗАБРАТЬ`;
+        } else {
+            document.getElementById('msg').textContent = 'Попробуйте еще раз!';
+        }
+    }
+
+    function takeWin() {
+        if (currentWin > 0) {
+            balance += currentWin;
+            currentWin = 0;
+            render();
+            document.getElementById('msg').textContent = 'Выигрыш зачислен на счет.';
+        }
+    }
+
+    // --- БОНУСНАЯ ИГРА С СУНДУКАМИ ---
+    function startBonusGame() {
+        document.getElementById('overlay').style.display = 'flex';
+        document.getElementById('overlayTitle').textContent = '🏴‍☠️ ПИРАТСКИЙ БОНУС: СУНДУКИ СОКРОВИЩ 🏴‍☠️';
+        document.getElementById('overlayText').textContent = 'Выбирайте сундуки! Остерегайтесь пустых бочек!';
+        document.getElementById('overlayCloseBtn').style.display = 'none';
+
+        const content = document.getElementById('overlayContent');
+        content.innerHTML = '<div class="chests-grid" id="chestsGrid"></div>';
+        
+        const grid = document.getElementById('chestsGrid');
+        // Генерируем 6 сундуков, в одном из них спрятана бомба/ловушка
+        let trapIndex = Math.floor(Math.random() * 6);
+        
+        for(let i = 0; i < 6; i++) {
+            const chest = document.createElement('div');
+            chest.className = 'chest-box';
+            chest.textContent = '📦';
+            chest.onclick = () => openChest(chest, i === trapIndex);
+            grid.appendChild(chest);
+        }
+        document.getElementById('msg').textContent = 'БОНУСНАЯ ИГРА! Открывайте сундуки.';
+    }
+
+    function openChest(chestEl, isTrap) {
+        if (chestEl.classList.contains('opened')) return;
+        chestEl.classList.add('opened');
+
+        if (isTrap) {
+            chestEl.textContent = '💣';
+            document.getElementById('overlayText').textContent = 'БУХ! Попалась ловушка! Бонус окончен.';
+            document.getElementById('overlayCloseBtn').style.display = 'block';
+            document.querySelectorAll('.chest-box').forEach(el => el.onclick = null);
+        } else {
+            let winCoins = (Math.floor(Math.random() * 5) + 2) * betPerLine * 10;
+            currentWin += winCoins;
+            render();
+            chestEl.textContent = '🪙';
+            document.getElementById('overlayText').textContent = `Найдено сокровище: +${winCoins} кредитов! Выбирайте следующий.`;
+        }
+    }
+
+    // --- РИСК-ИГРА НА КАРТЫ ---
+    let dealerCardVal = 0;
+    function openRiskGame() {
+        if (currentWin === 0) {
+            document.getElementById('msg').textContent = 'Сначала нужно выиграть!';
+            return;
+        }
+        document.getElementById('overlay').style.display = 'flex';
+        document.getElementById('overlayTitle').textContent = 'РИСК-ИГРА: УДВОЙТЕ ВЫИГРЫШ';
+        document.getElementById('overlayText').textContent = 'Карта дилера открыта. Выберите карту выше!';
+        document.getElementById('overlayCloseBtn').style.display = 'block';
+        
+        dealerCardVal = Math.floor(Math.random() * 10) + 2;
+        const content = document.getElementById('overlayContent');
+        content.innerHTML = `
+            <div style="font-size:12px; color:#94a3b8;">Карта дилера:</div>
+            <div class="cards-row"><div class="card dealer">${dealerCardVal}</div></div>
+            <div style="font-size:12px; color:#94a3b8; margin-top:5px;">Выберите вашу карту:</div>
+            <div class="cards-row" id="playerCardsContainer"></div>
+        `;
+
+        const playerContainer = document.getElementById('playerCardsContainer');
+        for(let i=0; i<4; i++) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.textContent = '🂠';
+            card.onclick = () => chooseCard(card);
+            playerContainer.appendChild(card);
+        }
+    }
+
+    function chooseCard(cardEl) {
+        let playerCardVal = Math.floor(Math.random() * 10) + 2;
+        cardEl.textContent = playerCardVal;
+        cardEl.className = 'card dealer';
+
+        if (playerCardVal > dealerCardVal) {
+            currentWin *= 2;
+            render();
+            setTimeout(() => {
+                alert(`Победа! Выигрыш удвоен до ${currentWin}`);
+                openRiskGame();
+            }, 300);
+        } else if (playerCardVal === dealerCardVal) {
+            setTimeout(() => { alert('Ничья! Попробуйте еще раз.'); openRiskGame(); }, 300);
+        } else {
+            currentWin = 0;
+            render();
+            document.getElementById('msg').textContent = 'Дилер победил! Вы проиграли выигрыш.';
+            closeOverlay();
+        }
+    }
+
+    function closeOverlay() {
+        document.getElementById('overlay').style.display = 'none';
+        render();
+    }
+</script>
+
+</body>
+</html>
