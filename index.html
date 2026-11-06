@@ -18,8 +18,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .sound-btn{background:var(--panel);border:1px solid #2c3a52;color:var(--gold);padding:8px 12px;border-radius:8px;font-size:16px;cursor:pointer}
 .sound-btn.off{color:var(--muted);opacity:.6}
 .title-box{text-align:center;padding:4px 0 2px}
-.title{font-size:26px;font-weight:900;letter-spacing:3px;background:linear-gradient(180deg,#ffe9a0 0%,#f0c040 35%,#b8860b 60%,#ffd966 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 3px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(212,175,55,.35));font-family:Georgia,serif;animation:shine 4s linear infinite;background-size:200% 100%}
-@keyframes shine{0%{background-position:0 0}100%{background-position:200% 0}}
+.title{font-size:26px;font-weight:900;letter-spacing:3px;background:linear-gradient(180deg,#ffe9a0 0%,#f0c040 35%,#b8860b 60%,#ffd966 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 3px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(212,175,55,.35));font-family:Georgia,serif;background-size:200% 100%}
 .balance-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
@@ -31,11 +30,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .machine::before{top:4px;left:8px}.machine::after{top:4px;right:8px}
 .reels-frame{background:linear-gradient(180deg,#050810,#1a1f2c);border-radius:10px;padding:6px;box-shadow:inset 0 4px 12px rgba(0,0,0,.9),0 0 0 1px #3a4a5c;position:relative}
 .reels{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:relative;z-index:1}
-.reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:6px;height:219px;overflow:hidden;position:relative;box-shadow:inset 0 8px 12px -6px rgba(0,0,0,.6),inset 0 -8px 12px -6px rgba(0,0,0,.6),0 0 0 1px #5a4a2a;contain:layout paint}
+.reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:6px;height:219px;overflow:hidden;position:relative;box-shadow:inset 0 8px 12px -6px rgba(0,0,0,.6),inset 0 -8px 12px -6px rgba(0,0,0,.6),0 0 0 1px #5a4a2a}
 .reel::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
 .reel::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
 .track{position:absolute;left:0;right:0;top:0;will-change:transform;backface-visibility:hidden;transform:translate3d(0,0,0)}
-.cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0}
+.cell{
+  height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;
+  position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0;
+  /* text-shadow дешевле filter, но даже его убрал — эмодзи и так яркие */
+}
 .cell.win::before{content:"";position:absolute;inset:4px;border:2px solid var(--goldL);border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.5),transparent 70%);box-shadow:0 0 14px var(--goldL),inset 0 0 14px rgba(255,217,102,.5);pointer-events:none;animation:winPulse .7s ease-in-out infinite alternate}
 @keyframes winPulse{0%{transform:scale(.95);opacity:.85}100%{transform:scale(1.03);opacity:1}}
 .lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
@@ -278,12 +281,12 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v8',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v8');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_roger_v9',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_roger_v9');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
 /* ============================================================
-   📳 HAPTIC FEEDBACK
+   📳 HAPTIC
    ============================================================ */
 function haptic(type) {
   const tg = window.Telegram?.WebApp;
@@ -308,7 +311,7 @@ function haptic(type) {
 }
 
 /* ============================================================
-   🎵 SFX — HTML5 Audio + data:WAV, БЕЗ МУЗЫКИ
+   🎵 SFX
    ============================================================ */
 const SFX = {};
 let audioReady = false;
@@ -377,7 +380,7 @@ function buildAudio() {
   Object.values(SFX).forEach(a => { a.preload = 'auto'; a.volume = 0.7; });
 
   const tickUrl = makeWav(0.03, t => (Math.random()*2-1) * Math.exp(-t*120) * 0.35);
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 4; i++) {
     const a = new Audio(tickUrl);
     a.preload = 'auto';
     a.volume = 0.3;
@@ -409,7 +412,6 @@ function sfx(name) {
   else playSfx(name);
 }
 
-// Пустышки для обратной совместимости (музыки больше нет)
 function startMusic() {}
 function stopMusic() {}
 
@@ -435,58 +437,59 @@ function setStatic(grid){
 }
 
 /* ============================================================
-   🎰 РЕАЛИСТИЧНОЕ ВРАЩЕНИЕ — WAAPI + GPU, БЕЗ BLUR
+   🎰 ПРОСТАЯ И СТАБИЛЬНАЯ АНИМАЦИЯ — CSS transition + compositor
    ============================================================ */
 function animateReel(track, final3, idx) {
   return new Promise(resolve => {
-    const filler = 20;
+    const filler = 12; // меньше DOM = меньше тормозов
     let html = '';
     for (let i = 0; i < filler; i++) html += `<div class="cell">${randSym()}</div>`;
     final3.forEach(s => html += `<div class="cell">${s}</div>`);
     track.innerHTML = html;
 
-    // Сброс в 0 без transition
+    // Сброс без transition
     track.style.transition = 'none';
     track.style.transform = 'translate3d(0,0,0)';
-    void track.offsetHeight; // force reflow
+    void track.offsetHeight;
 
     const targetY = -(filler * CELL_H);
-    const dur = 1300 + idx * 280;
+    const dur = 1200 + idx * 240;
 
-    // Тики с реалистичным замедлением
-    let elapsed = 0;
-    let tickDelay = 32;
-    const tickLoop = () => {
-      if (elapsed >= dur * 0.9) return;
-      playTick();
-      elapsed += tickDelay;
-      tickDelay *= 1.12;
-      setTimeout(tickLoop, tickDelay);
-    };
-    tickLoop();
+    // Тики через rAF — легкие и не накапливают таймеры
+    let rafId = null;
+    const start = performance.now();
+    let nextTickAt = 30;
 
-    // Основная анимация — на compositor thread
-    const anim = track.animate(
-      [
-        { transform: 'translate3d(0,0,0)', offset: 0,
-          easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
-        { transform: `translate3d(0,${targetY + 8}px,0)`, offset: 0.93,
-          easing: 'cubic-bezier(0.3, 0, 0.6, 1)' },
-        { transform: `translate3d(0,${targetY}px,0)`, offset: 1 }
-      ],
-      { duration: dur, fill: 'forwards' }
-    );
+    function tickLoop(now) {
+      const elapsed = now - start;
+      if (elapsed >= dur - 120) return;
+      if (elapsed >= nextTickAt) {
+        playTick();
+        // Тики замедляются к концу — реалистично
+        const progress = elapsed / dur;
+        nextTickAt = elapsed + 40 + progress * progress * 220;
+      }
+      rafId = requestAnimationFrame(tickLoop);
+    }
+    rafId = requestAnimationFrame(tickLoop);
 
-    anim.onfinish = () => {
-      sfx('reelStop');
-      haptic('light');
-      // Атомарная подмена DOM — визуально идентично
+    // Стартуем анимацию через 1 кадр (чтобы transition гарантированно сработал)
+    requestAnimationFrame(() => {
+      track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
+      track.style.transform = `translate3d(0,${targetY}px,0)`;
+    });
+
+    // Финализация через setTimeout — надёжнее чем transitionend (Safari баг)
+    setTimeout(() => {
+      if (rafId) cancelAnimationFrame(rafId);
       track.style.transition = 'none';
       track.style.transform = 'translate3d(0,0,0)';
       track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
       void track.offsetHeight;
+      sfx('reelStop');
+      haptic('light');
       resolve();
-    };
+    }, dur + 30);
   });
 }
 
