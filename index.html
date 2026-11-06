@@ -18,29 +18,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .sound-btn{background:var(--panel);border:1px solid #2c3a52;color:var(--gold);padding:8px 12px;border-radius:8px;font-size:16px;cursor:pointer}
 .sound-btn.off{color:var(--muted);opacity:.6}
 .title-box{text-align:center;padding:4px 0 2px}
-.title{font-size:26px;font-weight:900;letter-spacing:3px;background:linear-gradient(180deg,#ffe9a0 0%,#f0c040 35%,#b8860b 60%,#ffd966 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 3px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(212,175,55,.35));font-family:Georgia,serif;background-size:200% 100%}
+.title{
+  font-size:26px;font-weight:900;letter-spacing:3px;
+  color:#ffd966;font-family:Georgia,serif;
+  text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 12px rgba(212,175,55,.5);
+}
 .balance-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
 .stat .val{font-size:17px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .stat.right{text-align:right}
-.stat.win .val{color:var(--green);text-shadow:0 0 10px rgba(39,174,96,.4)}
+.stat.win .val{color:var(--green)}
 .machine{background:radial-gradient(ellipse at 50% 0,rgba(255,217,102,.08),transparent 60%),linear-gradient(180deg,#2d1d0f 0%,#1a0e05 100%);border:3px solid;border-image:linear-gradient(180deg,#ffe9a0,#b8860b,#ffe9a0) 1;border-radius:16px;padding:12px 10px 10px;box-shadow:0 0 0 1px #000,0 10px 30px rgba(0,0,0,.7),inset 0 0 40px rgba(0,0,0,.5);position:relative}
 .machine::before,.machine::after{content:"✦";position:absolute;font-size:20px;color:var(--gold);opacity:.7;text-shadow:0 0 8px rgba(212,175,55,.6)}
 .machine::before{top:4px;left:8px}.machine::after{top:4px;right:8px}
 .reels-frame{background:linear-gradient(180deg,#050810,#1a1f2c);border-radius:10px;padding:6px;box-shadow:inset 0 4px 12px rgba(0,0,0,.9),0 0 0 1px #3a4a5c;position:relative}
 .reels{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:relative;z-index:1}
-.reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:6px;height:219px;overflow:hidden;position:relative;box-shadow:inset 0 8px 12px -6px rgba(0,0,0,.6),inset 0 -8px 12px -6px rgba(0,0,0,.6),0 0 0 1px #5a4a2a}
+.reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:6px;height:219px;overflow:hidden;position:relative;box-shadow:inset 0 8px 12px -6px rgba(0,0,0,.6),inset 0 -8px 12px -6px rgba(0,0,0,.6),0 0 0 1px #5a4a2a;contain:layout paint}
 .reel::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
 .reel::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
-.track{position:absolute;left:0;right:0;top:0;will-change:transform;backface-visibility:hidden;transform:translate3d(0,0,0)}
-.cell{
-  height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;
-  position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0;
-  /* text-shadow дешевле filter, но даже его убрал — эмодзи и так яркие */
-}
-.cell.win::before{content:"";position:absolute;inset:4px;border:2px solid var(--goldL);border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.5),transparent 70%);box-shadow:0 0 14px var(--goldL),inset 0 0 14px rgba(255,217,102,.5);pointer-events:none;animation:winPulse .7s ease-in-out infinite alternate}
-@keyframes winPulse{0%{transform:scale(.95);opacity:.85}100%{transform:scale(1.03);opacity:1}}
+.track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0);backface-visibility:hidden}
+.cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0}
+.cell.win::before{content:"";position:absolute;inset:4px;border:2px solid #ffd966;border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.6),rgba(255,217,102,.15) 70%);pointer-events:none;box-shadow:0 0 10px rgba(255,217,102,.8)}
 .lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
 .lines-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .lines-row{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center}
@@ -52,8 +51,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .lines-mid .val{font-size:18px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .lines-mid .val small{font-size:11px;color:var(--muted);font-weight:700}
 .lines-presets{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
-.lp{background:linear-gradient(180deg,#2c3a52,#1a2333);border:1px solid #3a4a60;color:var(--muted);border-radius:6px;padding:5px 0;font-size:11px;font-weight:800;cursor:pointer;transition:all .1s}
-.lp.active{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 0 8px rgba(212,175,55,.4)}
+.lp{background:linear-gradient(180deg,#2c3a52,#1a2333);border:1px solid #3a4a60;color:var(--muted);border-radius:6px;padding:5px 0;font-size:11px;font-weight:800;cursor:pointer}
+.lp.active{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0}
 .lp:active{transform:scale(.95)}
 .bet-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:10px;display:grid;grid-template-columns:auto auto 1fr auto auto;gap:6px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .bet-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;min-width:42px;box-shadow:0 2px 0 #0f1722}
@@ -64,10 +63,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .bet-mid .val{font-size:17px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .bet-total{font-size:11px;color:var(--muted);text-align:center;margin-top:4px;font-weight:700}
 .bet-total b{color:var(--goldL);font-size:13px}
-.spin-btn{background:linear-gradient(180deg,#e74c3c 0%,#c0392b 45%,#7a1c11 100%);border:2px solid #ff8a7a;color:#fff;font-size:22px;font-weight:900;letter-spacing:3px;padding:16px;border-radius:14px;cursor:pointer;text-shadow:0 2px 2px rgba(0,0,0,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #4d0e07,0 10px 20px rgba(0,0,0,.5),0 0 30px rgba(231,76,60,.4);position:relative;overflow:hidden}
-.spin-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);animation:sweep 3s infinite}
-@keyframes sweep{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
-.spin-btn:active:not(:disabled){transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 0 #4d0e07,0 4px 10px rgba(0,0,0,.5)}
+.spin-btn{
+  background:linear-gradient(180deg,#e74c3c 0%,#c0392b 45%,#7a1c11 100%);
+  border:2px solid #ff8a7a;color:#fff;font-size:22px;font-weight:900;
+  letter-spacing:3px;padding:16px;border-radius:14px;cursor:pointer;
+  text-shadow:0 2px 2px rgba(0,0,0,.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #4d0e07,0 10px 20px rgba(0,0,0,.5);
+}
+.spin-btn:active:not(:disabled){transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 0 #4d0e07}
 .spin-btn:disabled{filter:grayscale(.7) brightness(.6);cursor:not-allowed}
 .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .act-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:10px;padding:10px 4px;font-size:10px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 #0f1722,0 4px 8px rgba(0,0,0,.4)}
@@ -76,11 +79,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .act-btn.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 3px 0 #5a4410}
 .act-btn.green{background:linear-gradient(180deg,#2ecc71,#1a7d43);border-color:#58e896;box-shadow:0 3px 0 #0f3d22}
 .act-btn.blue{background:linear-gradient(180deg,#3498db,#1a5f8a);border-color:#5dade2;box-shadow:0 3px 0 #0f3d54}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
 .modal.active{opacity:1;pointer-events:auto}
-.modal-box{background:linear-gradient(180deg,var(--panel2),var(--panel));border:3px solid var(--gold);border-radius:18px;padding:22px 18px;max-width:400px;width:100%;box-shadow:0 0 40px rgba(212,175,55,.5),0 20px 60px rgba(0,0,0,.8);text-align:center;transform:scale(.9);transition:transform .25s;max-height:85vh;overflow-y:auto}
-.modal.active .modal-box{transform:scale(1)}
-.modal-title{font-size:20px;font-weight:900;color:var(--goldL);margin-bottom:12px;text-shadow:0 0 15px rgba(212,175,55,.5);font-family:Georgia,serif}
+.modal-box{background:linear-gradient(180deg,var(--panel2),var(--panel));border:3px solid var(--gold);border-radius:18px;padding:22px 18px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.8);text-align:center;max-height:85vh;overflow-y:auto}
+.modal-title{font-size:20px;font-weight:900;color:var(--goldL);margin-bottom:12px;font-family:Georgia,serif}
 .modal-text{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5}
 .modal-close{background:linear-gradient(180deg,#576574,#2c3a52);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;margin-top:14px;width:100%}
 .pt-table{width:100%;border-collapse:collapse;font-size:12px}
@@ -88,10 +90,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .pt-table tbody td{padding:7px 4px;border-bottom:1px solid rgba(69,88,114,.4);font-variant-numeric:tabular-nums}
 .pt-sym{font-size:24px;text-align:left;padding-left:8px !important}
 .pt-val{color:var(--goldL);font-weight:800}
-.pt-val.hi{text-shadow:0 0 8px rgba(255,217,102,.4)}
 .shop-grid{display:flex;flex-direction:column;gap:8px}
 .shop-card{background:linear-gradient(135deg,#2a3446,#1a2333);border:2px solid #3a4a60;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.shop-card.featured{border-color:var(--gold);background:linear-gradient(135deg,#3a2a1a,#2a1a0a);box-shadow:0 0 20px rgba(212,175,55,.3)}
+.shop-card.featured{border-color:var(--gold);background:linear-gradient(135deg,#3a2a1a,#2a1a0a)}
 .shop-card:active{transform:scale(.98)}
 .shop-left{text-align:left}
 .shop-name{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:2px}
@@ -108,15 +109,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .modal-btn.green{background:linear-gradient(180deg,#2ecc71,#1a7d43)}
 .modal-btn.red{background:linear-gradient(180deg,#e74c3c,#7a1c11)}
 .modal-btn.gray{background:linear-gradient(180deg,#576574,#2c3a52)}
-.notif{position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:top .35s cubic-bezier(.3,1.5,.5,1);z-index:999;max-width:90vw;text-align:center;border:2px solid rgba(255,255,255,.3)}
+.notif{position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:top .3s;z-index:999;max-width:90vw;text-align:center;border:2px solid rgba(255,255,255,.3)}
 .notif.show{top:20px}
 .notif.error{background:linear-gradient(180deg,#e74c3c,#7a1c11)}
 .notif.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200}
-.start-overlay{position:fixed;inset:0;background:radial-gradient(circle at center,#1a2744,#050810);z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity .35s}
+.start-overlay{position:fixed;inset:0;background:radial-gradient(circle at center,#1a2744,#050810);z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity .3s}
 .start-overlay.hidden{opacity:0;pointer-events:none}
 .start-box{text-align:center;padding:20px;max-width:340px}
-.start-emoji{font-size:80px;margin-bottom:10px;filter:drop-shadow(0 0 20px rgba(255,217,102,.6))}
-.start-title{font-size:32px;font-weight:900;letter-spacing:3px;background:linear-gradient(180deg,#ffe9a0,#f0c040,#b8860b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;font-family:Georgia,serif}
+.start-emoji{font-size:80px;margin-bottom:10px}
+.start-title{font-size:32px;font-weight:900;letter-spacing:3px;color:#ffd966;margin-bottom:8px;font-family:Georgia,serif;text-shadow:0 2px 4px rgba(0,0,0,.8)}
 .start-sub{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.5}
 .start-btn{width:100%;background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 0 #0f3d22}
 .start-btn.muted{background:linear-gradient(180deg,#576574,#2c3a52);box-shadow:0 4px 0 #1a2333;font-size:13px;padding:11px}
@@ -281,8 +282,8 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v9',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v9');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_roger_v10',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_roger_v10');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
 /* ============================================================
@@ -412,9 +413,6 @@ function sfx(name) {
   else playSfx(name);
 }
 
-function startMusic() {}
-function stopMusic() {}
-
 /* ============================================================
    REELS
    ============================================================ */
@@ -437,59 +435,101 @@ function setStatic(grid){
 }
 
 /* ============================================================
-   🎰 ПРОСТАЯ И СТАБИЛЬНАЯ АНИМАЦИЯ — CSS transition + compositor
+   🎰 АНИМАЦИЯ БАРАБАНА — WAAPI + watchdog + fallback
    ============================================================ */
 function animateReel(track, final3, idx) {
   return new Promise(resolve => {
-    const filler = 12; // меньше DOM = меньше тормозов
-    let html = '';
-    for (let i = 0; i < filler; i++) html += `<div class="cell">${randSym()}</div>`;
-    final3.forEach(s => html += `<div class="cell">${s}</div>`);
-    track.innerHTML = html;
+    let resolved = false;
+    const finalize = () => {
+      if (resolved) return;
+      resolved = true;
+      try {
+        track.style.transition = 'none';
+        track.style.transform = 'translate3d(0,0,0)';
+        track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
+      } catch(e) {}
+      resolve();
+    };
 
-    // Сброс без transition
-    track.style.transition = 'none';
-    track.style.transform = 'translate3d(0,0,0)';
-    void track.offsetHeight;
+    try {
+      const filler = 10;
+      let html = '';
+      for (let i = 0; i < filler; i++) html += `<div class="cell">${randSym()}</div>`;
+      final3.forEach(s => html += `<div class="cell">${s}</div>`);
+      track.innerHTML = html;
 
-    const targetY = -(filler * CELL_H);
-    const dur = 1200 + idx * 240;
-
-    // Тики через rAF — легкие и не накапливают таймеры
-    let rafId = null;
-    const start = performance.now();
-    let nextTickAt = 30;
-
-    function tickLoop(now) {
-      const elapsed = now - start;
-      if (elapsed >= dur - 120) return;
-      if (elapsed >= nextTickAt) {
-        playTick();
-        // Тики замедляются к концу — реалистично
-        const progress = elapsed / dur;
-        nextTickAt = elapsed + 40 + progress * progress * 220;
-      }
-      rafId = requestAnimationFrame(tickLoop);
-    }
-    rafId = requestAnimationFrame(tickLoop);
-
-    // Стартуем анимацию через 1 кадр (чтобы transition гарантированно сработал)
-    requestAnimationFrame(() => {
-      track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
-      track.style.transform = `translate3d(0,${targetY}px,0)`;
-    });
-
-    // Финализация через setTimeout — надёжнее чем transitionend (Safari баг)
-    setTimeout(() => {
-      if (rafId) cancelAnimationFrame(rafId);
+      // Сброс в начало
       track.style.transition = 'none';
       track.style.transform = 'translate3d(0,0,0)';
-      track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
-      void track.offsetHeight;
-      sfx('reelStop');
-      haptic('light');
-      resolve();
-    }, dur + 30);
+      // Принудительный reflow (getBoundingClientRect надёжнее offsetHeight)
+      track.getBoundingClientRect();
+
+      const targetY = -(filler * CELL_H);
+      const dur = 1000 + idx * 220;
+
+      // Watchdog — страховка если animate() не сработает
+      const watchdog = setTimeout(() => {
+        try {
+          track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
+          track.style.transform = `translate3d(0,${targetY}px,0)`;
+        } catch(e) {}
+        setTimeout(finalize, dur + 50);
+      }, 20);
+
+      // Основная анимация через WAAPI
+      let finished = false;
+      try {
+        if (typeof track.animate === 'function') {
+          const anim = track.animate(
+            [
+              { transform: 'translate3d(0,0,0)' },
+              { transform: `translate3d(0,${targetY}px,0)` }
+            ],
+            { duration: dur, easing: 'cubic-bezier(0.15, 0.9, 0.25, 1)', fill: 'forwards' }
+          );
+          anim.onfinish = () => {
+            if (finished) return;
+            finished = true;
+            clearTimeout(watchdog);
+            sfx('reelStop');
+            finalize();
+          };
+        } else {
+          // Fallback CSS transition
+          clearTimeout(watchdog);
+          track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
+          track.style.transform = `translate3d(0,${targetY}px,0)`;
+          setTimeout(() => { sfx('reelStop'); finalize(); }, dur + 30);
+        }
+      } catch(e) {
+        // Если animate() бросил — CSS transition fallback
+        clearTimeout(watchdog);
+        track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
+        track.style.transform = `translate3d(0,${targetY}px,0)`;
+        setTimeout(() => { sfx('reelStop'); finalize(); }, dur + 30);
+      }
+
+      // Тики — только в последней трети для реалистичности и лёгкости
+      const start = performance.now();
+      const tickStartAt = dur * 0.6;
+      const tickEndAt = dur - 120;
+      let nextTickAt = tickStartAt;
+      function tickLoop(now) {
+        if (finished) return;
+        const elapsed = now - start;
+        if (elapsed > tickEndAt) return;
+        if (elapsed >= nextTickAt) {
+          playTick();
+          const p = (elapsed - tickStartAt) / Math.max(1, tickEndAt - tickStartAt);
+          nextTickAt = elapsed + 50 + p * p * 150;
+        }
+        requestAnimationFrame(tickLoop);
+      }
+      requestAnimationFrame(tickLoop);
+    } catch(e) {
+      console.error('animateReel fatal:', e);
+      finalize();
+    }
   });
 }
 
@@ -561,7 +601,6 @@ function drawWinLines(wins){
     poly.setAttribute('fill','none');
     poly.setAttribute('stroke-linecap','round');
     poly.setAttribute('stroke-linejoin','round');
-    poly.style.filter=`drop-shadow(0 0 8px ${color}) drop-shadow(0 0 4px ${color})`;
     overlay.appendChild(poly);
     try{
       const len=poly.getTotalLength();
@@ -583,7 +622,6 @@ function previewActiveLines(){
   overlay.style.opacity = '1';
 
   const lines = PAYLINES.slice(0, state.lines);
-  const duration = 1.0;
 
   lines.forEach((line, idx) => {
     const pts = [];
@@ -602,13 +640,12 @@ function previewActiveLines(){
     poly.setAttribute('fill', 'none');
     poly.setAttribute('stroke-linecap', 'round');
     poly.setAttribute('stroke-linejoin', 'round');
-    poly.style.filter = `drop-shadow(0 0 6px ${color})`;
     overlay.appendChild(poly);
     try {
       const len = poly.getTotalLength();
       poly.style.strokeDasharray = len;
       poly.style.strokeDashoffset = len;
-      poly.style.transition = `stroke-dashoffset ${duration}s ease-out`;
+      poly.style.transition = 'stroke-dashoffset 1s ease-out';
       poly.getBoundingClientRect();
       requestAnimationFrame(() => { poly.style.strokeDashoffset = 0; });
     } catch(e) {}
@@ -665,7 +702,7 @@ function closeModal(id){ $(id).classList.remove('active'); }
 window.closeModal=closeModal;
 
 /* ============================================================
-   SPIN
+   SPIN — с полной защитой от зависания
    ============================================================ */
 async function spin(){
   if(isSpinning) return;
@@ -679,32 +716,44 @@ async function spin(){
   save(); refresh();
   sfx('spinStart');
   haptic('medium');
+
   const perLine=state.betPerLine;
   const finalGrid=genGrid();
-  await Promise.all(tracks.map((tr,r)=>animateReel(tr,finalGrid[r],r)));
-  setStatic(finalGrid);
-  const {total,cells,wins}=calcWins(finalGrid,perLine);
-  if(total>0){
-    state.balance+=total;
-    $('winVal').textContent='+'+fmt(total)+' 🪙';
-    cells.forEach(key=>{
-      const [r,row]=key.split(',').map(Number);
-      const c=tracks[r].children[row];
-      if(c) c.classList.add('win');
-    });
-    setTimeout(()=>drawWinLines(wins),150);
-    const big=total>=bet*10;
-    sfx(big?'bigwin':'win');
-    haptic(big?'heavy':'success');
-    notif(big?tF('bigWin',{n:fmt(total)}):tF('winMsg',{n:fmt(total)}),big?'gold':'');
-    if(total>=bet*2) pendingRisk=total;
-  }else{
-    sfx('lose');
-    haptic('error');
+
+  try {
+    await Promise.all(tracks.map((tr,r)=>animateReel(tr,finalGrid[r],r)));
+  } catch(e) {
+    console.error('spin anim failed:', e);
+  } finally {
+    // В ЛЮБОМ случае возвращаем финальное состояние
+    try { setStatic(finalGrid); } catch(e) {}
+    haptic('light');
+
+    const {total,cells,wins}=calcWins(finalGrid,perLine);
+    if(total>0){
+      state.balance+=total;
+      $('winVal').textContent='+'+fmt(total)+' 🪙';
+      cells.forEach(key=>{
+        const [r,row]=key.split(',').map(Number);
+        const c=tracks[r].children[row];
+        if(c) c.classList.add('win');
+      });
+      setTimeout(()=>drawWinLines(wins),150);
+      const big=total>=bet*10;
+      sfx(big?'bigwin':'win');
+      haptic(big?'heavy':'success');
+      notif(big?tF('bigWin',{n:fmt(total)}):tF('winMsg',{n:fmt(total)}),big?'gold':'');
+      if(total>=bet*2) pendingRisk=total;
+    }else{
+      sfx('lose');
+      haptic('error');
+    }
+
+    if(Math.random()<0.03) setTimeout(triggerBonus,500);
+
+    isSpinning=false;
+    save(); refresh();
   }
-  if(Math.random()<0.03) setTimeout(triggerBonus,500);
-  isSpinning=false;
-  save(); refresh();
 }
 
 /* ============================================================
@@ -716,7 +765,7 @@ function buildPaytable(){
   SYMBOLS.forEach(sym=>{
     const [p3,p4,p5]=PAYTABLE[sym];
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="pt-sym">${sym}</td><td class="pt-val">${p3}</td><td class="pt-val">${p4}</td><td class="pt-val hi">${p5}</td>`;
+    tr.innerHTML=`<td class="pt-sym">${sym}</td><td class="pt-val">${p3}</td><td class="pt-val">${p4}</td><td class="pt-val">${p5}</td>`;
     tbody.appendChild(tr);
   });
 }
