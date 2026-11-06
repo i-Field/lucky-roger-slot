@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Roger - Classic Slot with Sound</title>
+    <title>Lucky Roger - Telegram Mini App</title>
+    <!-- Подключаем Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body {
@@ -27,12 +29,12 @@
         }
         .cabinet-title {
             text-align: center;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: bold;
             color: #fbbf24;
             text-shadow: 2px 2px #000;
             letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .dashboard {
             display: grid;
@@ -45,8 +47,8 @@
             margin-bottom: 10px;
             text-align: center;
         }
-        .dash-box { font-size: 11px; color: #94a3b8; }
-        .dash-val { color: #22c55e; font-size: 16px; font-weight: bold; text-shadow: 0 0 5px rgba(34,197,94,0.5); }
+        .dash-box { font-size: 10px; color: #94a3b8; }
+        .dash-val { color: #22c55e; font-size: 15px; font-weight: bold; text-shadow: 0 0 5px rgba(34,197,94,0.5); }
         
         .screen {
             background: #000;
@@ -54,8 +56,8 @@
             border-radius: 6px;
             padding: 6px;
             position: relative;
-            margin-bottom: 12px;
-            height: 180px;
+            margin-bottom: 10px;
+            height: 170px;
         }
         .reels-grid {
             display: grid;
@@ -75,8 +77,8 @@
             border-radius: 3px;
         }
         .symbol {
-            font-size: 30px;
-            height: 52px;
+            font-size: 28px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -86,7 +88,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .btn {
             background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
@@ -105,16 +107,17 @@
         .btn-max { background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); }
         .btn-spin { background: linear-gradient(180deg, #22c55e 0%, #15803d 100%); font-size: 15px; }
         .btn-risk { background: linear-gradient(180deg, #eab308 0%, #a16207 100%); }
-        
+        .btn-stars { background: linear-gradient(180deg, #ec4899 0%, #be185d 100%); grid-column: span 3; font-size: 13px; }
+
         .msg-bar {
             background: #020617;
             border: 1px solid #334155;
             color: #38bdf8;
             text-align: center;
             padding: 8px;
-            font-size: 13px;
+            font-size: 12px;
             border-radius: 4px;
-            min-height: 35px;
+            min-height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -134,9 +137,9 @@
         }
         .cards-row { display: flex; gap: 10px; margin: 15px 0; }
         .card {
-            width: 50px; height: 75px;
+            width: 45px; height: 70px;
             background: #fff; color: #000;
-            font-size: 20px; font-weight: bold;
+            font-size: 18px; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
             border-radius: 4px; cursor: pointer;
             border: 2px solid #cbd5e1;
@@ -146,26 +149,24 @@
         .chests-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 15px 0;
+            gap: 8px;
+            margin: 10px 0;
         }
         .chest-box {
             background: #334155;
             border: 2px solid #fbbf24;
             border-radius: 6px;
-            padding: 15px 10px;
-            font-size: 28px;
+            padding: 12px 8px;
+            font-size: 24px;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .chest-box:hover { background: #475569; transform: scale(1.05); }
-        .chest-box.opened { opacity: 0.6; cursor: default; transform: none; }
+        .chest-box.opened { opacity: 0.6; cursor: default; }
     </style>
 </head>
 <body>
 
 <div class="cabinet">
-    <div class="cabinet-title">⚓ LUCKY ROGER ⚓</div>
+    <div class="cabinet-title">🏴‍☠️ LUCKY ROGER 🏴‍☠️</div>
     
     <div class="dashboard">
         <div class="dash-box">КРЕДИТ<div id="balance" class="dash-val">1000</div></div>
@@ -181,7 +182,7 @@
             <h3 id="overlayTitle" style="color: #fbbf24; margin-bottom: 5px;">РАУНД</h3>
             <p id="overlayText" style="font-size: 12px; margin-bottom: 10px; color:#cbd5e1;"></p>
             <div id="overlayContent"></div>
-            <button class="btn" id="overlayCloseBtn" onclick="closeOverlay()" style="margin-top: 10px; background:#475569; display:none;">ВЫЙТИ ИЗ БОНУСА</button>
+            <button class="btn" id="overlayCloseBtn" onclick="closeOverlay()" style="margin-top: 10px; background:#475569; display:none;">ВЫЙТИ</button>
         </div>
     </div>
 
@@ -192,13 +193,18 @@
         <button class="btn btn-risk" onclick="triggerBtn(openRiskGame)">РИСК</button>
         <button class="btn btn-spin" onclick="triggerBtn(spin)">ПУСК</button>
         <button class="btn" onclick="triggerBtn(takeWin)">ЗАБРАТЬ</button>
+        <button class="btn btn-stars" onclick="triggerBtn(buyCoinsWithStars)">⭐ ДОКУПИТЬ 500 МОНЕТ ЗА ЗВЕЗДЫ ⭐</button>
     </div>
 
-    <div class="msg-bar" id="msg">Добро пожаловать в Lucky Roger! Нажмите ПУСК.</div>
+    <div class="msg-bar" id="msg">Нажмите ПУСК для игры! (Ежедневно +100 монет)</div>
 </div>
 
 <script>
-    // --- WEB AUDIO API ENGINE ---
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // --- WEB AUDIO API (Со звуком) ---
     let audioCtx = null;
 
     function initAudio() {
@@ -241,7 +247,7 @@
 
     function playWinSound() {
         initAudio();
-        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        const notes = [523.25, 659.25, 783.99, 1046.50];
         notes.forEach((freq, idx) => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -256,31 +262,12 @@
         });
     }
 
-    function playBonusSound() {
-        initAudio();
-        const notes = [440, 554.37, 659.25, 880];
-        notes.forEach((freq, idx) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.3);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(audioCtx.currentTime + idx * 0.1);
-            osc.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
-        });
-    }
-
     function playExplosionSound() {
         initAudio();
         const bufferSize = audioCtx.sampleRate * 0.3;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
         const gain = audioCtx.createGain();
@@ -298,12 +285,52 @@
 
     // --- GAME LOGIC ---
     const SYMBOLS = ['🏴‍☠️', '💣', '⚔️', '🪙', '🪙', '🍷', '🦜', '🧭', '🧭'];
-    let balance = 1000;
+    let balance = parseInt(localStorage.getItem('roger_balance')) || 1000;
     let betPerLine = 10;
     let activeLines = 9;
     let currentWin = 0;
     let isSpinning = false;
     let matrix = [];
+
+    // Ежедневный бонус (+100 монет)
+    function checkDailyBonus() {
+        let lastBonusDate = localStorage.getItem('roger_last_bonus');
+        let today = new Date().toDateString();
+        if (lastBonusDate !== today) {
+            balance += 100;
+            localStorage.setItem('roger_last_bonus', today);
+            saveBalance();
+            document.getElementById('msg').textContent = '🎁 Ежедневный бонус: +100 монет начислено!';
+        }
+    }
+
+    function saveBalance() {
+        localStorage.setItem('roger_balance', balance);
+    }
+
+    // Покупка за Telegram Stars (Звёзды)
+    function buyCoinsWithStars() {
+        // Если открыто в Телеграме, вызываем инвойс, иначе тестовое зачисление
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            // Здесь бэкенд бота должен создавать invoice link, для примера симулируем успешную покупку:
+            tg.showConfirm("Купить 500 монет за 5 ⭐?", (confirmed) => {
+                if (confirmed) {
+                    balance += 500;
+                    saveBalance();
+                    render();
+                    playWinSound();
+                    document.getElementById('msg').textContent = '⭐ Успешно куплено +500 монет!';
+                }
+            });
+        } else {
+            // Тестовый режим в браузере
+            balance += 500;
+            saveBalance();
+            render();
+            playWinSound();
+            document.getElementById('msg').textContent = '⭐ Тест: Добавлено +500 монет!';
+        }
+    }
 
     function initMatrix() {
         matrix = [];
@@ -334,10 +361,12 @@
         document.getElementById('bet').textContent = betPerLine;
         document.getElementById('lines').textContent = activeLines;
         document.getElementById('win').textContent = currentWin;
+        saveBalance();
     }
 
     initMatrix();
     render();
+    checkDailyBonus();
 
     function changeLines() {
         if (isSpinning) return;
@@ -363,8 +392,9 @@
     function spin() {
         if (isSpinning) return;
         let totalCost = betPerLine * activeLines;
+        
         if (balance < totalCost) {
-            document.getElementById('msg').textContent = 'Недостаточно кредитов!';
+            document.getElementById('msg').textContent = 'Не хватает монет! Докупите за ⭐ Звёзды ниже.';
             return;
         }
 
@@ -422,9 +452,7 @@
                 if (sym === firstSym || sym === '🏴‍☠️' || firstSym === '🏴‍☠️') {
                     if (firstSym === '🏴‍☠️') firstSym = sym;
                     matchCount++;
-                } else {
-                    break;
-                }
+                } else break;
             }
 
             if (matchCount >= 3) {
@@ -440,7 +468,7 @@
             playWinSound();
             document.getElementById('msg').textContent = `ВЫИГРЫШ: ${currentWin}! РИСК или ЗАБРАТЬ`;
         } else {
-            document.getElementById('msg').textContent = 'Попробуйте еще раз!';
+            document.getElementById('msg').textContent = balance < (betPerLine * activeLines) ? 'Баланс пуст! Пополните за ⭐' : 'Попробуйте еще раз!';
         }
     }
 
@@ -449,21 +477,19 @@
             balance += currentWin;
             currentWin = 0;
             render();
-            document.getElementById('msg').textContent = 'Выигрыш зачислен на счет.';
+            document.getElementById('msg').textContent = 'Выигрыш зачислен!';
         }
     }
 
-    // --- БОНУСНАЯ ИГРА ---
     function startBonusGame() {
-        playBonusSound();
+        playWinSound();
         document.getElementById('overlay').style.display = 'flex';
-        document.getElementById('overlayTitle').textContent = '🏴‍☠️ ПИРАТСКИЙ БОНУС: СУНДУКИ СОКРОВИЩ 🏴‍☠️';
-        document.getElementById('overlayText').textContent = 'Выбирайте сундуки! Остерегайтесь пустых бочек!';
+        document.getElementById('overlayTitle').textContent = '🏴‍☠️ БОНУС: СУНДУКИ СОКРОВИЩ';
+        document.getElementById('overlayText').textContent = 'Выбирайте сундуки!';
         document.getElementById('overlayCloseBtn').style.display = 'none';
 
         const content = document.getElementById('overlayContent');
         content.innerHTML = '<div class="chests-grid" id="chestsGrid"></div>';
-        
         const grid = document.getElementById('chestsGrid');
         let trapIndex = Math.floor(Math.random() * 6);
         
@@ -474,7 +500,6 @@
             chest.onclick = () => openChest(chest, i === trapIndex);
             grid.appendChild(chest);
         }
-        document.getElementById('msg').textContent = 'БОНУСНАЯ ИГРА! Открывайте сундуки.';
     }
 
     function openChest(chestEl, isTrap) {
@@ -484,7 +509,7 @@
         if (isTrap) {
             playExplosionSound();
             chestEl.textContent = '💣';
-            document.getElementById('overlayText').textContent = 'БУХ! Попалась ловушка! Бонус окончен.';
+            document.getElementById('overlayText').textContent = 'ЛОВУШКА! Бонус завершен.';
             document.getElementById('overlayCloseBtn').style.display = 'block';
             document.querySelectorAll('.chest-box').forEach(el => el.onclick = null);
         } else {
@@ -493,28 +518,27 @@
             currentWin += winCoins;
             render();
             chestEl.textContent = '🪙';
-            document.getElementById('overlayText').textContent = `Найдено сокровище: +${winCoins} кредитов! Выбирайте следующий.`;
+            document.getElementById('overlayText').textContent = `Сокровище: +${winCoins}! Выбирайте дальше.`;
         }
     }
 
-    // --- РИСК-ИГРА ---
     let dealerCardVal = 0;
     function openRiskGame() {
         if (currentWin === 0) {
-            document.getElementById('msg').textContent = 'Сначала нужно выиграть!';
+            document.getElementById('msg').textContent = 'Сначала выиграйте!';
             return;
         }
         document.getElementById('overlay').style.display = 'flex';
-        document.getElementById('overlayTitle').textContent = 'РИСК-ИГРА: УДВОЙТЕ ВЫИГРЫШ';
-        document.getElementById('overlayText').textContent = 'Карта дилера открыта. Выберите карту выше!';
+        document.getElementById('overlayTitle').textContent = 'РИСК-ИГРА (УДВОЕНИЕ)';
+        document.getElementById('overlayText').textContent = 'Выберите карту старше карты дилера:';
         document.getElementById('overlayCloseBtn').style.display = 'block';
         
         dealerCardVal = Math.floor(Math.random() * 10) + 2;
         const content = document.getElementById('overlayContent');
         content.innerHTML = `
-            <div style="font-size:12px; color:#94a3b8;">Карта дилера:</div>
+            <div style="font-size:11px; color:#94a3b8;">Дилер:</div>
             <div class="cards-row"><div class="card dealer">${dealerCardVal}</div></div>
-            <div style="font-size:12px; color:#94a3b8; margin-top:5px;">Выберите вашу карту:</div>
+            <div style="font-size:11px; color:#94a3b8;">Ваша карта:</div>
             <div class="cards-row" id="playerCardsContainer"></div>
         `;
 
@@ -537,18 +561,14 @@
             playWinSound();
             currentWin *= 2;
             render();
-            setTimeout(() => {
-                alert(`Победа! Выигрыш удвоен до ${currentWin}`);
-                openRiskGame();
-            }, 300);
+            setTimeout(() => { alert(`Победа! Выигрыш: ${currentWin}`); openRiskGame(); }, 200);
         } else if (playerCardVal === dealerCardVal) {
-            playBtnSound();
-            setTimeout(() => { alert('Ничья! Попробуйте еще раз.'); openRiskGame(); }, 300);
+            setTimeout(() => { alert('Ничья!'); openRiskGame(); }, 200);
         } else {
             playExplosionSound();
             currentWin = 0;
             render();
-            document.getElementById('msg').textContent = 'Дилер победил! Вы проиграли выигрыш.';
+            document.getElementById('msg').textContent = 'Дилер победил!';
             closeOverlay();
         }
     }
