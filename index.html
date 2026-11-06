@@ -15,9 +15,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 /* TOPBAR */
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;gap:6px}
 .lang-switch{display:flex;gap:4px;background:var(--panel);border:1px solid #2c3a52;border-radius:8px;padding:3px}
-.lang-btn{background:transparent;color:var(--muted);border:none;padding:5px 9px;font-size:11px;font-weight:800;border-radius:5px;cursor:pointer;transition:all .15s}
+.lang-btn{background:transparent;color:var(--muted);border:none;padding:5px 9px;font-size:11px;font-weight:800;border-radius:5px;cursor:pointer}
 .lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--goldD));color:#1a1200;box-shadow:0 0 8px rgba(212,175,55,.4)}
-.sound-btn{background:var(--panel);border:1px solid #2c3a52;color:var(--gold);padding:8px 12px;border-radius:8px;font-size:16px;cursor:pointer;transition:all .15s}
+.sound-btn{background:var(--panel);border:1px solid #2c3a52;color:var(--gold);padding:8px 12px;border-radius:8px;font-size:16px;cursor:pointer}
 .sound-btn.off{color:var(--muted);opacity:.6}
 
 /* TITLE */
@@ -50,22 +50,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
 .lines-overlay polyline{transition:stroke-dashoffset .45s ease-out}
 
-/* LINES SELECTOR */
-.lines-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:2px}
-.line-btn{padding:7px 0;background:linear-gradient(180deg,#3a4a60,#253247);border:1px solid #455872;color:var(--muted);border-radius:8px;font-weight:800;font-size:12px;cursor:pointer;transition:all .1s;box-shadow:0 2px 0 #0f1722}
-.line-btn.active{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 2px 0 #5a4410,0 0 10px rgba(212,175,55,.4)}
-.line-btn:active{transform:translateY(1px);box-shadow:none}
-.line-btn:disabled{opacity:.5}
+/* LINES BAR */
+.lines-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
+.lines-row{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center}
+.lines-arrow{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--goldL);border:1px solid #455872;border-radius:8px;width:40px;height:36px;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 2px 0 #0f1722;transition:all .1s;display:flex;align-items:center;justify-content:center}
+.lines-arrow:active{transform:translateY(2px);box-shadow:none}
+.lines-arrow:disabled{opacity:.4;cursor:not-allowed}
+.lines-mid{text-align:center}
+.lines-mid .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.lines-mid .val{font-size:18px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
+.lines-mid .val small{font-size:11px;color:var(--muted);font-weight:700}
+.lines-presets{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
+.lp{background:linear-gradient(180deg,#2c3a52,#1a2333);border:1px solid #3a4a60;color:var(--muted);border-radius:6px;padding:5px 0;font-size:11px;font-weight:800;cursor:pointer;transition:all .1s}
+.lp.active{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 0 8px rgba(212,175,55,.4)}
+.lp:active{transform:scale(.95)}
 
 /* BET */
 .bet-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:10px;display:grid;grid-template-columns:auto auto 1fr auto auto;gap:6px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
-.bet-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;transition:all .1s;min-width:42px;box-shadow:0 2px 0 #0f1722,0 3px 6px rgba(0,0,0,.4)}
-.bet-btn:active{transform:translateY(2px);box-shadow:0 0 0 #0f1722}
+.bet-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;min-width:42px;box-shadow:0 2px 0 #0f1722;transition:all .1s}
+.bet-btn:active{transform:translateY(2px);box-shadow:none}
 .bet-btn:disabled{opacity:.5;cursor:not-allowed}
 .bet-mid{text-align:center}
 .bet-mid .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
 .bet-mid .val{font-size:17px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
-.bet-total{font-size:10px;color:var(--muted);text-align:center;margin-top:4px}
+.bet-total{font-size:11px;color:var(--muted);text-align:center;margin-top:4px;font-weight:700}
+.bet-total b{color:var(--goldL);font-size:13px}
 
 /* SPIN */
 .spin-btn{background:linear-gradient(180deg,#e74c3c 0%,#c0392b 45%,#7a1c11 100%);border:2px solid #ff8a7a;color:#fff;font-size:22px;font-weight:900;letter-spacing:3px;padding:16px;border-radius:14px;cursor:pointer;text-shadow:0 2px 2px rgba(0,0,0,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #4d0e07,0 10px 20px rgba(0,0,0,.5),0 0 30px rgba(231,76,60,.4);transition:all .08s;position:relative;overflow:hidden}
@@ -77,7 +86,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 /* ACTIONS */
 .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .act-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:10px;padding:10px 4px;font-size:10px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 #0f1722,0 4px 8px rgba(0,0,0,.4);transition:all .1s}
-.act-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #0f1722}
+.act-btn:active{transform:translateY(2px);box-shadow:none}
 .act-btn .ico{font-size:20px}
 .act-btn.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 3px 0 #5a4410}
 .act-btn.green{background:linear-gradient(180deg,#2ecc71,#1a7d43);border-color:#58e896;box-shadow:0 3px 0 #0f3d22}
@@ -94,24 +103,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 
 /* PAYTABLE */
 .pt-table{width:100%;border-collapse:collapse;font-size:12px}
-.pt-table thead th{color:var(--goldL);padding:6px 4px;border-bottom:1px solid #455872;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.pt-table thead th{color:var(--goldL);padding:6px 4px;border-bottom:1px solid #455872;font-size:10px;text-transform:uppercase}
 .pt-table tbody td{padding:7px 4px;border-bottom:1px solid rgba(69,88,114,.4);font-variant-numeric:tabular-nums}
-.pt-table tbody tr:last-child td{border-bottom:none}
 .pt-sym{font-size:24px;text-align:left;padding-left:8px !important}
 .pt-val{color:var(--goldL);font-weight:800}
-.pt-val.hi{color:var(--goldL);text-shadow:0 0 8px rgba(255,217,102,.4)}
+.pt-val.hi{text-shadow:0 0 8px rgba(255,217,102,.4)}
 
 /* SHOP */
 .shop-grid{display:flex;flex-direction:column;gap:8px}
 .shop-card{background:linear-gradient(135deg,#2a3446,#1a2333);border:2px solid #3a4a60;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .15s}
-.shop-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 6px 15px rgba(0,0,0,.4)}
+.shop-card:hover{border-color:var(--gold);transform:translateY(-1px)}
 .shop-card.featured{border-color:var(--gold);background:linear-gradient(135deg,#3a2a1a,#2a1a0a);box-shadow:0 0 20px rgba(212,175,55,.3)}
 .shop-card:active{transform:scale(.98)}
 .shop-left{text-align:left}
-.shop-name{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.shop-name{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:2px}
 .shop-coins{font-size:20px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .shop-bonus{font-size:11px;color:var(--green);font-weight:800;margin-top:2px}
-.shop-price{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;padding:10px 16px;border-radius:10px;font-weight:900;font-size:14px;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.shop-price{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;padding:10px 16px;border-radius:10px;font-weight:900;font-size:14px;white-space:nowrap}
 
 /* CHESTS */
 .chests{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
@@ -133,7 +141,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .notif.error{background:linear-gradient(180deg,#e74c3c,#7a1c11)}
 .notif.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200}
 
-/* START OVERLAY */
+/* START */
 .start-overlay{position:fixed;inset:0;background:radial-gradient(circle at center,#1a2744,#050810);z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity .35s}
 .start-overlay.hidden{opacity:0;pointer-events:none}
 .start-box{text-align:center;padding:20px;max-width:340px}
@@ -147,7 +155,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 </head>
 <body>
 
-<!-- START OVERLAY -->
+<!-- START -->
 <div class="start-overlay" id="startOverlay">
   <div class="start-box">
     <div class="start-emoji">🏴‍☠️</div>
@@ -182,12 +190,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
     </div>
   </div>
 
-  <div class="lines-row" id="linesRow">
-    <button class="line-btn" data-lines="1">1</button>
-    <button class="line-btn" data-lines="3">3</button>
-    <button class="line-btn" data-lines="5">5</button>
-    <button class="line-btn" data-lines="7">7</button>
-    <button class="line-btn active" data-lines="9">9</button>
+  <div class="lines-bar">
+    <div class="lines-row">
+      <button class="lines-arrow" id="linesDec">−</button>
+      <div class="lines-mid">
+        <div class="lbl" data-i18n="lines">Линии</div>
+        <div class="val"><span id="linesVal">9</span><small> / 21</small></div>
+      </div>
+      <button class="lines-arrow" id="linesInc">+</button>
+    </div>
+    <div class="lines-presets">
+      <button class="lp" data-lines="1">1</button>
+      <button class="lp" data-lines="3">3</button>
+      <button class="lp" data-lines="5">5</button>
+      <button class="lp" data-lines="9">9</button>
+      <button class="lp" data-lines="15">15</button>
+      <button class="lp" data-lines="21">21</button>
+    </div>
   </div>
 
   <div class="bet-bar">
@@ -212,11 +231,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- PAYTABLE MODAL -->
+<!-- PAYTABLE -->
 <div class="modal" id="paytableModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="paytableTitle">📋 ТАБЛИЦА ВЫПЛАТ</div>
-    <div class="modal-text" data-i18n="paytableHint">Выплаты указаны за 1 монету ставки на линию</div>
+    <div class="modal-text" data-i18n="paytableHint">Выплаты за 1 монету ставки на линию</div>
     <table class="pt-table">
       <thead><tr><th></th><th>×3</th><th>×4</th><th>×5</th></tr></thead>
       <tbody id="ptBody"></tbody>
@@ -225,7 +244,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- SHOP MODAL -->
+<!-- SHOP -->
 <div class="modal" id="shopModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="shopTitle">⭐ МАГАЗИН МОНЕТ</div>
@@ -235,7 +254,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- BONUS MODAL -->
+<!-- BONUS -->
 <div class="modal" id="bonusModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="bonusTitle">🏴‍☠️ ПИРАТСКИЙ КЛАД</div>
@@ -248,7 +267,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- RISK MODAL -->
+<!-- RISK -->
 <div class="modal" id="riskModal">
   <div class="modal-box">
     <div class="modal-title" data-i18n="riskTitle">🃏 РИСК-ИГРА</div>
@@ -265,19 +284,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 
 <script>
 /* ============================================================
-   🔧 КОНФИГ — ВАШ БОТ
+   CONFIG — только endpoint (бот-токен в Cloudflare Secrets)
    ============================================================ */
 const CONFIG = {
-  // Числовой ID вашего бота (узнать: @userinfobot или https://api.telegram.org/bot<TOKEN>/getMe)
-  botId: '',
-
-  // Username бота БЕЗ @ (для ссылок t.me/...)
-  botUsername: '',  // например: 'LuckyRogerBot'
-
-  // Endpoint для создания invoice (Cloudflare Function, см. ниже)
   invoiceEndpoint: '/api/invoice',
-
-  // Пакеты для магазина
   packages: [
     { id: 'p100',   stars: 100,   coins: 1000,   name: 'Старт',      bonus: '' },
     { id: 'p500',   stars: 500,   coins: 6000,   name: 'Популярный', bonus: '+20%' },
@@ -289,29 +299,50 @@ const CONFIG = {
 /* ============================================================
    CONSTANTS
    ============================================================ */
-const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=9;
+const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
 const WEIGHTS={'🏴‍☠️':2,'💎':4,'🦜':6,'🗺️':8,'⚓':12,'🗡️':14,'🪙':18,'💣':18};
 const PAYTABLE={'🏴‍☠️':[10,40,150],'💎':[5,20,60],'🦜':[3,12,40],'🗺️':[2,8,25],'⚓':[2,6,20],'🗡️':[1,4,12],'🪙':[1,3,8],'💣':[1,2,6]};
-const PAYLINES=[
-  [[0,0],[1,0],[2,0],[3,0],[4,0]],
-  [[0,1],[1,1],[2,1],[3,1],[4,1]],
-  [[0,2],[1,2],[2,2],[3,2],[4,2]],
-  [[0,0],[1,1],[2,2],[3,1],[4,0]],
-  [[0,2],[1,1],[2,0],[3,1],[4,2]],
-  [[0,0],[1,0],[2,1],[3,2],[4,2]],
-  [[0,2],[1,2],[2,1],[3,0],[4,0]],
-  [[0,1],[1,0],[2,0],[3,0],[4,1]],
-  [[0,1],[1,2],[2,2],[3,2],[4,1]]
+
+// 21 классическая линия
+const PAYLINES = [
+  [[0,0],[1,0],[2,0],[3,0],[4,0]], // 1 top
+  [[0,1],[1,1],[2,1],[3,1],[4,1]], // 2 mid
+  [[0,2],[1,2],[2,2],[3,2],[4,2]], // 3 bot
+  [[0,0],[1,1],[2,2],[3,1],[4,0]], // 4 V
+  [[0,2],[1,1],[2,0],[3,1],[4,2]], // 5 inv V
+  [[0,0],[1,0],[2,1],[3,2],[4,2]], // 6 TL-BR
+  [[0,2],[1,2],[2,1],[3,0],[4,0]], // 7 BL-TR
+  [[0,1],[1,0],[2,0],[3,0],[4,1]], // 8 bump up
+  [[0,1],[1,2],[2,2],[3,2],[4,1]], // 9 bump down
+  [[0,0],[1,1],[2,0],[3,1],[4,0]], // 10 zig top
+  [[0,2],[1,1],[2,2],[3,1],[4,2]], // 11 zig bot
+  [[0,0],[1,2],[2,0],[3,2],[4,0]], // 12 M
+  [[0,2],[1,0],[2,2],[3,0],[4,2]], // 13 W
+  [[0,0],[1,1],[2,1],[3,1],[4,0]], // 14 top mid
+  [[0,2],[1,1],[2,1],[3,1],[4,2]], // 15 bot mid
+  [[0,1],[1,0],[2,1],[3,0],[4,1]], // 16 wave top
+  [[0,1],[1,2],[2,1],[3,2],[4,1]], // 17 wave bot
+  [[0,0],[1,0],[2,0],[3,1],[4,2]], // 18 top+diag
+  [[0,2],[1,2],[2,2],[3,1],[4,0]], // 19 bot+diag
+  [[0,0],[1,1],[2,2],[3,2],[4,2]], // 20 diag top
+  [[0,2],[1,1],[2,0],[3,0],[4,0]]  // 21 diag bot
 ];
-const LINE_COLORS=['#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be','#30b0ff','#5856d6','#af52de','#ff2d95'];
+
+const LINE_COLORS=[
+  '#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be',
+  '#30b0ff','#5856d6','#af52de','#ff2d95','#ff6b6b',
+  '#ffd93d','#6bcf7f','#4ecdc4','#95e1d3','#a8e6cf',
+  '#c7ceea','#e2a4d1','#f6d365','#b5eaea','#e0aaff',
+  '#ffb4a2'
+];
 const POOL=[];Object.entries(WEIGHTS).forEach(([s,w])=>{for(let i=0;i<w;i++)POOL.push(s)});
 
 /* ============================================================
    I18N
    ============================================================ */
 const I18N={
-  ru:{balance:'Баланс',win:'Выигрыш',bet:'Ставка',betPerLine:'Ставка / линия',totalBet:'Всего',spin:'КРУТИТЬ',spinActive:'КРУТИМ...',
+  ru:{balance:'Баланс',win:'Выигрыш',bet:'Ставка',betPerLine:'Ставка / линия',totalBet:'Всего',lines:'Линии',spin:'КРУТИТЬ',spinActive:'КРУТИМ...',
     dailyBonus:'Бонус',risk:'Риск',shop:'Магазин',paytable:'Выплаты',startSub:'Пиратский слот с сокровищами',startSound:'Играть со звуком',startMute:'🔇 Без звука',
     notEnough:'Недостаточно монет',bonusTitle:'🏴‍☠️ ПИРАТСКИЙ КЛАД',bonusText:'Выберите сундук:',
     bonusWon:'Сундук: +{n} 🪙!',riskTitle:'🃏 РИСК-ИГРА',riskText:'Рискнуть выигрышем {n} 🪙? Удвойте или потеряйте!',
@@ -322,7 +353,7 @@ const I18N={
     paytableTitle:'📋 ТАБЛИЦА ВЫПЛАТ',paytableHint:'Выплаты за 1 монету ставки на линию',close:'Закрыть',
     shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Покупка за Telegram Stars',
     paySuccess:'⭐ Оплата получена! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не удалось создать счёт'},
-  uk:{balance:'Баланс',win:'Виграш',bet:'Ставка',betPerLine:'Ставка / лінія',totalBet:'Разом',spin:'КРУТИТИ',spinActive:'КРУТИМО...',
+  uk:{balance:'Баланс',win:'Виграш',bet:'Ставка',betPerLine:'Ставка / лінія',totalBet:'Разом',lines:'Лінії',spin:'КРУТИТИ',spinActive:'КРУТИМО...',
     dailyBonus:'Бонус',risk:'Ризик',shop:'Магазин',paytable:'Виплати',startSub:'Піратський слот зі скарбами',startSound:'Грати зі звуком',startMute:'🔇 Без звуку',
     notEnough:'Недостатньо монет',bonusTitle:'🏴‍☠️ ПІРАТСЬКИЙ СКАРБ',bonusText:'Виберіть скриню:',
     bonusWon:'Скриня: +{n} 🪙!',riskTitle:'🃏 РИЗИК-ГРА',riskText:'Ризикнути {n} 🪙? Подвойте або втратите!',
@@ -333,7 +364,7 @@ const I18N={
     paytableTitle:'📋 ТАБЛИЦЯ ВИПЛАТ',paytableHint:'Виплати за 1 монету ставки на лінію',close:'Закрити',
     shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Купівля за Telegram Stars',
     paySuccess:'⭐ Оплату отримано! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не вдалося створити рахунок'},
-  en:{balance:'Balance',win:'Win',bet:'Bet',betPerLine:'Bet / line',totalBet:'Total',spin:'SPIN',spinActive:'SPINNING...',
+  en:{balance:'Balance',win:'Win',bet:'Bet',betPerLine:'Bet / line',totalBet:'Total',lines:'Lines',spin:'SPIN',spinActive:'SPINNING...',
     dailyBonus:'Bonus',risk:'Risk',shop:'Shop',paytable:'Payouts',startSub:'Pirate slot with treasures',startSound:'Play with sound',startMute:'🔇 Muted',
     notEnough:'Not enough coins',bonusTitle:'🏴‍☠️ PIRATE TREASURE',bonusText:'Pick a chest:',
     bonusWon:'Chest: +{n} 🪙!',riskTitle:'🃏 RISK GAME',riskText:'Risk {n} 🪙? Double or lose!',
@@ -360,54 +391,71 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v4',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v4');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_roger_v5',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_roger_v5');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
 /* ============================================================
-   AUDIO ENGINE (fixed)
+   🎵 AUDIO ENGINE — СИНХРОННЫЙ UNLOCK (без await!)
    ============================================================ */
-let ctx=null, musicGain=null, musicOn=false, musicStep=0, musicTimer=null, nextNoteTime=0;
+let ctx=null, masterGain=null, musicGain=null, sfxGain=null;
+let musicOn=false, musicStep=0, musicTimer=null, nextNoteTime=0, audioReady=false;
 const MUSIC_STEP=0.3;
 const MUSIC_PATTERN=[
-  {bass:110,lead:[440,659,880,659]},
-  {bass:87, lead:[349,523,698,523]},
-  {bass:131,lead:[523,659,784,659]},
-  {bass:98, lead:[392,587,784,587]}
+  {bass:110, lead:[440,659,880,659]}, // Am
+  {bass:87,  lead:[349,523,698,523]}, // F
+  {bass:131, lead:[523,659,784,659]}, // C
+  {bass:98,  lead:[392,587,784,587]}  // G
 ];
 
-function initAudio(){
-  if(ctx) return;
-  try{
-    ctx=new (window.AudioContext||window.webkitAudioContext)();
-    musicGain=ctx.createGain();
-    musicGain.gain.value=state.sound?0.14:0;
-    musicGain.connect(ctx.destination);
-  }catch(e){console.warn('Audio init failed',e)}
+// КРИТИЧНО: создание контекста + resume СИНХРОННО в обработчике жеста
+function tryInitAudio(){
+  if(!ctx){
+    try{
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC) return false;
+      ctx=new AC();
+      masterGain=ctx.createGain(); masterGain.gain.value=1; masterGain.connect(ctx.destination);
+      musicGain=ctx.createGain(); musicGain.gain.value=0; musicGain.connect(masterGain);
+      sfxGain=ctx.createGain(); sfxGain.gain.value=0.8; sfxGain.connect(masterGain);
+    }catch(e){ console.warn('[audio] create fail',e); return false; }
+  }
+  // НЕ await — fire & forget
+  if(ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
+  // iOS: silent buffer для разблокировки
+  if(ctx.state==='running'){
+    try{
+      const buf=ctx.createBuffer(1,1,22050);
+      const src=ctx.createBufferSource();
+      src.buffer=buf; src.connect(ctx.destination); src.start(0);
+    }catch(e){}
+  }
+  audioReady=(ctx.state==='running');
+  return audioReady;
 }
 
-async function unlockAudio(){
-  initAudio();
-  if(!ctx) return false;
-  if(ctx.state!=='running'){
-    try{ await ctx.resume(); }catch(e){}
-  }
-  if(ctx.state==='running' && state.sound && !musicOn){
-    startMusic();
-  }
-  return ctx.state==='running';
-}
+// Агрессивная разблокировка на всех событиях
+['pointerdown','touchstart','mousedown','keydown','click'].forEach(ev=>{
+  document.addEventListener(ev,tryInitAudio,{capture:true,passive:true});
+});
 
-function playTone(freq,dur,type='sine',vol=0.15,when=0){
+// Периодическая попытка — на случай, если контекст уснул
+setInterval(()=>{
+  if(ctx && ctx.state!=='running' && state.sound){
+    try{ ctx.resume(); }catch(e){}
+  }
+},1200);
+
+function playTone(freq,dur,type='sine',vol=0.15,delay=0){
   if(!state.sound||!ctx||ctx.state!=='running') return;
-  const t0=(when||ctx.currentTime);
+  const now=ctx.currentTime+delay;
   const osc=ctx.createOscillator(), g=ctx.createGain();
-  osc.type=type; osc.frequency.setValueAtTime(freq,t0);
-  osc.connect(g); g.connect(ctx.destination);
-  g.gain.setValueAtTime(0,t0);
-  g.gain.linearRampToValueAtTime(vol,t0+0.008);
-  g.gain.exponentialRampToValueAtTime(0.001,t0+dur);
-  osc.start(t0); osc.stop(t0+dur+0.02);
+  osc.type=type; osc.frequency.setValueAtTime(freq,now);
+  osc.connect(g); g.connect(sfxGain);
+  g.gain.setValueAtTime(0,now);
+  g.gain.linearRampToValueAtTime(vol,now+0.008);
+  g.gain.exponentialRampToValueAtTime(0.001,now+dur);
+  osc.start(now); osc.stop(now+dur+0.02);
 }
 function playTick(progress){
   if(!state.sound||!ctx||ctx.state!=='running') return;
@@ -416,24 +464,24 @@ function playTick(progress){
 function sfx(name){
   if(!state.sound||!ctx||ctx.state!=='running') return;
   switch(name){
-    case 'click': playTone(800,0.05,'square',0.06); break;
+    case 'click': playTone(800,0.05,'square',0.07); break;
     case 'spinStart':
-      playTone(160,0.15,'sawtooth',0.12);
-      playTone(220,0.15,'sawtooth',0.10,ctx.currentTime+0.06); break;
-    case 'reelStop': playTone(180,0.09,'triangle',0.18); playTone(90,0.14,'sine',0.15,ctx.currentTime+0.03); break;
-    case 'win': [523,659,784].forEach((f,i)=>playTone(f,0.18,'sine',0.16,ctx.currentTime+i*0.08)); break;
-    case 'bigwin': [523,659,784,1047,1319,1568].forEach((f,i)=>playTone(f,0.22,'triangle',0.18,ctx.currentTime+i*0.09)); break;
-    case 'lose': playTone(180,0.25,'sine',0.1); playTone(140,0.35,'sine',0.08,ctx.currentTime+0.15); break;
-    case 'bonus': [784,988,1175,1568].forEach((f,i)=>playTone(f,0.2,'square',0.13,ctx.currentTime+i*0.09)); break;
-    case 'chest': playTone(400,0.1,'square',0.12); playTone(800,0.1,'square',0.12,ctx.currentTime+0.08); playTone(1200,0.25,'triangle',0.15,ctx.currentTime+0.16); break;
-    case 'coin': playTone(1568,0.06,'sine',0.14); playTone(2093,0.1,'sine',0.1,ctx.currentTime+0.05); break;
+      playTone(160,0.15,'sawtooth',0.14);
+      playTone(220,0.15,'sawtooth',0.12,0.06); break;
+    case 'reelStop': playTone(180,0.09,'triangle',0.2); playTone(90,0.14,'sine',0.18,0.03); break;
+    case 'win': [523,659,784].forEach((f,i)=>playTone(f,0.18,'sine',0.18,i*0.08)); break;
+    case 'bigwin': [523,659,784,1047,1319,1568].forEach((f,i)=>playTone(f,0.22,'triangle',0.2,i*0.09)); break;
+    case 'lose': playTone(180,0.25,'sine',0.12); playTone(140,0.35,'sine',0.1,0.15); break;
+    case 'bonus': [784,988,1175,1568].forEach((f,i)=>playTone(f,0.2,'square',0.15,i*0.09)); break;
+    case 'chest': playTone(400,0.1,'square',0.14); playTone(800,0.1,'square',0.14,0.08); playTone(1200,0.25,'triangle',0.17,0.16); break;
+    case 'coin': playTone(1568,0.06,'sine',0.16); playTone(2093,0.1,'sine',0.12,0.05); break;
   }
 }
 
 function startMusic(){
   if(!ctx||!musicGain||musicOn||ctx.state!=='running') return;
   musicOn=true; musicStep=0; nextNoteTime=ctx.currentTime+0.1;
-  musicGain.gain.setTargetAtTime(state.sound?0.14:0,ctx.currentTime,0.05);
+  musicGain.gain.setTargetAtTime(state.sound?0.35:0,ctx.currentTime,0.1);
   musicTick();
 }
 function stopMusic(){musicOn=false;if(musicTimer){clearTimeout(musicTimer);musicTimer=null}}
@@ -444,6 +492,7 @@ function musicTick(){
     const barIdx=Math.floor(musicStep/4)%4;
     const beatInBar=musicStep%4;
     const bar=MUSIC_PATTERN[barIdx];
+    // Bass
     if(beatInBar===0){
       const osc=ctx.createOscillator(), g=ctx.createGain();
       osc.type='sine'; osc.frequency.value=bar.bass;
@@ -453,20 +502,21 @@ function musicTick(){
       g.gain.exponentialRampToValueAtTime(0.01,nextNoteTime+0.5);
       osc.start(nextNoteTime); osc.stop(nextNoteTime+0.55);
     }
-    const leadFreq=bar.lead[beatInBar];
+    // Lead
     const osc=ctx.createOscillator(), g=ctx.createGain();
-    osc.type='triangle'; osc.frequency.value=leadFreq;
+    osc.type='triangle'; osc.frequency.value=bar.lead[beatInBar];
     osc.connect(g); g.connect(musicGain);
     g.gain.setValueAtTime(0,nextNoteTime);
-    g.gain.linearRampToValueAtTime(0.3,nextNoteTime+0.02);
+    g.gain.linearRampToValueAtTime(0.32,nextNoteTime+0.02);
     g.gain.exponentialRampToValueAtTime(0.005,nextNoteTime+MUSIC_STEP*0.9);
     osc.start(nextNoteTime); osc.stop(nextNoteTime+MUSIC_STEP*0.95);
+    // Hi-hat
     const bufSize=Math.floor(ctx.sampleRate*0.03);
     const buf=ctx.createBuffer(1,bufSize,ctx.sampleRate);
     const data=buf.getChannelData(0);
     for(let i=0;i<bufSize;i++) data[i]=(Math.random()*2-1)*0.4;
     const src=ctx.createBufferSource(); src.buffer=buf;
-    const hg=ctx.createGain(); hg.gain.value=0.12;
+    const hg=ctx.createGain(); hg.gain.value=0.1;
     src.connect(hg); hg.connect(musicGain);
     src.start(nextNoteTime);
     nextNoteTime+=MUSIC_STEP;
@@ -475,11 +525,6 @@ function musicTick(){
   musicTimer=setTimeout(musicTick,80);
 }
 function setMusicVolume(v){if(musicGain&&ctx)musicGain.gain.setTargetAtTime(v,ctx.currentTime,0.1)}
-
-// Периодическая попытка перезапуска музыки (если упала при сворачивании)
-setInterval(()=>{
-  if(state.sound && ctx && ctx.state==='running' && !musicOn) startMusic();
-}, 3000);
 
 /* ============================================================
    REELS
@@ -503,7 +548,7 @@ function setStatic(grid){
 }
 
 /* ============================================================
-   REEL ANIMATION
+   ANIMATION
    ============================================================ */
 function animateReel(track,final3,idx){
   return new Promise(resolve=>{
@@ -554,7 +599,6 @@ function genGrid(){
 }
 function calcWins(grid,perLine){
   const cells=new Set(), wins=[]; let total=0;
-  // Only check ACTIVE lines
   PAYLINES.slice(0, state.lines).forEach((line,idx)=>{
     const syms=line.map(([r,row])=>grid[r][row]);
     const first=syms[0];
@@ -574,7 +618,7 @@ function calcWins(grid,perLine){
 }
 
 /* ============================================================
-   WIN LINE DRAWING
+   WIN LINES
    ============================================================ */
 function drawWinLines(wins){
   overlay.innerHTML='';
@@ -619,19 +663,19 @@ function refresh(){
   $('balanceVal').textContent=fmt(state.balance)+' 🪙';
   $('betVal').textContent=fmt(state.betPerLine)+' 🪙';
   $('totalBetVal').textContent=fmt(totalBet());
+  $('linesVal').textContent=state.lines;
   $('spinBtn').textContent=isSpinning?t('spinActive'):t('spin');
   $('spinBtn').disabled=isSpinning;
   $('betMin').disabled=isSpinning||state.betPerLine<=1;
   $('betDec').disabled=isSpinning||state.betPerLine<=1;
   $('betInc').disabled=isSpinning||state.betPerLine>=100;
   $('betMax').disabled=isSpinning||state.betPerLine>=100;
+  $('linesDec').disabled=isSpinning||state.lines<=1;
+  $('linesInc').disabled=isSpinning||state.lines>=MAX_LINES;
   $('soundBtn').textContent=state.sound?'🔊':'🔇';
   $('soundBtn').classList.toggle('off',!state.sound);
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===state.lang));
-  document.querySelectorAll('.line-btn').forEach(b=>{
-    b.classList.toggle('active', parseInt(b.dataset.lines)===state.lines);
-    b.disabled=isSpinning;
-  });
+  document.querySelectorAll('.lp').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.lines)===state.lines));
   document.documentElement.lang=state.lang;
 }
 function applyI18n(){
@@ -649,13 +693,14 @@ function notif(msg,type=''){
   n._t=setTimeout(()=>{n.className='notif '+type},2200);
 }
 function closeModal(id){ $(id).classList.remove('active'); }
+window.closeModal=closeModal;
 
 /* ============================================================
    SPIN
    ============================================================ */
 async function spin(){
   if(isSpinning) return;
-  await unlockAudio();
+  tryInitAudio();
   const bet=totalBet();
   if(state.balance<bet){ notif(t('notEnough'),'error'); sfx('lose'); return; }
   isSpinning=true; clearLines();
@@ -691,7 +736,7 @@ async function spin(){
 }
 
 /* ============================================================
-   PAYTABLE MODAL
+   PAYTABLE / SHOP
    ============================================================ */
 function buildPaytable(){
   const tbody=$('ptBody');
@@ -699,22 +744,11 @@ function buildPaytable(){
   SYMBOLS.forEach(sym=>{
     const [p3,p4,p5]=PAYTABLE[sym];
     const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td class="pt-sym">${sym}</td>
-      <td class="pt-val">${p3}</td>
-      <td class="pt-val">${p4}</td>
-      <td class="pt-val hi">${p5}</td>`;
+    tr.innerHTML=`<td class="pt-sym">${sym}</td><td class="pt-val">${p3}</td><td class="pt-val">${p4}</td><td class="pt-val hi">${p5}</td>`;
     tbody.appendChild(tr);
   });
 }
-function openPaytable(){
-  buildPaytable();
-  $('paytableModal').classList.add('active');
-}
-
-/* ============================================================
-   SHOP
-   ============================================================ */
+function openPaytable(){ buildPaytable(); $('paytableModal').classList.add('active'); }
 function buildShop(){
   const grid=$('shopGrid');
   grid.innerHTML='';
@@ -732,45 +766,30 @@ function buildShop(){
     grid.appendChild(card);
   });
 }
-function openShop(){
-  buildShop();
-  $('shopModal').classList.add('active');
-}
+function openShop(){ buildShop(); $('shopModal').classList.add('active'); }
 
 async function buyPackage(pkg){
-  await unlockAudio();
+  tryInitAudio();
   const tg=window.Telegram?.WebApp;
-
-  // Режим без бэкенда → тестовая покупка
-  if(!CONFIG.botId || !CONFIG.invoiceEndpoint){
-    state.balance+=pkg.coins;
-    save(); refresh(); sfx('coin');
-    notif(tF('payTest',{n:fmt(pkg.coins)}),'gold');
-    closeModal('shopModal');
-    return;
-  }
-
   try{
     const res=await fetch(CONFIG.invoiceEndpoint,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        packageId: pkg.id,
-        stars: pkg.stars,
-        coins: pkg.coins,
-        userId: tg?.initDataUnsafe?.user?.id || 0,
-        initData: tg?.initData || ''
+        packageId:pkg.id, stars:pkg.stars, coins:pkg.coins,
+        userId:tg?.initDataUnsafe?.user?.id||0,
+        initData:tg?.initData||''
       })
     });
-    if(!res.ok) throw new Error('invoice failed');
-    const { invoiceLink } = await res.json();
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const { invoiceLink, error } = await res.json();
+    if(error) throw new Error(error);
     if(!invoiceLink) throw new Error('no invoiceLink');
 
     if(tg?.openInvoice){
-      tg.openInvoice(invoiceLink, (status)=>{
+      tg.openInvoice(invoiceLink,(status)=>{
         if(status==='paid'){
-          state.balance+=pkg.coins;
-          save(); refresh(); sfx('coin');
+          state.balance+=pkg.coins; save(); refresh(); sfx('coin');
           notif(tF('paySuccess',{n:fmt(pkg.coins)}),'gold');
           closeModal('shopModal');
         }
@@ -779,8 +798,11 @@ async function buyPackage(pkg){
       window.open(invoiceLink,'_blank');
     }
   }catch(e){
-    console.error('Invoice error:', e);
-    notif(t('payError'),'error');
+    console.error('[buyPackage]',e);
+    // Fallback: тестовая покупка, если бэкенд не подключён
+    state.balance+=pkg.coins; save(); refresh(); sfx('coin');
+    notif(tF('payTest',{n:fmt(pkg.coins)}),'gold');
+    closeModal('shopModal');
   }
 }
 
@@ -837,50 +859,58 @@ function claimDaily(){
    EVENTS
    ============================================================ */
 function bind(){
-  // START OVERLAY
-  $('startSound').onclick=async()=>{
+  // START — синхронный unlock на pointerdown
+  $('startSound').addEventListener('pointerdown',(e)=>{
+    e.preventDefault();
     state.sound=true; save();
-    await unlockAudio();
-    $('startOverlay').classList.add('hidden');
-    refresh();
-  };
-  $('startMute').onclick=()=>{
+    tryInitAudio(); // синхронно!
+    // Проверка через 100мс — контекст обычно запускается синхронно
+    setTimeout(()=>{
+      if(ctx && ctx.state==='running'){
+        startMusic();
+        sfx('bigwin'); // приветственный бип
+      }else{
+        notif('Audio not ready: '+((ctx&&ctx.state)||'no ctx'),'error');
+      }
+      $('startOverlay').classList.add('hidden');
+      refresh();
+    },100);
+  });
+  $('startMute').addEventListener('pointerdown',(e)=>{
+    e.preventDefault();
     state.sound=false; save();
     $('startOverlay').classList.add('hidden');
     refresh();
-  };
+  });
 
   // LINES
-  document.querySelectorAll('.line-btn').forEach(btn=>{
-    btn.onclick=async()=>{
-      if(isSpinning) return;
-      state.lines=parseInt(btn.dataset.lines);
-      await unlockAudio(); sfx('click');
-      save(); refresh();
-    };
+  $('linesDec').onclick=()=>{ if(isSpinning) return; state.lines=Math.max(1,state.lines-1); tryInitAudio(); sfx('click'); save(); refresh(); };
+  $('linesInc').onclick=()=>{ if(isSpinning) return; state.lines=Math.min(MAX_LINES,state.lines+1); tryInitAudio(); sfx('click'); save(); refresh(); };
+  document.querySelectorAll('.lp').forEach(b=>{
+    b.onclick=()=>{ if(isSpinning) return; state.lines=parseInt(b.dataset.lines); tryInitAudio(); sfx('click'); save(); refresh(); };
   });
 
   // BET
-  $('betMin').onclick=async()=>{ if(!isSpinning){state.betPerLine=1; await unlockAudio(); sfx('click'); save(); refresh()} };
-  $('betMax').onclick=async()=>{ if(!isSpinning){state.betPerLine=100; await unlockAudio(); sfx('click'); save(); refresh()} };
-  $('betDec').onclick=async()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); await unlockAudio(); sfx('click'); save(); refresh()} };
-  $('betInc').onclick=async()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); await unlockAudio(); sfx('click'); save(); refresh()} };
+  $('betMin').onclick=()=>{ if(!isSpinning){state.betPerLine=1; tryInitAudio(); sfx('click'); save(); refresh()} };
+  $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=100; tryInitAudio(); sfx('click'); save(); refresh()} };
+  $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); tryInitAudio(); sfx('click'); save(); refresh()} };
+  $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); tryInitAudio(); sfx('click'); save(); refresh()} };
 
   // SPIN
-  $('spinBtn').onclick=()=>{ spin(); };
+  $('spinBtn').onclick=()=>{ tryInitAudio(); spin(); };
 
   // ACTIONS
-  $('bonusBtn').onclick=async()=>{ await unlockAudio(); sfx('click'); claimDaily(); };
-  $('riskBtn').onclick=async()=>{ await unlockAudio(); sfx('click'); openRisk(); };
-  $('shopBtn').onclick=async()=>{ await unlockAudio(); sfx('click'); openShop(); };
-  $('paytableBtn').onclick=async()=>{ await unlockAudio(); sfx('click'); openPaytable(); };
+  $('bonusBtn').onclick=()=>{ tryInitAudio(); sfx('click'); claimDaily(); };
+  $('riskBtn').onclick=()=>{ tryInitAudio(); sfx('click'); openRisk(); };
+  $('shopBtn').onclick=()=>{ tryInitAudio(); sfx('click'); openShop(); };
+  $('paytableBtn').onclick=()=>{ tryInitAudio(); sfx('click'); openPaytable(); };
 
-  // SOUND
-  $('soundBtn').onclick=async()=>{
+  // SOUND TOGGLE
+  $('soundBtn').onclick=()=>{
     state.sound=!state.sound;
     if(state.sound){
-      await unlockAudio();
-      setMusicVolume(0.14);
+      tryInitAudio();
+      setMusicVolume(0.35);
       startMusic();
       sfx('click');
       notif(t('soundOn'));
@@ -892,19 +922,16 @@ function bind(){
   };
 
   // RISK
-  $('riskHigher').onclick=async()=>{ await unlockAudio(); riskChoose(true); };
-  $('riskLower').onclick=async()=>{ await unlockAudio(); riskChoose(false); };
+  $('riskHigher').onclick=()=>{ tryInitAudio(); riskChoose(true); };
+  $('riskLower').onclick=()=>{ tryInitAudio(); riskChoose(false); };
   $('riskTake').onclick=()=>{ $('riskModal').classList.remove('active'); pendingRisk=0; };
 
   // LANG
   document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.onclick=async()=>{
-      state.lang=b.dataset.lang; save(); applyI18n();
-      await unlockAudio(); sfx('click'); notif(t('langChanged'));
-    };
+    b.onclick=()=>{ state.lang=b.dataset.lang; save(); applyI18n(); tryInitAudio(); sfx('click'); notif(t('langChanged')); };
   });
 
-  // CLOSE MODALS BY BACKDROP
+  // MODALS BACKDROP CLOSE
   document.querySelectorAll('.modal').forEach(m=>{
     m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('active'); });
   });
@@ -912,7 +939,7 @@ function bind(){
   // RESIZE
   window.addEventListener('resize',()=>{ if(overlay.innerHTML) clearLines(); });
 
-  // TAB VISIBILITY: pause music when hidden, resume when visible
+  // VISIBILITY
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){ stopMusic(); }
     else if(state.sound && ctx && ctx.state==='running'){ startMusic(); }
