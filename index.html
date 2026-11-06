@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Lucky Roger</title>
+<title>Lucky Roger V13</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0a0e17;--panel:#1a2333;--panel2:#232e42;--gold:#d4af37;--goldL:#ffd966;--goldD:#8a6d1a;--red:#c0392b;--green:#27ae60;--text:#f0f4f8;--muted:#8899aa}
@@ -33,6 +33,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:6px;height:219px;overflow:hidden;position:relative;box-shadow:inset 0 8px 12px -6px rgba(0,0,0,.6),inset 0 -8px 12px -6px rgba(0,0,0,.6),0 0 0 1px #5a4a2a}
 .reel::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
 .reel::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
+.reel-flash{position:absolute;inset:0;background:rgba(255,255,255,0);pointer-events:none;z-index:4;border-radius:6px;transition:background .1s}
+.reel-flash.flash{background:rgba(255,255,255,.85)}
 .track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0)}
 .cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0}
 .cell.win::before{content:"";position:absolute;inset:4px;border:2px solid #ffd966;border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.6),rgba(255,217,102,.15) 70%);pointer-events:none;box-shadow:0 0 10px rgba(255,217,102,.8)}
@@ -112,9 +114,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .start-btn{width:100%;background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 0 #0f3d22}
 .start-btn.muted{background:linear-gradient(180deg,#576574,#2c3a52);box-shadow:0 4px 0 #1a2333;font-size:13px;padding:11px}
 .start-btn:active{transform:translateY(3px);box-shadow:none}
+/* ВЕРСИЯ */
+.version-badge{position:fixed;bottom:4px;right:4px;font-size:9px;color:#556680;background:rgba(10,14,23,.7);padding:2px 6px;border-radius:4px;z-index:997;font-family:monospace;pointer-events:none}
 </style>
 </head>
 <body>
+
+<div class="version-badge">v13</div>
 
 <div class="start-overlay" id="startOverlay">
   <div class="start-box">
@@ -123,6 +129,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
     <div class="start-sub" data-i18n="startSub">Пиратский слот с сокровищами</div>
     <button class="start-btn" id="startSound">🔊 <span data-i18n="startSound">Играть со звуком</span></button>
     <button class="start-btn muted" id="startMute">🔇 <span data-i18n="startMute">Без звука</span></button>
+    <div style="margin-top:12px;font-size:10px;color:#556680;font-family:monospace;">V13 · барабаны по очереди</div>
   </div>
 </div>
 
@@ -229,6 +236,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 <div class="notif" id="notif"></div>
 
 <script>
+console.log('%c🏴‍☠️ Lucky Roger V13 LOADED', 'font-size:18px;color:#ffd966;font-weight:bold');
+
 const CONFIG = {
   invoiceEndpoint: '/api/invoice',
   packages: [
@@ -238,6 +247,14 @@ const CONFIG = {
     { id: 'p10000', stars: 10000, coins: 200000, name: 'Легенда',    bonus: '+100%' }
   ]
 };
+
+// НАПРАВЛЕНИЕ: 'top-down' = символы идут сверху вниз, 'bottom-up' = снизу вверх
+const REEL_DIRECTION = 'top-down';
+
+// 🎯 СТАГГЕР — тайминги остановки по очереди
+const STAGGER_START = 60;   // мс задержки старта каждого следующего барабана
+const STAGGER_DURATION = 350; // мс прибавки к длительности каждого следующего
+const BASE_DURATION = 800;   // базовая длительность анимации
 
 const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
@@ -267,18 +284,16 @@ const reelsEl=document.getElementById('reels');
 const overlay=document.getElementById('linesOverlay');
 const frame=document.getElementById('reelsFrame');
 const tracks=[];
+const flashes=[];
 
 function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v12',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v12');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_roger_v13',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_roger_v13');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
-/* ============================================================
-   📳 HAPTIC
-   ============================================================ */
 function haptic(type) {
   const tg = window.Telegram?.WebApp;
   if (tg?.HapticFeedback) {
@@ -302,7 +317,7 @@ function haptic(type) {
 }
 
 /* ============================================================
-   🎵 SFX — большая библиотека звуков
+   🎵 SFX
    ============================================================ */
 const SFX = {};
 const reelStopPool = [];
@@ -333,18 +348,12 @@ function makeWav(duration, sampler, sampleRate) {
 
 function buildAudio() {
   if (audioReady) return;
-
-  // Click — короткий тихий
   SFX.click = new Audio(makeWav(0.04, t => Math.sin(2*Math.PI*900*t) * Math.exp(-t*80) * 0.35));
-
-  // Spin Start — "вжжж" со свипом вверх
   SFX.spinStart = new Audio(makeWav(0.35, t => {
     const sweep = Math.sin(2*Math.PI*(180 + t*1800)*t) * Math.exp(-t*3.5) * 0.35;
     const noise = (Math.random()*2-1) * Math.exp(-t*8) * 0.15;
     return sweep + noise;
   }));
-
-  // Reel Loop — тиканье во время вращения (loop)
   SFX.reelLoop = new Audio(makeWav(0.25, t => {
     const ticks = [0, 0.062, 0.125, 0.187];
     let v = 0;
@@ -359,7 +368,6 @@ function buildAudio() {
   SFX.reelLoop.loop = true;
   SFX.reelLoop.volume = 0.45;
 
-  // Reel Stop — "щёлк" (пул из 5 для 5 барабанов)
   const stopUrl = makeWav(0.12, t => {
     const thump = Math.sin(2*Math.PI*80*t) * Math.exp(-t*20) * 0.5;
     const click = (Math.random()*2-1) * Math.exp(-t*80) * 0.3;
@@ -372,21 +380,16 @@ function buildAudio() {
     reelStopPool.push(a);
   }
 
-  // Win (малый) — 3 ноты
   SFX.win = new Audio(makeWav(0.5, t => {
     let v = 0;
     [[523,0],[659,0.09],[784,0.18]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*8); });
     return v * 0.42;
   }));
-
-  // Medium Win — 4 ноты с завершением
   SFX.mediumWin = new Audio(makeWav(0.75, t => {
     let v = 0;
     [[523,0],[659,0.1],[784,0.2],[1047,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*6); });
     return v * 0.4;
   }));
-
-  // Big Win — длинная фанфара
   SFX.bigwin = new Audio(makeWav(1.2, t => {
     let v = 0;
     [[523,0],[659,0.1],[784,0.2],[1047,0.32],[1319,0.44],[1568,0.56]].forEach(([f,s]) => {
@@ -394,43 +397,31 @@ function buildAudio() {
     });
     return v * 0.36;
   }));
-
-  // Lose — тихий, две ноты вниз
   SFX.lose = new Audio(makeWav(0.55, t => {
     const v1 = t<0.28 ? Math.sin(2*Math.PI*220*t)*Math.exp(-t*6) : 0;
     const v2 = t>=0.28 ? Math.sin(2*Math.PI*165*(t-0.28))*Math.exp(-(t-0.28)*6) : 0;
     return (v1+v2)*0.32;
   }));
-
-  // Bonus — фанфары
   SFX.bonus = new Audio(makeWav(0.9, t => {
     let v = 0;
     [[784,0],[988,0.1],[1175,0.2],[1568,0.32]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
     return v * 0.44;
   }));
-
-  // Chest — открытие сундука
   SFX.chest = new Audio(makeWav(0.55, t => {
     let v = 0;
     [[400,0],[800,0.08],[1200,0.16],[1600,0.24]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*9); });
     return v * 0.4;
   }));
-
-  // Coin — дзынь монеты
   SFX.coin = new Audio(makeWav(0.25, t => {
     const v1 = Math.sin(2*Math.PI*1568*t)*Math.exp(-t*12);
     const v2 = t>0.05 ? Math.sin(2*Math.PI*2093*(t-0.05))*Math.exp(-(t-0.05)*9) : 0;
     return (v1+v2)*0.42;
   }));
-
-  // Risk Win — восходящие ноты
   SFX.riskWin = new Audio(makeWav(0.65, t => {
     let v = 0;
     [[659,0],[880,0.12],[1175,0.24],[1568,0.36]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
     return v * 0.42;
   }));
-
-  // Risk Lose — нисходящие
   SFX.riskLose = new Audio(makeWav(0.7, t => {
     let v = 0;
     [[440,0],[349,0.15],[262,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4); });
@@ -446,7 +437,6 @@ function buildAudio() {
   audioReady = true;
 }
 
-// 🔥 Прогрев — «разблокировать» каждый Audio в gesture, чтобы играл мгновенно
 function warmupAudio() {
   if (audioWarmed) return;
   audioWarmed = true;
@@ -517,60 +507,88 @@ function sfx(name) {
    ============================================================ */
 function randSym(){return POOL[Math.floor(Math.random()*POOL.length)]}
 function buildReels(){
-  reelsEl.innerHTML=''; tracks.length=0;
+  reelsEl.innerHTML=''; tracks.length=0; flashes.length=0;
   for(let r=0;r<REELS;r++){
     const reel=document.createElement('div'); reel.className='reel';
     const track=document.createElement('div'); track.className='track';
     track.innerHTML=Array.from({length:ROWS},()=>`<div class="cell">${randSym()}</div>`).join('');
-    reel.appendChild(track); reelsEl.appendChild(reel); tracks.push(track);
+    const flash=document.createElement('div'); flash.className='reel-flash';
+    reel.appendChild(track);
+    reel.appendChild(flash);
+    reelsEl.appendChild(reel);
+    tracks.push(track);
+    flashes.push(flash);
   }
 }
 
 /* ============================================================
-   🎰 АНИМАЦИЯ — СВЕРХУ ВНИЗ
-   Логика: финальные клетки в НАЧАЛЕ track, случайные в конце.
-   Старт: track сдвинут вверх → видны случайные (нижние).
-   Финал: track в позиции 0 → видны финальные (верхние).
-   Движение track: вниз → символы проходят сверху вниз ✓
+   🎰 АНИМАЦИЯ — ПООЧЕРЁДНО + СВЕРХУ ВНИЗ
    ============================================================ */
 function animateReel(track, final3, idx) {
   return new Promise(resolve => {
     try {
       const filler = 10;
 
-      // ФИНАЛЬНЫЕ в начале, случайные после
+      // Финальные символы в НАЧАЛЕ, случайные в конце
+      // Так финальные "приедут" сверху в конце анимации
       let html = '';
       final3.forEach(s => html += `<div class="cell">${s}</div>`);
       for (let i = 0; i < filler; i++) html += `<div class="cell">${randSym()}</div>`;
       track.innerHTML = html;
 
-      // Старт: сдвигаем track вверх на filler клеток (видим случайные снизу)
-      const startY = -(filler * CELL_H);
+      const totalCells = filler + ROWS; // 13
+      let startY, endY;
+
+      if (REEL_DIRECTION === 'top-down') {
+        // Старт: track сдвинут вверх (видим нижние случайные)
+        // Конец: track на 0 (видим верхние финальные)
+        // Track движется ВНИЗ = символы идут сверху вниз ✓
+        startY = -(filler * CELL_H);
+        endY = 0;
+      } else {
+        // Обратное направление
+        startY = 0;
+        endY = -(filler * CELL_H);
+      }
+
       track.style.transition = 'none';
       track.style.transform = `translate3d(0,${startY}px,0)`;
-      track.offsetHeight; // reflow
+      track.getBoundingClientRect(); // reflow
 
-      const dur = 800 + idx * 200; // 800, 1000, 1200, 1400, 1600
+      const startDelay = idx * STAGGER_START;
+      const dur = BASE_DURATION + idx * STAGGER_DURATION;
 
-      // Двойной rAF для надёжного старта transition на iOS
-      requestAnimationFrame(() => {
+      // 🎯 СТАРТ с задержкой — барабаны начинают крутиться по очереди
+      setTimeout(() => {
         requestAnimationFrame(() => {
-          // Анимируем к 0 → track едет ВНИЗ → символы идут сверху вниз
-          track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
-          track.style.transform = 'translate3d(0,0,0)';
+          requestAnimationFrame(() => {
+            track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
+            track.style.transform = `translate3d(0,${endY}px,0)`;
+          });
         });
-      });
+      }, startDelay);
 
-      // Финализация
+      // 🎯 ФИНАЛИЗАЦИЯ с задержкой — барабаны останавливаются по очереди
       setTimeout(() => {
         try {
           track.style.transition = 'none';
           track.style.transform = 'translate3d(0,0,0)';
           track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
         } catch(e) {}
+
+        // Вспышка
+        try {
+          const flash = flashes[idx];
+          if (flash) {
+            flash.classList.add('flash');
+            setTimeout(() => flash.classList.remove('flash'), 100);
+          }
+        } catch(e) {}
+
         sfx('reelStop');
+        haptic('light');
         resolve();
-      }, dur + 60);
+      }, startDelay + dur + 60);
     } catch(e) {
       console.error('animateReel error:', e);
       try {
@@ -765,7 +783,6 @@ async function spin(){
   $('winVal').textContent='0 🪙';
   save(); refresh();
 
-  // 🔊 ЗВУК ВРАЩЕНИЯ стартует синхронно с анимацией
   sfx('spinStart');
   startReelLoop();
   haptic('medium');
@@ -779,9 +796,7 @@ async function spin(){
     console.error('spin anim failed:', e);
   }
 
-  // 🛑 Останавливаем звук вращения
   stopReelLoop();
-  haptic('light');
 
   const {total,cells,wins}=calcWins(finalGrid,perLine);
   if(total>0){
@@ -794,7 +809,6 @@ async function spin(){
     });
     setTimeout(()=>drawWinLines(wins),150);
 
-    // 🎵 Разный звук в зависимости от размера выигрыша
     const ratio = total / bet;
     let winSound = 'win';
     if (ratio >= 20) winSound = 'bigwin';
@@ -946,9 +960,7 @@ function bind(){
     e.preventDefault();
     state.sound=true; save();
     buildAudio();
-    // 🔥 Прогрев всех звуков в gesture — убирает задержку на первом спине
     warmupAudio();
-    // Приветственный звук
     setTimeout(()=>{ try{ playSfx('bigwin'); }catch(e){} }, 30);
     haptic('success');
     setTimeout(()=>{ $('startOverlay').classList.add('hidden'); refresh(); }, 200);
@@ -1007,7 +1019,6 @@ function bind(){
 
   window.addEventListener('resize',()=>{ if(overlay.innerHTML && !isSpinning) clearLines(); });
 
-  // Останавливаем звук вращения при уходе с вкладки
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden) stopReelLoop();
   });
