@@ -272,12 +272,12 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v11',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v11');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_roger_v12',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_roger_v12');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
 /* ============================================================
-   📳 HAPTIC (только для важных событий)
+   📳 HAPTIC
    ============================================================ */
 function haptic(type) {
   const tg = window.Telegram?.WebApp;
@@ -302,12 +302,13 @@ function haptic(type) {
 }
 
 /* ============================================================
-   🎵 SFX
+   🎵 SFX — большая библиотека звуков
    ============================================================ */
 const SFX = {};
+const reelStopPool = [];
+let reelStopIdx = 0;
 let audioReady = false;
-const tickPool = [];
-let tickIdx = 0;
+let audioWarmed = false;
 
 function makeWav(duration, sampler, sampleRate) {
   sampleRate = sampleRate || 11025;
@@ -332,53 +333,143 @@ function makeWav(duration, sampler, sampleRate) {
 
 function buildAudio() {
   if (audioReady) return;
-  SFX.click = new Audio(makeWav(0.05, t => Math.sin(2*Math.PI*800*t) * Math.exp(-t*60) * 0.5));
-  SFX.spinStart = new Audio(makeWav(0.22, t => Math.sin(2*Math.PI*(160+t*600)*t) * Math.exp(-t*6) * 0.55));
-  SFX.reelStop = new Audio(makeWav(0.16, t => {
-    const v = Math.sin(2*Math.PI*180*t) + 0.5*Math.sin(2*Math.PI*90*t);
-    return v * Math.exp(-t*18) * 0.55;
-  }));
-  SFX.win = new Audio(makeWav(0.55, t => {
-    let v = 0;
-    [[523,0],[659,0.08],[784,0.16]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*7); });
-    return v * 0.42;
-  }));
-  SFX.bigwin = new Audio(makeWav(1.0, t => {
-    let v = 0;
-    [[523,0],[659,0.09],[784,0.18],[1047,0.27],[1319,0.36],[1568,0.45]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
-    return v * 0.38;
-  }));
-  SFX.lose = new Audio(makeWav(0.5, t => {
-    const v1 = t<0.24 ? Math.sin(2*Math.PI*180*t)*Math.exp(-t*7) : 0;
-    const v2 = t>=0.24 ? Math.sin(2*Math.PI*140*(t-0.24))*Math.exp(-(t-0.24)*7) : 0;
-    return (v1+v2)*0.42;
-  }));
-  SFX.bonus = new Audio(makeWav(0.8, t => {
-    let v = 0;
-    [[784,0],[988,0.1],[1175,0.2],[1568,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*6); });
-    return v * 0.42;
-  }));
-  SFX.chest = new Audio(makeWav(0.5, t => {
-    let v = 0;
-    [[400,0],[800,0.08],[1200,0.16]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*10); });
-    return v * 0.4;
-  }));
-  SFX.coin = new Audio(makeWav(0.2, t => {
-    const v1 = Math.sin(2*Math.PI*1568*t)*Math.exp(-t*14);
-    const v2 = t>0.05 ? Math.sin(2*Math.PI*2093*(t-0.05))*Math.exp(-(t-0.05)*10) : 0;
-    return (v1+v2)*0.4;
-  }));
-  Object.values(SFX).forEach(a => { a.preload = 'auto'; a.volume = 0.7; });
 
-  const tickUrl = makeWav(0.03, t => (Math.random()*2-1) * Math.exp(-t*120) * 0.35);
-  for (let i = 0; i < 4; i++) {
-    const a = new Audio(tickUrl);
+  // Click — короткий тихий
+  SFX.click = new Audio(makeWav(0.04, t => Math.sin(2*Math.PI*900*t) * Math.exp(-t*80) * 0.35));
+
+  // Spin Start — "вжжж" со свипом вверх
+  SFX.spinStart = new Audio(makeWav(0.35, t => {
+    const sweep = Math.sin(2*Math.PI*(180 + t*1800)*t) * Math.exp(-t*3.5) * 0.35;
+    const noise = (Math.random()*2-1) * Math.exp(-t*8) * 0.15;
+    return sweep + noise;
+  }));
+
+  // Reel Loop — тиканье во время вращения (loop)
+  SFX.reelLoop = new Audio(makeWav(0.25, t => {
+    const ticks = [0, 0.062, 0.125, 0.187];
+    let v = 0;
+    for (const ts of ticks) {
+      const dt = t - ts;
+      if (dt >= 0 && dt < 0.015) {
+        v += (Math.random()*2-1) * Math.exp(-dt*150) * 0.35;
+      }
+    }
+    return v;
+  }));
+  SFX.reelLoop.loop = true;
+  SFX.reelLoop.volume = 0.45;
+
+  // Reel Stop — "щёлк" (пул из 5 для 5 барабанов)
+  const stopUrl = makeWav(0.12, t => {
+    const thump = Math.sin(2*Math.PI*80*t) * Math.exp(-t*20) * 0.5;
+    const click = (Math.random()*2-1) * Math.exp(-t*80) * 0.3;
+    return thump + click;
+  });
+  for (let i = 0; i < 5; i++) {
+    const a = new Audio(stopUrl);
     a.preload = 'auto';
-    a.volume = 0.3;
-    tickPool.push(a);
+    a.volume = 0.7;
+    reelStopPool.push(a);
   }
 
+  // Win (малый) — 3 ноты
+  SFX.win = new Audio(makeWav(0.5, t => {
+    let v = 0;
+    [[523,0],[659,0.09],[784,0.18]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*8); });
+    return v * 0.42;
+  }));
+
+  // Medium Win — 4 ноты с завершением
+  SFX.mediumWin = new Audio(makeWav(0.75, t => {
+    let v = 0;
+    [[523,0],[659,0.1],[784,0.2],[1047,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*6); });
+    return v * 0.4;
+  }));
+
+  // Big Win — длинная фанфара
+  SFX.bigwin = new Audio(makeWav(1.2, t => {
+    let v = 0;
+    [[523,0],[659,0.1],[784,0.2],[1047,0.32],[1319,0.44],[1568,0.56]].forEach(([f,s]) => {
+      if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4) * 1.1;
+    });
+    return v * 0.36;
+  }));
+
+  // Lose — тихий, две ноты вниз
+  SFX.lose = new Audio(makeWav(0.55, t => {
+    const v1 = t<0.28 ? Math.sin(2*Math.PI*220*t)*Math.exp(-t*6) : 0;
+    const v2 = t>=0.28 ? Math.sin(2*Math.PI*165*(t-0.28))*Math.exp(-(t-0.28)*6) : 0;
+    return (v1+v2)*0.32;
+  }));
+
+  // Bonus — фанфары
+  SFX.bonus = new Audio(makeWav(0.9, t => {
+    let v = 0;
+    [[784,0],[988,0.1],[1175,0.2],[1568,0.32]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
+    return v * 0.44;
+  }));
+
+  // Chest — открытие сундука
+  SFX.chest = new Audio(makeWav(0.55, t => {
+    let v = 0;
+    [[400,0],[800,0.08],[1200,0.16],[1600,0.24]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*9); });
+    return v * 0.4;
+  }));
+
+  // Coin — дзынь монеты
+  SFX.coin = new Audio(makeWav(0.25, t => {
+    const v1 = Math.sin(2*Math.PI*1568*t)*Math.exp(-t*12);
+    const v2 = t>0.05 ? Math.sin(2*Math.PI*2093*(t-0.05))*Math.exp(-(t-0.05)*9) : 0;
+    return (v1+v2)*0.42;
+  }));
+
+  // Risk Win — восходящие ноты
+  SFX.riskWin = new Audio(makeWav(0.65, t => {
+    let v = 0;
+    [[659,0],[880,0.12],[1175,0.24],[1568,0.36]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
+    return v * 0.42;
+  }));
+
+  // Risk Lose — нисходящие
+  SFX.riskLose = new Audio(makeWav(0.7, t => {
+    let v = 0;
+    [[440,0],[349,0.15],[262,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4); });
+    return v * 0.36;
+  }));
+
+  Object.values(SFX).forEach(a => {
+    if (a === SFX.reelLoop) return;
+    a.preload = 'auto';
+    if (!a.volume || a.volume === 1) a.volume = 0.7;
+  });
+
   audioReady = true;
+}
+
+// 🔥 Прогрев — «разблокировать» каждый Audio в gesture, чтобы играл мгновенно
+function warmupAudio() {
+  if (audioWarmed) return;
+  audioWarmed = true;
+  const all = [...Object.values(SFX), ...reelStopPool];
+  all.forEach(a => {
+    if (!a || !a.play) return;
+    const orig = a.volume;
+    try {
+      a.volume = 0;
+      const p = a.play();
+      if (p && p.then) {
+        p.then(() => {
+          try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
+        }).catch(() => {
+          try { a.volume = orig; } catch(e) {}
+        });
+      } else {
+        try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
+      }
+    } catch(e) {
+      try { a.volume = orig; } catch(e) {}
+    }
+  });
 }
 
 function playSfx(name) {
@@ -389,17 +480,35 @@ function playSfx(name) {
   try { a.currentTime = 0; a.play().catch(()=>{}); } catch(e) {}
 }
 
-function playTick() {
-  if (!state.sound || !tickPool.length) return;
+function playReelStop() {
+  if (!state.sound || !reelStopPool.length) return;
   try {
-    const a = tickPool[tickIdx++ % tickPool.length];
+    const a = reelStopPool[reelStopIdx++ % reelStopPool.length];
     a.currentTime = 0;
     a.play().catch(()=>{});
   } catch(e) {}
 }
 
+function startReelLoop() {
+  if (!state.sound || !SFX.reelLoop) return;
+  try {
+    SFX.reelLoop.volume = 0.45;
+    SFX.reelLoop.currentTime = 0;
+    SFX.reelLoop.play().catch(()=>{});
+  } catch(e) {}
+}
+
+function stopReelLoop() {
+  if (!SFX.reelLoop) return;
+  try {
+    SFX.reelLoop.volume = 0;
+    SFX.reelLoop.pause();
+    SFX.reelLoop.currentTime = 0;
+  } catch(e) {}
+}
+
 function sfx(name) {
-  if (name === 'tick') playTick();
+  if (name === 'reelStop') playReelStop();
   else playSfx(name);
 }
 
@@ -418,34 +527,41 @@ function buildReels(){
 }
 
 /* ============================================================
-   🎰 АНИМАЦИЯ БАРАБАНА — ПРОСТО, CSS TRANSITION, БЕЗ ГОНОК
+   🎰 АНИМАЦИЯ — СВЕРХУ ВНИЗ
+   Логика: финальные клетки в НАЧАЛЕ track, случайные в конце.
+   Старт: track сдвинут вверх → видны случайные (нижние).
+   Финал: track в позиции 0 → видны финальные (верхние).
+   Движение track: вниз → символы проходят сверху вниз ✓
    ============================================================ */
 function animateReel(track, final3, idx) {
   return new Promise(resolve => {
     try {
       const filler = 10;
+
+      // ФИНАЛЬНЫЕ в начале, случайные после
       let html = '';
-      for (let i = 0; i < filler; i++) html += `<div class="cell">${randSym()}</div>`;
       final3.forEach(s => html += `<div class="cell">${s}</div>`);
+      for (let i = 0; i < filler; i++) html += `<div class="cell">${randSym()}</div>`;
       track.innerHTML = html;
 
-      // Сброс
+      // Старт: сдвигаем track вверх на filler клеток (видим случайные снизу)
+      const startY = -(filler * CELL_H);
       track.style.transition = 'none';
-      track.style.transform = 'translate3d(0,0,0)';
+      track.style.transform = `translate3d(0,${startY}px,0)`;
       track.offsetHeight; // reflow
 
-      const targetY = -(filler * CELL_H);
-      const dur = 800 + idx * 180; // 800, 980, 1160, 1340, 1520
+      const dur = 800 + idx * 200; // 800, 1000, 1200, 1400, 1600
 
-      // Двойной rAF — гарантирует что transition сработает на iOS Safari
+      // Двойной rAF для надёжного старта transition на iOS
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+          // Анимируем к 0 → track едет ВНИЗ → символы идут сверху вниз
           track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
-          track.style.transform = `translate3d(0,${targetY}px,0)`;
+          track.style.transform = 'translate3d(0,0,0)';
         });
       });
 
-      // Финализация через setTimeout — надёжнее чем transitionend
+      // Финализация
       setTimeout(() => {
         try {
           track.style.transition = 'none';
@@ -456,7 +572,6 @@ function animateReel(track, final3, idx) {
         resolve();
       }, dur + 60);
     } catch(e) {
-      // Fallback — если что-то упало, ставим финальное состояние
       console.error('animateReel error:', e);
       try {
         track.style.transition = 'none';
@@ -649,20 +764,25 @@ async function spin(){
   state.balance-=bet;
   $('winVal').textContent='0 🪙';
   save(); refresh();
+
+  // 🔊 ЗВУК ВРАЩЕНИЯ стартует синхронно с анимацией
   sfx('spinStart');
+  startReelLoop();
   haptic('medium');
 
   const perLine=state.betPerLine;
   const finalGrid=genGrid();
 
-  // Ждём анимацию ВСЕХ барабанов
   try {
     await Promise.all(tracks.map((tr,r)=>animateReel(tr,finalGrid[r],r)));
   } catch(e) {
     console.error('spin anim failed:', e);
   }
 
-  // Подсчёт выигрыша
+  // 🛑 Останавливаем звук вращения
+  stopReelLoop();
+  haptic('light');
+
   const {total,cells,wins}=calcWins(finalGrid,perLine);
   if(total>0){
     state.balance+=total;
@@ -673,10 +793,16 @@ async function spin(){
       if(c) c.classList.add('win');
     });
     setTimeout(()=>drawWinLines(wins),150);
-    const big=total>=bet*10;
-    sfx(big?'bigwin':'win');
-    haptic(big?'heavy':'success');
-    notif(big?tF('bigWin',{n:fmt(total)}):tF('winMsg',{n:fmt(total)}),big?'gold':'');
+
+    // 🎵 Разный звук в зависимости от размера выигрыша
+    const ratio = total / bet;
+    let winSound = 'win';
+    if (ratio >= 20) winSound = 'bigwin';
+    else if (ratio >= 5) winSound = 'mediumWin';
+    sfx(winSound);
+
+    haptic(ratio >= 10 ? 'heavy' : 'success');
+    notif(ratio >= 10 ? tF('bigWin',{n:fmt(total)}) : tF('winMsg',{n:fmt(total)}), ratio >= 10 ? 'gold' : '');
     if(total>=bet*2) pendingRisk=total;
   }else{
     sfx('lose');
@@ -785,10 +911,12 @@ function riskChoose(win){
   const won=Math.random()<0.5 ? win : !win;
   $('riskModal').classList.remove('active');
   if(won){
-    state.balance+=pendingRisk; sfx('win'); haptic('success');
+    state.balance+=pendingRisk;
+    sfx('riskWin'); haptic('success');
     notif(tF('riskWin',{n:fmt(pendingRisk)}),'gold');
   }else{
-    state.balance-=pendingRisk; sfx('lose'); haptic('error');
+    state.balance-=pendingRisk;
+    sfx('riskLose'); haptic('error');
     notif(t('riskLose'),'error');
   }
   pendingRisk=0; save(); refresh();
@@ -818,14 +946,18 @@ function bind(){
     e.preventDefault();
     state.sound=true; save();
     buildAudio();
-    playSfx('bigwin');
+    // 🔥 Прогрев всех звуков в gesture — убирает задержку на первом спине
+    warmupAudio();
+    // Приветственный звук
+    setTimeout(()=>{ try{ playSfx('bigwin'); }catch(e){} }, 30);
     haptic('success');
-    setTimeout(()=>{ $('startOverlay').classList.add('hidden'); refresh(); }, 60);
+    setTimeout(()=>{ $('startOverlay').classList.add('hidden'); refresh(); }, 200);
   });
   $('startMute').addEventListener('pointerdown',(e)=>{
     e.preventDefault();
     state.sound=false; save();
     buildAudio();
+    audioWarmed = true;
     $('startOverlay').classList.add('hidden');
     refresh();
   });
@@ -850,8 +982,14 @@ function bind(){
 
   $('soundBtn').onclick=()=>{
     state.sound=!state.sound;
-    if(state.sound){ buildAudio(); sfx('click'); haptic('light'); notif(t('soundOn')); }
-    else{ notif(t('soundOff'),'error'); }
+    if(state.sound){
+      buildAudio();
+      if(!audioWarmed) warmupAudio();
+      sfx('click'); haptic('light'); notif(t('soundOn'));
+    } else {
+      stopReelLoop();
+      notif(t('soundOff'),'error');
+    }
     save(); refresh();
   };
 
@@ -868,6 +1006,11 @@ function bind(){
   });
 
   window.addEventListener('resize',()=>{ if(overlay.innerHTML && !isSpinning) clearLines(); });
+
+  // Останавливаем звук вращения при уходе с вкладки
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) stopReelLoop();
+  });
 }
 
 /* ============================================================
