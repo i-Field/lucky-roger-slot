@@ -1,671 +1,983 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lucky Roger - Pirate Slot</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --bg-color: #121620;
-            --panel-bg: #1e2636;
-            --gold: #f39c12;
-            --gold-light: #f1c40f;
-            --accent: #e74c3c;
-            --text-main: #ffffff;
-            --text-muted: #95a5a6;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Lucky Roger — Pirate Slot</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+    --bg: #0a0e17;
+    --bg-2: #141b28;
+    --panel: #1a2333;
+    --panel-2: #232e42;
+    --gold: #d4af37;
+    --gold-light: #ffd966;
+    --gold-dark: #8a6d1a;
+    --red: #c0392b;
+    --red-dark: #7a1c11;
+    --green: #27ae60;
+    --cream: #f5e6c8;
+    --text: #f0f4f8;
+    --muted: #8899aa;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(ellipse at top, #1a2744 0%, #0a0e17 70%);
+    background-attachment: fixed;
+    color: var(--text);
+    display: flex; justify-content: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding: 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+}
+.app { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 8px; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+/* ============ TOP BAR ============ */
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 4px 2px; }
+.lang-switch { display: flex; gap: 4px; background: var(--panel); border: 1px solid #2c3a52; border-radius: 8px; padding: 3px; }
+.lang-btn {
+    background: transparent; color: var(--muted); border: none;
+    padding: 5px 9px; font-size: 11px; font-weight: 800;
+    border-radius: 5px; cursor: pointer; transition: all .15s;
+}
+.lang-btn.active { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #1a1200; box-shadow: 0 0 8px rgba(212,175,55,.4); }
+.lang-btn:not(.active):hover { color: var(--gold-light); }
+.sound-btn {
+    background: var(--panel); border: 1px solid #2c3a52; color: var(--gold);
+    padding: 8px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: all .15s;
+}
+.sound-btn.off { color: var(--muted); opacity: .6; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding: 10px;
-        }
+/* ============ TITLE ============ */
+.title-box { text-align: center; padding: 4px 0 2px; }
+.title {
+    font-size: 28px; font-weight: 900; letter-spacing: 3px;
+    background: linear-gradient(180deg, #ffe9a0 0%, #f0c040 35%, #b8860b 60%, #ffd966 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(212,175,55,.35));
+    font-family: Georgia, "Times New Roman", serif;
+    animation: shine 4s linear infinite;
+    background-size: 200% 100%;
+}
+@keyframes shine { 0%{background-position:0% 0} 100%{background-position:200% 0} }
 
-        .app-container {
-            width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+/* ============ BALANCE BAR ============ */
+.balance-bar {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.stat {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid #34455f; border-radius: 10px;
+    padding: 8px 12px; display: flex; flex-direction: column; gap: 2px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 3px 6px rgba(0,0,0,.3);
+}
+.stat .lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.stat .val { font-size: 17px; font-weight: 900; color: var(--gold-light); font-variant-numeric: tabular-nums; }
+.stat.right { text-align: right; }
+.stat.win .val { color: var(--green); text-shadow: 0 0 10px rgba(39,174,96,.4); }
 
-        /* Верхняя панель */
-        .header-panel {
-            background: var(--panel-bg);
-            border-radius: 12px;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 2px solid #2c3e50;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
+/* ============ MACHINE ============ */
+.machine {
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255,217,102,.08), transparent 60%),
+        linear-gradient(180deg, #2d1d0f 0%, #1a0e05 100%);
+    border: 3px solid;
+    border-image: linear-gradient(180deg, #ffe9a0, #b8860b, #ffe9a0) 1;
+    border-radius: 16px; padding: 12px 10px 10px;
+    box-shadow: 0 0 0 1px #000, 0 10px 30px rgba(0,0,0,.7), inset 0 0 40px rgba(0,0,0,.5);
+    position: relative;
+}
+.machine::before, .machine::after {
+    content: "✦"; position: absolute; font-size: 20px;
+    color: var(--gold); opacity: .7;
+    text-shadow: 0 0 8px rgba(212,175,55,.6);
+}
+.machine::before { top: 4px; left: 8px; }
+.machine::after  { top: 4px; right: 8px; }
 
-        .balance-box, .bet-box {
-            display: flex;
-            flex-direction: column;
-        }
+.reels-frame {
+    background: linear-gradient(180deg, #050810, #1a1f2c);
+    border-radius: 10px; padding: 6px;
+    box-shadow: inset 0 4px 12px rgba(0,0,0,.9), 0 0 0 1px #3a4a5c;
+}
+.reels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.reel {
+    background: linear-gradient(180deg, #f8f0dd 0%, #e8dcc0 50%, #d4c8a8 100%);
+    border-radius: 6px; height: 219px; overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 6px 8px -4px rgba(0,0,0,.5), inset 0 -6px 8px -4px rgba(0,0,0,.5), 0 0 0 1px #5a4a2a;
+}
+.reel::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 20px;
+    background: linear-gradient(180deg, rgba(0,0,0,.35), transparent); z-index: 3; pointer-events: none;
+}
+.reel::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 20px;
+    background: linear-gradient(0deg, rgba(0,0,0,.35), transparent); z-index: 3; pointer-events: none;
+}
+.track {
+    position: absolute; left: 0; right: 0; top: 0;
+    will-change: transform;
+}
+.cell {
+    height: 73px; display: flex; align-items: center; justify-content: center;
+    font-size: 42px; line-height: 1;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,.4));
+    position: relative;
+}
+.cell.win { animation: winPulse .8s ease-in-out infinite alternate; }
+.cell.win::before {
+    content: ""; position: absolute; inset: 3px;
+    border: 2px solid var(--gold-light);
+    border-radius: 6px;
+    background: radial-gradient(circle, rgba(255,217,102,.4), transparent 70%);
+    box-shadow: 0 0 12px var(--gold-light), inset 0 0 12px rgba(255,217,102,.5);
+    pointer-events: none;
+}
+@keyframes winPulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 6px var(--gold-light)); }
+    100% { transform: scale(1.08); filter: drop-shadow(0 0 14px var(--gold-light)); }
+}
 
-        .label {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: bold;
-        }
+/* ============ BET BAR ============ */
+.bet-bar {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid #34455f; border-radius: 12px;
+    padding: 10px; display: grid;
+    grid-template-columns: auto auto 1fr auto auto;
+    gap: 6px; align-items: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 3px 6px rgba(0,0,0,.3);
+}
+.bet-btn {
+    background: linear-gradient(180deg, #3a4a60, #253247);
+    color: var(--text); border: 1px solid #455872;
+    border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; font-weight: 800;
+    cursor: pointer; transition: all .1s;
+    min-width: 42px;
+    box-shadow: 0 2px 0 #0f1722, 0 3px 6px rgba(0,0,0,.4);
+}
+.bet-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #0f1722; }
+.bet-btn:disabled { opacity: .5; cursor: not-allowed; }
+.bet-mid { text-align: center; }
+.bet-mid .lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.bet-mid .val { font-size: 20px; font-weight: 900; color: var(--gold-light); font-variant-numeric: tabular-nums; }
 
-        .value {
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--gold-light);
-        }
+/* ============ SPIN BUTTON ============ */
+.spin-btn {
+    background: linear-gradient(180deg, #e74c3c 0%, #c0392b 45%, #7a1c11 100%);
+    border: 2px solid #ff8a7a;
+    color: #fff; font-size: 22px; font-weight: 900;
+    letter-spacing: 3px; padding: 16px;
+    border-radius: 14px; cursor: pointer;
+    text-shadow: 0 2px 2px rgba(0,0,0,.6);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.3),
+        0 6px 0 #4d0e07,
+        0 10px 20px rgba(0,0,0,.5),
+        0 0 30px rgba(231,76,60,.4);
+    transition: all .08s;
+    position: relative; overflow: hidden;
+}
+.spin-btn::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.3) 50%, transparent 60%);
+    animation: sweep 3s infinite;
+}
+@keyframes sweep { 0%,100%{transform:translateX(-100%)} 50%{transform:translateX(100%)} }
+.spin-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 2px 0 #4d0e07, 0 4px 10px rgba(0,0,0,.5); }
+.spin-btn:disabled { filter: grayscale(.7) brightness(.6); cursor: not-allowed; }
 
-        /* Игровое поле / Барабаны */
-        .slot-machine {
-            background: #0d1117;
-            border: 4px solid #34495e;
-            border-radius: 16px;
-            padding: 10px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 8px 16px rgba(0,0,0,0.4);
-            position: relative;
-        }
+/* ============ ACTION ROW ============ */
+.actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.act-btn {
+    background: linear-gradient(180deg, #3a4a60, #253247);
+    color: var(--text); border: 1px solid #455872;
+    border-radius: 10px; padding: 10px 6px;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    box-shadow: 0 3px 0 #0f1722, 0 4px 8px rgba(0,0,0,.4);
+    transition: all .1s;
+}
+.act-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #0f1722; }
+.act-btn .ico { font-size: 20px; }
+.act-btn.gold { background: linear-gradient(180deg, #ffd966, #b8860b); color: #1a1200; border-color: #ffe9a0; box-shadow: 0 3px 0 #5a4410, 0 4px 8px rgba(0,0,0,.4); }
+.act-btn.green { background: linear-gradient(180deg, #2ecc71, #1a7d43); border-color: #58e896; box-shadow: 0 3px 0 #0f3d22, 0 4px 8px rgba(0,0,0,.4); }
 
-        .reels-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            background: #161b22;
-            padding: 8px;
-            border-radius: 10px;
-        }
+/* ============ MODALS ============ */
+.modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.85);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    padding: 20px;
+}
+.modal.active { opacity: 1; pointer-events: auto; }
+.modal-box {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 3px solid var(--gold); border-radius: 18px;
+    padding: 22px 18px; max-width: 380px; width: 100%;
+    box-shadow: 0 0 40px rgba(212,175,55,.5), 0 20px 60px rgba(0,0,0,.8);
+    text-align: center;
+    transform: scale(.9); transition: transform .25s;
+}
+.modal.active .modal-box { transform: scale(1); }
+.modal-title {
+    font-size: 22px; font-weight: 900; color: var(--gold-light);
+    margin-bottom: 8px; text-shadow: 0 0 15px rgba(212,175,55,.5);
+    font-family: Georgia, serif;
+}
+.modal-text { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+.chests { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 8px; }
+.chest {
+    background: linear-gradient(180deg, #4a3520, #2a1a0e);
+    border: 2px solid var(--gold); border-radius: 12px;
+    font-size: 40px; padding: 16px 0; cursor: pointer;
+    transition: transform .15s;
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.4);
+}
+.chest:hover { transform: scale(1.05); }
+.chest:active { transform: scale(.92); }
+.chest.opened { background: radial-gradient(circle, #ffd966, #b8860b); border-color: #ffe9a0; }
+.modal-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.modal-btn {
+    padding: 12px; border-radius: 10px; border: none;
+    font-size: 14px; font-weight: 800; cursor: pointer;
+    color: #fff; transition: transform .1s;
+}
+.modal-btn:active { transform: scale(.97); }
+.modal-btn.green { background: linear-gradient(180deg, #2ecc71, #1a7d43); }
+.modal-btn.red { background: linear-gradient(180deg, #e74c3c, #7a1c11); }
+.modal-btn.gray { background: linear-gradient(180deg, #576574, #2c3a52); }
 
-        .reel {
-            background: #ffffff;
-            border-radius: 8px;
-            height: 220px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
+/* ============ NOTIFICATION ============ */
+.notif {
+    position: fixed; top: -80px; left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #2ecc71, #1a7d43);
+    color: #fff; padding: 10px 22px; border-radius: 30px;
+    font-size: 13px; font-weight: 800;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.3);
+    transition: top .35s cubic-bezier(.3,1.5,.5,1);
+    z-index: 999; max-width: 90vw; text-align: center;
+    border: 2px solid rgba(255,255,255,.3);
+}
+.notif.show { top: 20px; }
+.notif.error { background: linear-gradient(180deg, #e74c3c, #7a1c11); }
+.notif.gold { background: linear-gradient(180deg, #ffd966, #b8860b); color: #1a1200; }
 
-        .symbols-track {
-            position: absolute;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.1s ease-out;
-        }
-
-        .symbol {
-            height: 73px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 38px;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
-        }
-
-        /* Панель управления */
-        .controls-panel {
-            background: var(--panel-bg);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border: 2px solid #2c3e50;
-        }
-
-        .bet-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-small {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-small:active {
-            transform: scale(0.95);
-        }
-
-        .btn-spin {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 22px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 6px 0 #962d22, 0 8px 15px rgba(0,0,0,0.4);
-            cursor: pointer;
-            transition: all 0.1s;
-        }
-
-        .btn-spin:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #962d22, 0 4px 8px rgba(0,0,0,0.4);
-        }
-
-        .btn-spin:disabled {
-            background: #7f8c8d;
-            box-shadow: 0 6px 0 #596566;
-            cursor: not-allowed;
-        }
-
-        /* Нижний ряд кнопок */
-        .action-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .btn-action {
-            background: #2980b9;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .btn-stars {
-            background: linear-gradient(135deg, #f39c12, #d35400);
-            grid-column: span 2;
-        }
-
-        /* Модальные окна / Мини-игры */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: var(--panel-bg);
-            border: 3px solid var(--gold);
-            border-radius: 16px;
-            padding: 20px;
-            width: 90%;
-            max-width: 360px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-        }
-
-        .modal-title {
-            font-size: 22px;
-            color: var(--gold-light);
-            margin-bottom: 10px;
-            font-weight: 900;
-        }
-
-        .modal-text {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        /* Сундуки бонус игры */
-        .chests-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .chest {
-            background: #2c3e50;
-            border: 2px solid var(--gold);
-            border-radius: 10px;
-            font-size: 36px;
-            padding: 15px 0;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .chest:active {
-            transform: scale(0.9);
-        }
-
-        /* Уведомления */
-        #notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: #27ae60;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
-            z-index: 200;
-        }
-
-        #notification.show {
-            transform: translateX(-50%) translateY(0);
-        }
-    </style>
+/* ============ WIN CELL FLASH ============ */
+@keyframes flash { 0%,100% { opacity: 0 } 50% { opacity: 1 } }
+</style>
 </head>
 <body>
+<div class="app">
 
-    <div id="notification">Уведомление</div>
-
-    <div class="app-container">
-        <!-- Шапка -->
-        <div class="header-panel">
-            <div class="balance-box">
-                <span class="label">Баланс</span>
-                <span class="value" id="balanceDisplay">1000 🪙</span>
-            </div>
-            <div class="bet-box" style="align-items: flex-end;">
-                <span class="label">Выигрыш</span>
-                <span class="value" id="winDisplay">0 🪙</span>
-            </div>
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="lang-switch">
+            <button class="lang-btn" data-lang="uk">UKR</button>
+            <button class="lang-btn" data-lang="ru">RUS</button>
+            <button class="lang-btn" data-lang="en">ENG</button>
         </div>
+        <button class="sound-btn" id="soundBtn" aria-label="sound">🔊</button>
+    </div>
 
-        <!-- Слот машина -->
-        <div class="slot-machine">
-            <div class="reels-grid" id="reelsGrid">
-                <!-- Барабаны генерируются скриптом -->
-            </div>
+    <!-- TITLE -->
+    <div class="title-box">
+        <div class="title">LUCKY ROGER</div>
+    </div>
+
+    <!-- BALANCE -->
+    <div class="balance-bar">
+        <div class="stat">
+            <span class="lbl" data-i18n="balance">Баланс</span>
+            <span class="val" id="balanceVal">1000 🪙</span>
         </div>
-
-        <!-- Управление -->
-        <div class="controls-panel">
-            <div class="bet-controls">
-                <button class="btn-small" onclick="changeBet(-5)">MIN</button>
-                <button class="btn-small" onclick="changeBet(-1)">-</button>
-                <div style="text-align: center;">
-                    <span class="label">Ставка на линию</span>
-                    <span id="betDisplay" style="font-size: 16px; font-weight: bold; color: white;">9 🪙</span>
-                </div>
-                <button class="btn-small" onclick="changeBet(1)">+</button>
-                <button class="btn-small" onclick="changeBet(5)">MAX</button>
-            </div>
-
-            <button class="btn-spin" id="spinButton" onclick="startSpin()">КРУТИТЬ</button>
-
-            <div class="action-row">
-                <button class="btn-action" onclick="claimDailyBonus()">🎁 Бонус</button>
-                <button class="btn-action" onclick="toggleAudio()" id="soundBtn">🔊 Звук</button>
-                <button class="btn-action btn-stars" onclick="buyStars()">⭐ Купить фишки за Stars</button>
-            </div>
+        <div class="stat right win">
+            <span class="lbl" data-i18n="win">Выигрыш</span>
+            <span class="val" id="winVal">0 🪙</span>
         </div>
     </div>
 
-    <!-- Модальное окно бонус игры (Сундуки) -->
-    <div class="modal-overlay" id="bonusModal">
-        <div class="modal-content">
-            <div class="modal-title">🏴‍☠️ ПИРАТСКИЙ КЛАД!</div>
-            <div class="modal-text">Вы нашли тайник с сокровищами! Выберите один из сундуков, чтобы забрать награду:</div>
-            <div class="chests-grid">
-                <div class="chest" onclick="pickChest(this)">📦</div>
-                <div class="chest" onclick="pickChest(this)">📦</div>
-                <div class="chest" onclick="pickChest(this)">📦</div>
-            </div>
+    <!-- MACHINE -->
+    <div class="machine">
+        <div class="reels-frame">
+            <div class="reels" id="reels"></div>
         </div>
     </div>
 
-    <!-- Модальное окно риск-игры -->
-    <div class="modal-overlay" id="riskModal">
-        <div class="modal-content">
-            <div class="modal-title">🃏 РИСК-ИГРА</div>
-            <div class="modal-text" id="riskText">Угадайте, карта дилера старше или младше? Удвойте свой выигрыш!</div>
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <button class="btn-small" style="background:#27ae60; padding: 12px 20px;" onclick="chooseRisk('high')">МАСТЕР / ВЫШЕ</button>
-                <button class="btn-small" style="background:#c0392b; padding: 12px 20px;" onclick="chooseRisk('low')">НИЖЕ</button>
-            </div>
-            <button class="btn-small" style="background:#7f8c8d; margin-top: 10px; width: 100%;" onclick="closeRiskModal()">Забрать выигрыш</button>
+    <!-- BET -->
+    <div class="bet-bar">
+        <button class="bet-btn" id="betMin">MIN</button>
+        <button class="bet-btn" id="betDec">−</button>
+        <div class="bet-mid">
+            <div class="lbl" data-i18n="bet">Ставка</div>
+            <div class="val" id="betVal">9 🪙</div>
         </div>
+        <button class="bet-btn" id="betInc">+</button>
+        <button class="bet-btn" id="betMax">MAX</button>
     </div>
 
-    <script>
-        // Инициализация Telegram WebApp
-        const tg = window.Telegram.WebApp;
+    <!-- SPIN -->
+    <button class="spin-btn" id="spinBtn" data-i18n="spin">КРУТИТЬ</button>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <button class="act-btn gold" id="bonusBtn"><span class="ico">🎁</span><span data-i18n="dailyBonus">Бонус</span></button>
+        <button class="act-btn green" id="riskBtn"><span class="ico">🃏</span><span data-i18n="risk">Риск</span></button>
+        <button class="act-btn" id="starsBtn"><span class="ico">⭐</span><span data-i18n="buyStars">Stars</span></button>
+    </div>
+</div>
+
+<!-- BONUS MODAL -->
+<div class="modal" id="bonusModal">
+    <div class="modal-box">
+        <div class="modal-title" data-i18n="bonusTitle">🏴‍☠️ ПИРАТСКИЙ КЛАД</div>
+        <div class="modal-text" data-i18n="bonusText">Выберите сундук с сокровищами:</div>
+        <div class="chests">
+            <div class="chest" data-chest="0">📦</div>
+            <div class="chest" data-chest="1">📦</div>
+            <div class="chest" data-chest="2">📦</div>
+        </div>
+    </div>
+</div>
+
+<!-- RISK MODAL -->
+<div class="modal" id="riskModal">
+    <div class="modal-box">
+        <div class="modal-title" data-i18n="riskTitle">🃏 РИСК-ИГРА</div>
+        <div class="modal-text" id="riskText"></div>
+        <div class="modal-btns">
+            <button class="modal-btn green" id="riskHigher">ВЫШЕ</button>
+            <button class="modal-btn red" id="riskLower">НИЖЕ</button>
+            <button class="modal-btn gray" id="riskTake">Забрать</button>
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const LINES = 9;
+const ROWS = 3;
+const REELS = 5;
+const SYMBOLS = ['🏴‍☠️', '💎', '🦜', '🗺️', '⚓', '🗡️', '🪙', '💣'];
+const SYMBOL_WEIGHTS = { '🏴‍☠️': 2, '💎': 4, '🦜': 6, '🗺️': 8, '⚓': 12, '🗡️': 14, '🪙': 18, '💣': 18 };
+
+// Payouts [3 of kind, 4 of kind, 5 of kind] × per-line bet
+const PAYTABLE = {
+    '🏴‍☠️': [10, 40, 150],
+    '💎': [5, 20, 60],
+    '🦜': [3, 12, 40],
+    '🗺️': [2, 8, 25],
+    '⚓': [2, 6, 20],
+    '🗡️': [1, 4, 12],
+    '🪙': [1, 3, 8],
+    '💣': [1, 2, 6]
+};
+
+// 9 paylines: [[reel,row], ...]
+const PAYLINES = [
+    [[0,0],[1,0],[2,0],[3,0],[4,0]], // top
+    [[0,1],[1,1],[2,1],[3,1],[4,1]], // middle
+    [[0,2],[1,2],[2,2],[3,2],[4,2]], // bottom
+    [[0,0],[1,1],[2,2],[3,1],[4,0]], // V
+    [[0,2],[1,1],[2,0],[3,1],[4,2]], // inverted V
+    [[0,0],[1,0],[2,1],[3,2],[4,2]], // zigzag down
+    [[0,2],[1,2],[2,1],[3,0],[4,0]], // zigzag up
+    [[0,1],[1,0],[2,0],[3,0],[4,1]], // bump up
+    [[0,1],[1,2],[2,2],[3,2],[4,1]]  // bump down
+];
+
+const WEIGHTED_POOL = [];
+Object.entries(SYMBOL_WEIGHTS).forEach(([s, w]) => { for (let i = 0; i < w; i++) WEIGHTED_POOL.push(s); });
+
+/* ============================================================
+   I18N
+   ============================================================ */
+const I18N = {
+    ru: {
+        balance: 'Баланс', win: 'Выигрыш', bet: 'Ставка', spin: 'КРУТИТЬ',
+        spinActive: 'КРУТИМ...', dailyBonus: 'Бонус', risk: 'Риск', buyStars: 'Stars',
+        notEnough: 'Недостаточно монет',
+        bonusTitle: '🏴‍☠️ ПИРАТСКИЙ КЛАД', bonusText: 'Выберите сундук с сокровищами:',
+        bonusWon: 'Сундук: +{n} монет!',
+        riskTitle: '🃏 РИСК-ИГРА', riskText: 'Рискнуть выигрышем {n} 🪙? Удвойте или потеряйте всё!',
+        riskHigher: 'ВЫШЕ', riskLower: 'НИЖЕ', riskTake: 'Забрать',
+        riskWin: '🎉 Победа! Выигрыш удвоен: +{n}',
+        riskLose: '❌ Не повезло. Выигрыш потерян.',
+        riskNoWin: 'Сначала сыграйте и выиграйте!',
+        winMsg: 'Выигрыш: +{n} 🪙',
+        bigWin: '🔥 БОЛЬШОЙ ВЫИГРЫШ: +{n} 🪙!',
+        dailyClaimed: 'Бонус уже получен! Ждите 24ч',
+        dailyGot: '🎁 Ежедневный бонус: +100 монет!',
+        starsTest: '⭐ Тестовая покупка: +500 монет!',
+        soundOn: 'Звук вкл', soundOff: 'Звук выкл',
+        langChanged: 'Язык: Русский'
+    },
+    uk: {
+        balance: 'Баланс', win: 'Виграш', bet: 'Ставка', spin: 'КРУТИТИ',
+        spinActive: 'КРУТИМО...', dailyBonus: 'Бонус', risk: 'Ризик', buyStars: 'Stars',
+        notEnough: 'Недостатньо монет',
+        bonusTitle: '🏴‍☠️ ПІРАТСЬКИЙ СКАРБ', bonusText: 'Виберіть скриню зі скарбами:',
+        bonusWon: 'Скриня: +{n} монет!',
+        riskTitle: '🃏 РИЗИК-ГРА', riskText: 'Ризикнути виграшем {n} 🪙? Подвойте або втратите все!',
+        riskHigher: 'ВИЩЕ', riskLower: 'НИЖЧЕ', riskTake: 'Забрати',
+        riskWin: '🎉 Перемога! Виграш подвоєно: +{n}',
+        riskLose: '❌ Не пощастило. Виграш втрачено.',
+        riskNoWin: 'Спочатку зіграйте та виграйте!',
+        winMsg: 'Виграш: +{n} 🪙',
+        bigWin: '🔥 ВЕЛИКИЙ ВИГРАШ: +{n} 🪙!',
+        dailyClaimed: 'Бонус вже отримано! Чекайте 24г',
+        dailyGot: '🎁 Щоденний бонус: +100 монет!',
+        starsTest: '⭐ Тестова покупка: +500 монет!',
+        soundOn: 'Звук увімк', soundOff: 'Звук вимк',
+        langChanged: 'Мова: Українська'
+    },
+    en: {
+        balance: 'Balance', win: 'Win', bet: 'Bet', spin: 'SPIN',
+        spinActive: 'SPINNING...', dailyBonus: 'Bonus', risk: 'Risk', buyStars: 'Stars',
+        notEnough: 'Not enough coins',
+        bonusTitle: '🏴‍☠️ PIRATE TREASURE', bonusText: 'Choose a treasure chest:',
+        bonusWon: 'Chest: +{n} coins!',
+        riskTitle: '🃏 RISK GAME', riskText: 'Risk your win of {n} 🪙? Double or lose it all!',
+        riskHigher: 'HIGHER', riskLower: 'LOWER', riskTake: 'Take',
+        riskWin: '🎉 Win! Doubled: +{n}',
+        riskLose: '❌ No luck. Win lost.',
+        riskNoWin: 'Play and win first!',
+        winMsg: 'Win: +{n} 🪙',
+        bigWin: '🔥 BIG WIN: +{n} 🪙!',
+        dailyClaimed: 'Bonus already claimed! Wait 24h',
+        dailyGot: '🎁 Daily bonus: +100 coins!',
+        starsTest: '⭐ Test purchase: +500 coins!',
+        soundOn: 'Sound ON', soundOff: 'Sound OFF',
+        langChanged: 'Language: English'
+    }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let state = {
+    balance: 1000,
+    bet: 9,
+    lang: 'ru',
+    sound: true,
+    lastDaily: 0
+};
+let isSpinning = false;
+let pendingRiskWin = 0;
+let lastGrid = null; // last [reel][row] symbols
+
+function t(key) {
+    return (I18N[state.lang] && I18N[state.lang][key]) || I18N.ru[key] || key;
+}
+function tFmt(key, vars) {
+    let s = t(key);
+    Object.entries(vars).forEach(([k, v]) => s = s.replaceAll('{' + k + '}', v));
+    return s;
+}
+
+/* ============================================================
+   PERSISTENCE
+   ============================================================ */
+function save() {
+    try { localStorage.setItem('lucky_roger_v2', JSON.stringify(state)); } catch (e) {}
+}
+function load() {
+    try {
+        const raw = localStorage.getItem('lucky_roger_v2');
+        if (raw) Object.assign(state, JSON.parse(raw));
+    } catch (e) {}
+}
+
+/* ============================================================
+   AUDIO ENGINE
+   ============================================================ */
+let audioCtx = null;
+function unlockAudio() {
+    if (!audioCtx) {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) { return; }
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, dur, type = 'sine', vol = 0.15, delay = 0) {
+    if (!state.sound || !audioCtx) return;
+    const now = audioCtx.currentTime + delay;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(vol, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.start(now);
+    osc.stop(now + dur + 0.02);
+}
+
+function sfx(name) {
+    if (!state.sound) return;
+    unlockAudio();
+    if (!audioCtx) return;
+    switch (name) {
+        case 'click':
+            playTone(800, 0.05, 'square', 0.08);
+            break;
+        case 'spinStart':
+            playTone(220, 0.15, 'sawtooth', 0.12);
+            playTone(330, 0.15, 'sawtooth', 0.10, 0.05);
+            break;
+        case 'reelStop':
+            playTone(120, 0.08, 'triangle', 0.15);
+            break;
+        case 'win':
+            [523, 659, 784].forEach((f, i) => playTone(f, 0.18, 'sine', 0.15, i * 0.08));
+            break;
+        case 'bigwin':
+            [523, 659, 784, 1047, 1319].forEach((f, i) => playTone(f, 0.25, 'triangle', 0.18, i * 0.09));
+            break;
+        case 'lose':
+            playTone(180, 0.25, 'sine', 0.1);
+            playTone(140, 0.35, 'sine', 0.08, 0.15);
+            break;
+        case 'bonus':
+            [784, 988, 1175, 1568].forEach((f, i) => playTone(f, 0.2, 'square', 0.13, i * 0.09));
+            break;
+        case 'chest':
+            playTone(400, 0.1, 'square', 0.12);
+            playTone(800, 0.1, 'square', 0.12, 0.08);
+            playTone(1200, 0.25, 'triangle', 0.15, 0.16);
+            break;
+        case 'coin':
+            playTone(1568, 0.06, 'sine', 0.12);
+            playTone(2093, 0.1, 'sine', 0.1, 0.05);
+            break;
+    }
+}
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+function $(id) { return document.getElementById(id); }
+function fmt(n) { return Math.round(n).toLocaleString('ru-RU'); }
+
+function refreshUI() {
+    $('balanceVal').textContent = fmt(state.balance) + ' 🪙';
+    $('betVal').textContent = fmt(state.bet) + ' 🪙';
+    $('winVal').textContent = '0 🪙';
+    $('betMin').disabled = isSpinning || state.bet <= LINES;
+    $('betDec').disabled = isSpinning || state.bet <= LINES;
+    $('betInc').disabled = isSpinning || state.bet >= LINES * 100;
+    $('betMax').disabled = isSpinning || state.bet >= LINES * 100;
+    $('spinBtn').textContent = isSpinning ? t('spinActive') : t('spin');
+    $('spinBtn').disabled = isSpinning;
+    $('soundBtn').textContent = state.sound ? '🔊' : '🔇';
+    $('soundBtn').classList.toggle('off', !state.sound);
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.lang === state.lang);
+    });
+    document.documentElement.lang = state.lang;
+}
+
+function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+    });
+    $('riskHigher').textContent = t('riskHigher');
+    $('riskLower').textContent = t('riskLower');
+    $('riskTake').textContent = t('riskTake');
+    refreshUI();
+}
+
+function showNotif(msg, type = '') {
+    const n = $('notif');
+    n.textContent = msg;
+    n.className = 'notif show ' + type;
+    clearTimeout(n._t);
+    n._t = setTimeout(() => { n.className = 'notif ' + type; }, 2200);
+}
+
+/* ============================================================
+   REELS RENDERING
+   ============================================================ */
+const reelsEl = $('reels');
+let reelTracks = [];
+
+function randomSymbol() {
+    return WEIGHTED_POOL[Math.floor(Math.random() * WEIGHTED_POOL.length)];
+}
+
+function buildReels() {
+    reelsEl.innerHTML = '';
+    reelTracks = [];
+    for (let r = 0; r < REELS; r++) {
+        const reel = document.createElement('div');
+        reel.className = 'reel';
+        const track = document.createElement('div');
+        track.className = 'track';
+        // Initial 3 static random symbols
+        track.innerHTML = `<div class="cell">${randomSymbol()}</div><div class="cell">${randomSymbol()}</div><div class="cell">${randomSymbol()}</div>`;
+        reel.appendChild(track);
+        reelsEl.appendChild(reel);
+        reelTracks.push(track);
+    }
+}
+
+function setStaticResult(grid) {
+    // grid[reel][row]
+    reelTracks.forEach((track, r) => {
+        track.style.transition = 'none';
+        track.style.transform = 'translateY(0)';
+        track.innerHTML = '';
+        for (let row = 0; row < ROWS; row++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.textContent = grid[r][row];
+            track.appendChild(cell);
+        }
+    });
+}
+
+function highlightWins(winningCells) {
+    // winningCells: Set of "r,row"
+    winningCells.forEach(key => {
+        const [r, row] = key.split(',').map(Number);
+        const cell = reelTracks[r].children[row];
+        if (cell) cell.classList.add('win');
+    });
+}
+
+function clearHighlights() {
+    document.querySelectorAll('.cell.win').forEach(c => c.classList.remove('win'));
+}
+
+/* ============================================================
+   GAME LOGIC
+   ============================================================ */
+function generateGrid() {
+    const grid = [];
+    for (let r = 0; r < REELS; r++) {
+        const col = [];
+        for (let row = 0; row < ROWS; row++) {
+            col.push(randomSymbol());
+        }
+        grid.push(col);
+    }
+    return grid;
+}
+
+function calcWins(grid, perLineBet) {
+    const winningCells = new Set();
+    let totalWin = 0;
+    const lineWins = [];
+
+    PAYLINES.forEach(line => {
+        const syms = line.map(([r, row]) => grid[r][row]);
+        const first = syms[0];
+        let count = 1;
+        for (let i = 1; i < 5; i++) {
+            if (syms[i] === first) count++;
+            else break;
+        }
+        if (count >= 3) {
+            const mult = PAYTABLE[first][count - 3];
+            if (mult > 0) {
+                const win = mult * perLineBet;
+                totalWin += win;
+                lineWins.push({ sym: first, count, mult });
+                for (let i = 0; i < count; i++) {
+                    winningCells.add(`${line[i][0]},${line[i][1]}`);
+                }
+            }
+        }
+    });
+
+    return { totalWin, winningCells, lineWins };
+}
+
+/* ============================================================
+   SPIN
+   ============================================================ */
+async function spin() {
+    if (isSpinning) return;
+    if (state.balance < state.bet) {
+        showNotif(t('notEnough'), 'error');
+        sfx('lose');
+        return;
+    }
+    unlockAudio();
+    sfx('spinStart');
+
+    isSpinning = true;
+    clearHighlights();
+    state.balance -= state.bet;
+    $('winVal').textContent = '0 🪙';
+    save();
+    refreshUI();
+
+    const perLineBet = state.bet / LINES;
+    const finalGrid = generateGrid();
+
+    // Animate each reel
+    const spinPromises = reelTracks.map((track, r) => {
+        return new Promise(resolve => {
+            // Build long track with random noise + final 3 symbols
+            const fillerCount = 12;
+            let html = '';
+            for (let i = 0; i < fillerCount; i++) {
+                html += `<div class="cell">${randomSymbol()}</div>`;
+            }
+            for (let row = 0; row < ROWS; row++) {
+                html += `<div class="cell">${finalGrid[r][row]}</div>`;
+            }
+            track.style.transition = 'none';
+            track.style.transform = 'translateY(0)';
+            track.innerHTML = html;
+
+            // Force reflow
+            void track.offsetHeight;
+
+            const targetY = -(fillerCount * 73);
+            const dur = 0.55 + r * 0.18;
+            track.style.transition = `transform ${dur}s cubic-bezier(0.15, 0.85, 0.35, 1.05)`;
+            track.style.transform = `translateY(${targetY}px)`;
+
+            setTimeout(() => {
+                sfx('reelStop');
+                resolve();
+            }, dur * 1000 + 30);
+        });
+    });
+
+    await Promise.all(spinPromises);
+
+    // Freeze reels to static 3 cells (same visual)
+    setStaticResult(finalGrid);
+    lastGrid = finalGrid;
+
+    // Calculate wins
+    const { totalWin, winningCells, lineWins } = calcWins(finalGrid, perLineBet);
+
+    // Chance for bonus (3%) instead of normal win
+    const bonusRoll = Math.random();
+
+    if (totalWin > 0) {
+        state.balance += totalWin;
+        $('winVal').textContent = '+' + fmt(totalWin) + ' 🪙';
+        highlightWins(winningCells);
+
+        const bigWin = totalWin >= state.bet * 10;
+        sfx(bigWin ? 'bigwin' : 'win');
+        showNotif(bigWin ? tFmt('bigWin', { n: fmt(totalWin) }) : tFmt('winMsg', { n: fmt(totalWin) }), bigWin ? 'gold' : '');
+
+        // Offer risk game for meaningful wins
+        if (totalWin >= state.bet * 2) {
+            pendingRiskWin = totalWin;
+        }
+    } else {
+        sfx('lose');
+    }
+
+    if (bonusRoll < 0.03) {
+        setTimeout(() => triggerBonus(), 400);
+    }
+
+    isSpinning = false;
+    save();
+    refreshUI();
+}
+
+/* ============================================================
+   BONUS GAME
+   ============================================================ */
+function triggerBonus() {
+    sfx('bonus');
+    document.querySelectorAll('.chest').forEach(c => {
+        c.textContent = '📦';
+        c.classList.remove('opened');
+        c.onclick = () => pickChest(c);
+    });
+    $('bonusModal').classList.add('active');
+}
+
+function pickChest(el) {
+    if (el.classList.contains('opened')) return;
+    sfx('chest');
+    const prizes = [50, 100, 200, 300, 500, 1000];
+    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+    el.textContent = '💎';
+    el.classList.add('opened');
+    state.balance += prize;
+    save();
+    refreshUI();
+    showNotif(tFmt('bonusWon', { n: fmt(prize) }), 'gold');
+    // Reveal other chests
+    document.querySelectorAll('.chest').forEach(c => {
+        if (c !== el && !c.classList.contains('opened')) {
+            c.textContent = '🕳️';
+            c.classList.add('opened');
+        }
+    });
+    setTimeout(() => $('bonusModal').classList.remove('active'), 1500);
+}
+
+/* ============================================================
+   RISK GAME
+   ============================================================ */
+function openRisk() {
+    if (pendingRiskWin <= 0) {
+        showNotif(t('riskNoWin'), 'error');
+        return;
+    }
+    $('riskText').textContent = tFmt('riskText', { n: fmt(pendingRiskWin) });
+    $('riskModal').classList.add('active');
+}
+
+function riskChoose(win) {
+    const w = Math.random() < 0.5 ? win : !win; // 50/50
+    $('riskModal').classList.remove('active');
+    if (w) {
+        state.balance += pendingRiskWin;
+        sfx('win');
+        showNotif(tFmt('riskWin', { n: fmt(pendingRiskWin) }), 'gold');
+    } else {
+        state.balance -= pendingRiskWin;
+        sfx('lose');
+        showNotif(t('riskLose'), 'error');
+    }
+    pendingRiskWin = 0;
+    save();
+    refreshUI();
+}
+
+/* ============================================================
+   DAILY BONUS
+   ============================================================ */
+function claimDaily() {
+    const now = Date.now();
+    if (now - state.lastDaily < 24 * 3600 * 1000) {
+        showNotif(t('dailyClaimed'), 'error');
+        return;
+    }
+    state.lastDaily = now;
+    state.balance += 100;
+    save();
+    refreshUI();
+    sfx('bonus');
+    showNotif(t('dailyGot'), 'gold');
+}
+
+/* ============================================================
+   TELEGRAM STARS
+   ============================================================ */
+function buyStars() {
+    // В продакшене: запрашивайте invoiceLink у вашего Cloudflare Worker / бэкенда
+    // const res = await fetch('/api/invoice', { method: 'POST' });
+    // const { invoiceLink } = await res.json();
+    // tg.openInvoice(invoiceLink, (status) => { if (status === 'paid') credit(); });
+    const tg = window.Telegram?.WebApp;
+    if (tg && tg.openInvoice && window.LUCKY_ROGER_INVOICE) {
+        tg.openInvoice(window.LUCKY_ROGER_INVOICE, (status) => {
+            if (status === 'paid') {
+                state.balance += 1000;
+                save();
+                refreshUI();
+                showNotif('⭐ +1000 монет!', 'gold');
+            }
+        });
+    } else {
+        state.balance += 500;
+        save();
+        refreshUI();
+        sfx('coin');
+        showNotif(t('starsTest'), 'gold');
+    }
+}
+
+/* ============================================================
+   EVENT BINDINGS
+   ============================================================ */
+function bindEvents() {
+    $('betMin').onclick = () => { if (!isSpinning) { state.bet = LINES; sfx('click'); refreshUI(); save(); } };
+    $('betMax').onclick = () => { if (!isSpinning) { state.bet = LINES * 100; sfx('click'); refreshUI(); save(); } };
+    $('betDec').onclick = () => { if (!isSpinning) { state.bet = Math.max(LINES, state.bet - LINES); sfx('click'); refreshUI(); save(); } };
+    $('betInc').onclick = () => { if (!isSpinning) { state.bet = Math.min(LINES * 100, state.bet + LINES); sfx('click'); refreshUI(); save(); } };
+    $('spinBtn').onclick = () => { unlockAudio(); spin(); };
+    $('bonusBtn').onclick = () => { sfx('click'); claimDaily(); };
+    $('riskBtn').onclick = () => { sfx('click'); openRisk(); };
+    $('starsBtn').onclick = () => { sfx('click'); buyStars(); };
+    $('soundBtn').onclick = () => {
+        state.sound = !state.sound;
+        save();
+        refreshUI();
+        if (state.sound) { unlockAudio(); sfx('click'); showNotif(t('soundOn')); }
+        else { showNotif(t('soundOff'), 'error'); }
+    };
+    $('riskHigher').onclick = () => { unlockAudio(); riskChoose(true); };
+    $('riskLower').onclick = () => { unlockAudio(); riskChoose(false); };
+    $('riskTake').onclick = () => {
+        $('riskModal').classList.remove('active');
+        pendingRiskWin = 0;
+    };
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.onclick = () => {
+            state.lang = btn.dataset.lang;
+            save();
+            applyTranslations();
+            sfx('click');
+            showNotif(t('langChanged'));
+        };
+    });
+
+    // Unlock audio on ANY first tap (Web Audio API requirement)
+    document.body.addEventListener('pointerdown', unlockAudio, { once: true });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+    load();
+
+    // Auto-detect language from Telegram
+    const tg = window.Telegram?.WebApp;
+    if (tg && !state.lang) {
+        const code = tg.initDataUnsafe?.user?.language_code || 'ru';
+        if (code.startsWith('uk')) state.lang = 'uk';
+        else if (code.startsWith('ru')) state.lang = 'ru';
+        else state.lang = 'en';
+    }
+
+    if (tg) {
+        tg.ready();
         tg.expand();
+        tg.setHeaderColor?.('#0a0e17');
+        tg.setBackgroundColor?.('#0a0e17');
+    }
 
-        // Игровая экономика и состояние
-        let balance = 1000;
-        let currentBet = 9; // По 1 монете на 9 линий
-        let lastWin = 0;
-        let isSpinning = false;
-        let soundEnabled = true;
-        let pendingRiskWin = 0;
+    buildReels();
+    bindEvents();
+    applyTranslations();
+}
 
-        // Набор символов слота (эмодзи)
-        const symbols = ['🪙', '⚓', '🗡️', '🗺️', '💣', '🦜', '🏴‍☠️'];
-        // Веса символов для барабанов
-        const reelSymbolsCount = 15;
-        const numReels = 5;
-        const numRows = 3;
-
-        // Аудио движок на Web Audio API
-        let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
-
-        function playSound(type) {
-            if (!soundEnabled) return;
-            initAudio();
-            if (!audioCtx) return;
-
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            const now = audioCtx.currentTime;
-
-            if (type === 'spin') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(120, now);
-                osc.frequency.exponentialRampToValueAtTime(40, now + 0.08);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-                osc.start(now);
-                osc.stop(now + 0.08);
-            } else if (type === 'win') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.setValueAtTime(450, now + 0.1);
-                osc.frequency.setValueAtTime(600, now + 0.2);
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                osc.start(now);
-                osc.stop(now + 0.4);
-            } else if (type === 'bonus') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(500, now);
-                osc.frequency.setValueAtTime(750, now + 0.15);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            }
-        }
-
-        function toggleAudio() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundBtn').innerText = soundEnabled ? '🔊 Звук' : '🔇 Звук OFF';
-            showNotification(soundEnabled ? 'Звук включен' : 'Звук выключен');
-        }
-
-        // Инициализация барабанов в DOM
-        const reelsGrid = document.getElementById('reelsGrid');
-        let reelElements = [];
-
-        function createReels() {
-            reelsGrid.innerHTML = '';
-            reelElements = [];
-            for (let i = 0; i < numReels; i++) {
-                const reelDiv = document.createElement('div');
-                reelDiv.className = 'reel';
-                const trackDiv = document.createElement('div');
-                trackDiv.className = 'symbols-track';
-                
-                // Наполняем начальными символами
-                let html = '';
-                for (let j = 0; j < reelSymbolsCount; j++) {
-                    html += `<div class="symbol">${getRandomSymbol()}</div>`;
-                }
-                trackDiv.innerHTML = html;
-                reelDiv.appendChild(trackDiv);
-                reelsGrid.appendChild(reelDiv);
-                reelElements.push(trackDiv);
-            }
-        }
-
-        function getRandomSymbol() {
-            return symbols[Math.floor(Math.random() * symbols.length)];
-        }
-
-        // Управление ставкой
-        function changeBet(delta) {
-            if (isSpinning) return;
-            currentBet += delta;
-            if (currentBet < 9) currentBet = 9;
-            if (currentBet > 90) currentBet = 90;
-            document.getElementById('betDisplay').innerText = currentBet + ' 🪙';
-        }
-
-        // Запуск вращения
-        function startSpin() {
-            if (isSpinning) return;
-            if (balance < currentBet) {
-                showNotification('Недостаточно монет! Пополните баланс.');
-                return;
-            }
-
-            balance -= currentBet;
-            updateDisplay();
-            isSpinning = true;
-            document.getElementById('spinButton').disabled = true;
-            document.getElementById('winDisplay').innerText = '0 🪙';
-
-            let activeReels = numReels;
-
-            reelElements.forEach((track, index) => {
-                // Генерируем случайный победный набор для этого барабана
-                let newSymbols = [];
-                for(let k=0; k < 12; k++) {
-                    newSymbols.push(getRandomSymbol());
-                }
-                
-                // Финальные 3 символа ряда
-                const finalResult = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
-                newSymbols.push(finalResult[0], finalResult[1], finalResult[2]);
-
-                let html = '';
-                newSymbols.forEach(sym => {
-                    html += `<div class="symbol">${sym}</div>`;
-                });
-                track.innerHTML = html;
-
-                // Крутим с задержкой для каждого барабана
-                const targetOffset = -(newSymbols.length - 3) * 73;
-                track.style.transition = `transform ${0.6 + index * 0.2}s cubic-bezier(0.15, 0.85, 0.35, 1.2)`;
-                track.style.transform = `translateY(${targetOffset}px)`;
-
-                setTimeout(() => {
-                    playSound('spin');
-                    activeReels--;
-                    if (activeReels === 0) {
-                        checkWin();
-                    }
-                }, 600 + index * 200);
-            });
-        }
-
-        // Проверка выигрыша
-        function checkWin() {
-            isSpinning = false;
-            document.getElementById('spinButton').disabled = false;
-
-            // Простая имитация выигрыша для динамики (RTP ~92%)
-            let winMultiplier = 0;
-            const rand = Math.random();
-
-            if (rand < 0.35) {
-                winMultiplier = Math.random() < 0.5 ? 1 : 2;
-            } else if (rand < 0.42) {
-                winMultiplier = 5;
-            } else if (rand === 0.45) {
-                // Триггер бонус игры (Сундуки)
-                triggerBonusGame();
-                return;
-            }
-
-            lastWin = currentBet * winMultiplier;
-
-            if (lastWin > 0) {
-                balance += lastWin;
-                document.getElementById('winDisplay').innerText = lastWin + ' 🪙';
-                playSound('win');
-                showNotification(`Выигрыш: ${lastWin} монет!`);
-                
-                // Предложить риск игру при хорошем выигрыше
-                if (lastWin >= currentBet * 2) {
-                    setTimeout(() => openRiskModal(lastWin), 800);
-                }
-            }
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            document.getElementById('balanceDisplay').innerText = balance + ' 🪙';
-        }
-
-        // Ежедневный бонус
-        function claimDailyBonus() {
-            const lastClaim = localStorage.getItem('lucky_roger_last_claim');
-            const now = new Date().getTime();
-
-            if (lastClaim && now - lastClaim < 24 * 60 * 60 * 1000) {
-                showNotification('Бонус уже получен! Ждите 24 часа.');
-                return;
-            }
-
-            balance += 100;
-            localStorage.setItem('lucky_roger_last_claim', now);
-            updateDisplay();
-            playSound('bonus');
-            showNotification('🎁 +100 монет получено!');
-        }
-
-        // Бонус игра: Сундуки
-        function triggerBonusGame() {
-            playSound('bonus');
-            document.getElementById('bonusModal').classList.add('active');
-        }
-
-        function pickChest(element) {
-            const prizes = [50, 100, 250, 500];
-            const prize = prizes[Math.floor(Math.random() * prizes.length)];
-            element.innerHTML = '💎';
-            balance += prize;
-            updateDisplay();
-            playSound('win');
-            showNotification(`Сундук принес ${prize} монет!`);
-            
-            setTimeout(() => {
-                document.getElementById('bonusModal').classList.remove('active');
-                element.innerHTML = '📦'; // сброс
-            }, 1200);
-        }
-
-        // Риск игра
-        function openRiskModal(winAmount) {
-            pendingRiskWin = winAmount;
-            document.getElementById('riskText').innerText = `Рискнуть выигрышем ${winAmount} 🪙? Угадайте карту дилера!`;
-            document.getElementById('riskModal').classList.add('active');
-        }
-
-        function chooseRisk(choice) {
-            const won = Math.random() < 0.5;
-            document.getElementById('riskModal').classList.remove('active');
-
-            if (won) {
-                pendingRiskWin *= 2;
-                balance += pendingRiskWin;
-                playSound('win');
-                showNotification(`🎉 Победа в риске! Выигрыш удвоен: ${pendingRiskWin}`);
-            } else {
-                balance -= pendingRiskWin;
-                showNotification('❌ Дилер победил. Вы потеряли выигрыш.');
-            }
-            updateDisplay();
-        }
-
-        function closeRiskModal() {
-            document.getElementById('riskModal').classList.remove('active');
-        }
-
-        // Покупка фишек за Telegram Stars
-        function buyStars() {
-            if (tg.openInvoice) {
-                // Интеграция со счетами Telegram Stars (XTR)
-                showNotification('Открытие счета Telegram Stars...');
-                // Здесь вызывается invoice бэкенда, заглушка для теста:
-                setTimeout(() => {
-                    balance += 500;
-                    updateDisplay();
-                    showNotification('⭐ Успешно куплено +500 монет!');
-                }, 1000);
-            } else {
-                // Тестовый режим в браузере
-                balance += 500;
-                updateDisplay();
-                showNotification('⭐ Тестовая покупка: +500 монет зачислено!');
-            }
-        }
-
-        function showNotification(text) {
-            const notif = document.getElementById('notification');
-            notif.innerText = text;
-            notif.classList.add('show');
-            setTimeout(() => {
-                notif.classList.remove('show');
-            }, 2500);
-        }
-
-        // Первый запуск генерации барабанов
-        createReels();
-        updateDisplay();
-    </script>
+init();
+</script>
 </body>
 </html>
