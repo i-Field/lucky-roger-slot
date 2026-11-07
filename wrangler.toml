@@ -1,2 +1,5 @@
-name = "lucky-roger"
-pages_build_output_dir = "."
+name = "lucky-roger-slot"
+compatibility_date = "2024-01-01"
+
+[assets]
+directory = "./"
