@@ -1,9 +1,7 @@
-// worker.js
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // Обработка API для оплаты
     if (url.pathname === '/api/invoice' && request.method === 'POST') {
       try {
         const body = await request.json();
@@ -18,7 +16,10 @@ export default {
         
         const pkg = ALLOWED[packageId];
         if (!pkg || pkg.stars !== stars) {
-          return new Response(JSON.stringify({ error: 'Invalid package' }), { status: 400 });
+          return new Response(JSON.stringify({ error: 'Invalid package' }), { 
+            status: 400, 
+            headers: { 'Content-Type': 'application/json' }
+          });
         }
 
         const tgResponse = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/createInvoiceLink`, {
@@ -47,7 +48,7 @@ export default {
       }
     }
 
-    // Для всех остальных запросов отдаём статические файлы
+    // Отдаем игру
     return env.ASSETS.fetch(request);
   }
 };
