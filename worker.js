@@ -38,41 +38,81 @@ export default {
       } catch(e) { return new Response('[]', { headers: { 'Content-Type': 'application/json' } }); }
     }
 
-    if (url.pathname === '/api/balance' && request.method === 'POST') {
+    // ПРИВЯЗКА КОШЕЛЬКА
+    if (url.pathname === '/api/connect_wallet' && request.method === 'POST') {
       try {
-        const { initData } = await request.json();
+        const { initData, wallet } = await request.json();
         if (!await validateTelegramData(initData, env.BOT_TOKEN)) return new Response('Forbidden', { status: 403 });
         const userId = JSON.parse(new URLSearchParams(initData).get('user')).id;
+        await env.LUCKY_DB.put(`wallet_${userId}`, wallet);
+        return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
+      } catch(e) { return new Response(JSON.stringify({ error: e.message }), { status: 500 }); }
+    }
+
+    if (url.pathname === '/api/balance' && request.method === 'POST') {
+      try {
+        const { initData, startParam } = await request.json();
+        if (!await validateTelegramData(initData, env.BOT_TOKEN)) return new Response('Forbidden', { status: 403 });
+        
+        const userObj = JSON.parse(new URLSearchParams(initData).get('user'));
+        const userId = userObj.id;
         
         let balance = await env.LUCKY_DB.get(`user_${userId}`);
-        if (balance === null) { balance = 1000; await env.LUCKY_DB.put(`user_${userId}`, balance.toString()); }
+        
+        // РЕФЕРАЛЬНАЯ СИСТЕМА
+        if (balance === null) {
+          balance = 1000;
+          await env.LUCKY_DB.put(`user_${userId}`, balance.toString());
+          
+          // Если пришел по рефке
+          if (startParam && startParam.startsWith('ref_')) {
+            const referrerId = startParam.replace('ref_', '');
+            if (referrerId !== userId.toString()) {
+              let refBal = parseInt(await env.LUCKY_DB.get(`user_${referrerId}`) || '0');
+              await env.LUCKY_DB.put(`user_${referrerId}`, (refBal + 5000).toString());
+              let refCount = parseInt(await env.LUCKY_DB.get(`refcount_${referrerId}`) || '0');
+              await env.LUCKY_DB.put(`refcount_${referrerId}`, (refCount + 1).toString());
+            }
+          }
+        }
         
         let jackpot = await env.LUCKY_DB.get('global_jackpot');
         if (jackpot === null) { jackpot = 50000; await env.LUCKY_DB.put('global_jackpot', jackpot.toString()); }
+        
+        let wallet = await env.LUCKY_DB.get(`wallet_${userId}`) || '';
+        let refCount = await env.LUCKY_DB.get(`refcount_${userId}`) || '0';
+        let spins = await env.LUCKY_DB.get(`spins_${userId}`) || '0';
 
-        return new Response(JSON.stringify({ balance: parseInt(balance), jackpot: parseInt(jackpot) }), { headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ 
+          balance: parseInt(balance), 
+          jackpot: parseInt(jackpot),
+          wallet: wallet,
+          refCount: parseInt(refCount),
+          spins: parseInt(spins)
+        }), { headers: { 'Content-Type': 'application/json' } });
       } catch(e) { return new Response(JSON.stringify({ error: e.message }), { status: 500 }); }
     }
 
     if (url.pathname === '/api/spin' && request.method === 'POST') {
       try {
-        // 🔥 ИСПРАВЛЕНИЕ ЗДЕСЬ: заменили const на let, чтобы можно было прибавить джекпот
         let { initData, newBalance, betAmount } = await request.json();
-        
         if (!await validateTelegramData(initData, env.BOT_TOKEN)) return new Response('Forbidden', { status: 403 });
         const userId = JSON.parse(new URLSearchParams(initData).get('user')).id;
         
+        // Считаем спины для заданий
+        let spins = parseInt(await env.LUCKY_DB.get(`spins_${userId}`) || '0');
+        await env.LUCKY_DB.put(`spins_${userId}`, (spins + 1).toString());
+
         let jackpot = parseInt(await env.LUCKY_DB.get('global_jackpot') || '50000');
-        jackpot += Math.floor(betAmount * 0.02); // 2% в джекпот
+        jackpot += Math.floor(betAmount * 0.02); 
         
         let jackpotWon = false;
         let winAmount = 0;
         
-        // Шанс выиграть джекпот (0.1%)
         if (Math.random() < 0.001) { 
           jackpotWon = true;
           winAmount = jackpot;
-          newBalance += jackpot; // Теперь это работает, т.к. newBalance - это let
+          newBalance += jackpot;
           jackpot = 50000; 
         }
         
