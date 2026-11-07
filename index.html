@@ -19,6 +19,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .sound-btn.off{color:var(--muted);opacity:.6}
 .title-box{text-align:center;padding:4px 0 2px}
 .title{font-size:26px;font-weight:900;letter-spacing:3px;color:#ffd966;font-family:Georgia,serif;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 12px rgba(212,175,55,.5)}
+.jackpot-bar{background:linear-gradient(180deg,#2a1a0a,#1a0e05);border:2px solid var(--gold);border-radius:12px;padding:6px 12px;text-align:center;box-shadow:0 0 15px rgba(212,175,55,.4);position:relative;overflow:hidden;animation:jackpotPulse 2s infinite alternate}
+@keyframes jackpotPulse{0%{box-shadow:0 0 10px rgba(212,175,55,.4)}100%{box-shadow:0 0 25px rgba(212,175,55,.8)}}
+.jackpot-bar .lbl{font-size:10px;color:#ffd966;text-transform:uppercase;letter-spacing:2px;font-weight:900}
+.jackpot-bar .val{font-size:22px;font-weight:900;color:#fff;text-shadow:0 0 10px #ffd966;font-variant-numeric:tabular-nums}
 .balance-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
@@ -116,9 +120,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .start-btn{width:100%;background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 0 #0f3d22;position:relative;z-index:10}
 .start-btn.muted{background:linear-gradient(180deg,#576574,#2c3a52);box-shadow:0 4px 0 #1a2333;font-size:13px;padding:11px}
 .start-btn:active{transform:translateY(3px);box-shadow:none}
+.age-badge{position:fixed;bottom:8px;left:8px;background:rgba(0,0,0,.6);color:#ffb84d;font-size:10px;font-weight:900;padding:2px 6px;border-radius:4px;border:1px solid #ffb84d;z-index:997;pointer-events:none}
 </style>
 </head>
 <body>
+
+<div class="age-badge">18+</div>
 
 <div class="start-overlay" id="startOverlay">
   <div class="start-box">
@@ -127,6 +134,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
     <div class="start-sub" data-i18n="startSub">Пиратский слот с сокровищами</div>
     <button class="start-btn" id="startSound">🔊 <span data-i18n="startSound">Играть со звуком</span></button>
     <button class="start-btn muted" id="startMute">🔇 <span data-i18n="startMute">Без звука</span></button>
+    <div style="margin-top:16px;font-size:9px;color:#8899aa;line-height:1.3;">Это социальная игра. Виртуальные монеты не имеют денежной стоимости и не подлежат выводу.</div>
   </div>
 </div>
 
@@ -139,7 +147,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
     </div>
     <button class="sound-btn" id="soundBtn">🔊</button>
   </div>
+  
   <div class="title-box"><div class="title">LUCKY ROGER</div></div>
+  
+  <div class="jackpot-bar" id="jackpotBar">
+    <div class="lbl">💰 ДЖЕКПОТ 💰</div>
+    <div class="val" id="jackpotVal">50 000 🪙</div>
+  </div>
+
   <div class="balance-bar">
     <div class="stat"><span class="lbl" data-i18n="balance">Баланс</span><span class="val" id="balanceVal">1000 🪙</span></div>
     <div class="stat right win"><span class="lbl" data-i18n="win">Выигрыш</span><span class="val" id="winVal">0 🪙</span></div>
@@ -230,6 +245,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
   </div>
 </div>
 
+<div class="modal" id="jackpotModal">
+  <div class="modal-box" style="border-color:#ffd966; background:radial-gradient(circle at top, #4a2a0a, #1a0e05);">
+    <div style="font-size:60px; margin-bottom:10px; animation:winFlash 0.5s infinite alternate;">💰</div>
+    <div class="modal-title" style="font-size:26px; color:#ffd966;">ДЖЕКПОТ!</div>
+    <div class="modal-text" style="font-size:16px; color:#fff;">Вы сорвали главный куш!</div>
+    <div class="modal-title" style="font-size:32px; color:#2ecc71;" id="jackpotWinAmount">+50 000 🪙</div>
+    <button class="modal-btn gold" style="background:linear-gradient(180deg,#ffd966,#b8860b); color:#1a1200; margin-top:20px;" onclick="closeModal('jackpotModal')">ЗАБРАТЬ</button>
+  </div>
+</div>
+
 <div class="notif" id="notif"></div>
 
 <script>
@@ -244,10 +269,9 @@ const CONFIG = {
 };
 
 const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
-const AUTO_STOP_TIME = 7000; // 7 секунд
+const AUTO_STOP_TIME = 7000;
 
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
-// Настроил веса чуть щедрее для выигрышей
 const WEIGHTS={'🏴‍☠️':3,'💎':5,'🦜':8,'🗺️':10,'⚓':14,'🗡️':16,'🪙':24,'💣':12};
 const PAYTABLE={'🏴‍☠️':[10,40,150],'💎':[5,20,60],'🦜':[3,12,40],'🗺️':[2,8,25],'⚓':[2,6,20],'🗡️':[1,4,12],'🪙':[1,3,8],'💣':[1,2,6]};
 const PAYLINES=[
@@ -269,6 +293,7 @@ const I18N={
 };
 
 let state={balance:1000,betPerLine:1,lines:9,lang:'ru',sound:true,lastDaily:0};
+let globalJackpot = 50000;
 let isSpinning=false, pendingRisk=0, stopRequested=false, autoStopTimer=null;
 const reelsEl=document.getElementById('reels');
 const overlay=document.getElementById('linesOverlay');
@@ -283,6 +308,10 @@ function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{
 function save(){try{localStorage.setItem('lucky_v16',JSON.stringify(state))}catch(e){}}
 function load(){try{const r=localStorage.getItem('lucky_v16');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
+
+function updateJackpotUI() {
+  $('jackpotVal').textContent = fmt(globalJackpot) + ' 🪙';
+}
 
 function haptic(type) {
   const tg = window.Telegram?.WebApp;
@@ -375,7 +404,6 @@ function buildAudio() {
   });
   for (let i = 0; i < 5; i++) reelStopPool.push(createAudio(stopUrl, 0.9));
 
-  // 🎵 Уникальные звуки для каждого символа
   SFX.winPirate = createAudio(makeWav(1.2, t => {
     let v = 0;
     [[392,0],[523,0.12],[659,0.24],[784,0.36],[1047,0.48]].forEach(([f,s]) => {
@@ -545,30 +573,24 @@ function buildReels(){
   }
 }
 
-/* ============================================================
-   🎰 РЕАЛИСТИЧНАЯ АНИМАЦИЯ (rAF)
-   ============================================================ */
 let reelAnimFrames = [null, null, null, null, null];
 let reelPositions = [0, 0, 0, 0, 0];
 
 function startReelSpin(r) {
   const track = tracks[r];
-  // Генерируем очень длинную ленту, чтобы крутилось долго
   let html = '';
   for (let i = 0; i < 40; i++) html += `<div class="cell">${randSym()}</div>`;
   track.innerHTML = html;
   
   let lastTime = performance.now();
-  const speed = 2000; // пикселей в секунду
+  const speed = 2000;
   
   function frame(now) {
-    if (!isSpinning) return; // Если остановили, выходим из цикла
+    if (!isSpinning) return;
     const dt = (now - lastTime) / 1000;
     lastTime = now;
     
     reelPositions[r] -= speed * dt;
-    
-    // Зацикливаем: если уехали на 20 клеток вниз, возвращаем наверх
     if (reelPositions[r] <= -(20 * CELL_H)) {
       reelPositions[r] += 20 * CELL_H;
     }
@@ -582,34 +604,25 @@ function startReelSpin(r) {
 function stopReelAnim(r, final3) {
   return new Promise(resolve => {
     setTimeout(() => {
-      cancelAnimationFrame(reelAnimFrames[r]); // Останавливаем цикл
+      cancelAnimationFrame(reelAnimFrames[r]);
       
       const track = tracks[r];
       const currentY = reelPositions[r];
       
-      // Теперь формируем правильную ленту, которая будет тормозить
       let html = '';
-      // Добавляем рандомные символы сверху, чтобы не было пустоты
       for (let i = 0; i < 15; i++) html += `<div class="cell">${randSym()}</div>`;
-      // Добавляем выигрышные символы
       final3.forEach(s => html += `<div class="cell">${s}</div>`);
-      // И еще немного снизу
       for (let i = 0; i < 5; i++) html += `<div class="cell">${randSym()}</div>`;
       track.innerHTML = html;
       
-      // Ставим трек в текущую позицию, где он был (модуль 15 клеток)
       let startY = currentY % (15 * CELL_H);
       if(startY > 0) startY -= 15 * CELL_H;
       
       track.style.transition = 'none';
       track.style.transform = `translate3d(0, ${startY}px, 0)`;
-      track.getBoundingClientRect(); // рефлоу
+      track.getBoundingClientRect();
       
-      // Едем вниз до финальных символов (они на позиции -15 клеток)
-      // Сделаем несколько оборотов для красоты
       let targetY = -15 * CELL_H;
-      
-      // Длительность торможения (с задержкой по очереди для барабанов)
       const dur = 800 + r * 200; 
       
       track.style.transition = `transform ${dur}ms cubic-bezier(0.1, 0.8, 0.2, 1)`;
@@ -628,7 +641,7 @@ function stopReelAnim(r, final3) {
         haptic('light');
         resolve();
       }, dur + 50);
-    }, r * 200); // Задержка старта остановки
+    }, r * 200);
   });
 }
 
@@ -661,7 +674,6 @@ function calcWins(grid,perLine){
         total+=win;
         wins.push({idx,line,sym:first,count,mult,win});
         for(let i=0;i<count;i++) cells.add(`${line[i][0]},${line[i][1]}`);
-        // Добавляем звук этой линии
         if (WIN_SOUND[first]) winSounds.push(WIN_SOUND[first]);
       }
     }
@@ -795,6 +807,7 @@ function refresh(){
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===state.lang));
   document.querySelectorAll('.lp').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.lines)===state.lines));
   document.documentElement.lang=state.lang;
+  updateJackpotUI();
 }
 function applyI18n(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
@@ -840,11 +853,9 @@ async function startSpinAction() {
   setTimeout(()=>{ if (isSpinning) startReelLoop(); }, 150);
   haptic('medium');
   
-  // Сбрасываем позиции перед стартом
   reelPositions = [0, 0, 0, 0, 0];
   tracks.forEach((tr, i) => startReelSpin(i));
   
-  // Автостоп через 7 секунд
   autoStopTimer = setTimeout(() => requestStop(), AUTO_STOP_TIME);
 }
 
@@ -859,7 +870,6 @@ async function requestStop() {
   const perLine = state.betPerLine;
   const finalGrid = genGrid();
   
-  // Останавливаем по очереди
   await Promise.all(tracks.map((tr, i) => stopReelAnim(i, finalGrid[i])));
   
   const {total,cells,wins,winSounds} = calcWins(finalGrid, perLine);
@@ -867,8 +877,6 @@ async function requestStop() {
   if (total > 0) {
     state.balance += total;
     $('winVal').textContent = '+' + fmt(total) + ' 🪙';
-    
-    // Подсвечиваем клетки
     cells.forEach(key=>{
       const [r,row]=key.split(',').map(Number);
       const c=tracks[r].children[row];
@@ -876,11 +884,10 @@ async function requestStop() {
     });
     setTimeout(()=>drawWinLines(wins), 150);
     
-    // 🎵 Проигрываем звуки выигравших линий по очереди
     let delay = 200;
     winSounds.forEach(snd => {
       setTimeout(() => { sfx(snd); haptic('success'); }, delay);
-      delay += 300; // Задержка между звуками линий
+      delay += 300;
     });
 
     const ratio = total / bet;
@@ -896,6 +903,28 @@ async function requestStop() {
   
   isSpinning = false;
   save(); refresh();
+
+  try {
+    const tg = window.Telegram?.WebApp;
+    const res = await fetch('/api/spin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData, newBalance: state.balance, betAmount: bet })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      globalJackpot = data.jackpot;
+      updateJackpotUI();
+      
+      if (data.jackpotWon) {
+        state.balance = data.newBalance;
+        save(); refresh();
+        sfx('bigwin'); haptic('heavy');
+        $('jackpotWinAmount').textContent = '+' + fmt(data.winAmount) + ' 🪙';
+        $('jackpotModal').classList.add('active');
+      }
+    }
+  } catch(e) { console.error('Ошибка синхронизации джекпота', e); }
 }
 
 /* ============================================================
@@ -1111,7 +1140,6 @@ async function init() {
     const code = tg.initDataUnsafe?.user?.language_code;
     if (code) state.lang = code.startsWith('uk') ? 'uk' : code.startsWith('ru') ? 'ru' : 'en';
     
-    // Скачиваем реальный баланс с сервера
     try {
       const res = await fetch('/api/balance', {
         method: 'POST',
@@ -1122,6 +1150,9 @@ async function init() {
       if (data.balance !== undefined) {
         state.balance = data.balance;
         save();
+      }
+      if (data.jackpot !== undefined) {
+        globalJackpot = data.jackpot;
       }
     } catch(e) { console.error('Balance sync error:', e); }
   }
