@@ -432,67 +432,6 @@ function buildAudio() {
 
   audioReady = true;
 }
-  
-
-  const stopUrl = makeWav(0.12, t => {
-    const thump = Math.sin(2*Math.PI*80*t) * Math.exp(-t*20) * 0.5;
-    const click = (Math.random()*2-1) * Math.exp(-t*80) * 0.3;
-    return thump + click;
-  });
-  for (let i = 0; i < 5; i++) {
-    reelStopPool.push(createAudio(stopUrl, 0.7));
-  }
-
-  SFX.win = createAudio(makeWav(0.5, t => {
-    let v = 0;
-    [[523,0],[659,0.09],[784,0.18]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*8); });
-    return v * 0.42;
-  }), 0.7);
-  SFX.mediumWin = createAudio(makeWav(0.75, t => {
-    let v = 0;
-    [[523,0],[659,0.1],[784,0.2],[1047,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*6); });
-    return v * 0.4;
-  }), 0.7);
-  SFX.bigwin = createAudio(makeWav(1.2, t => {
-    let v = 0;
-    [[523,0],[659,0.1],[784,0.2],[1047,0.32],[1319,0.44],[1568,0.56]].forEach(([f,s]) => {
-      if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4) * 1.1;
-    });
-    return v * 0.36;
-  }), 0.8);
-  SFX.lose = createAudio(makeWav(0.55, t => {
-    const v1 = t<0.28 ? Math.sin(2*Math.PI*220*t)*Math.exp(-t*6) : 0;
-    const v2 = t>=0.28 ? Math.sin(2*Math.PI*165*(t-0.28))*Math.exp(-(t-0.28)*6) : 0;
-    return (v1+v2)*0.32;
-  }), 0.6);
-  SFX.bonus = createAudio(makeWav(0.9, t => {
-    let v = 0;
-    [[784,0],[988,0.1],[1175,0.2],[1568,0.32]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
-    return v * 0.44;
-  }), 0.8);
-  SFX.chest = createAudio(makeWav(0.55, t => {
-    let v = 0;
-    [[400,0],[800,0.08],[1200,0.16],[1600,0.24]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*9); });
-    return v * 0.4;
-  }), 0.7);
-  SFX.coin = createAudio(makeWav(0.25, t => {
-    const v1 = Math.sin(2*Math.PI*1568*t)*Math.exp(-t*12);
-    const v2 = t>0.05 ? Math.sin(2*Math.PI*2093*(t-0.05))*Math.exp(-(t-0.05)*9) : 0;
-    return (v1+v2)*0.42;
-  }), 0.7);
-  SFX.riskWin = createAudio(makeWav(0.65, t => {
-    let v = 0;
-    [[659,0],[880,0.12],[1175,0.24],[1568,0.36]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
-    return v * 0.42;
-  }), 0.7);
-  SFX.riskLose = createAudio(makeWav(0.7, t => {
-    let v = 0;
-    [[440,0],[349,0.15],[262,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4); });
-    return v * 0.36;
-  }), 0.6);
-
-  audioReady = true;
-}
 
 function warmupAudio() {
   const all = [...Object.values(SFX), ...reelStopPool];
