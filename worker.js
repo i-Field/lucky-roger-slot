@@ -25,7 +25,6 @@ export default {
       return new Response(JSON.stringify(await res.json()), { headers: { 'Content-Type': 'application/json' } });
     }
 
-    // ТАБЛИЦА ЛИДЕРОВ
     if (url.pathname === '/api/leaderboard') {
       try {
         const list = await env.LUCKY_DB.list({ prefix: 'user_' });
@@ -57,7 +56,9 @@ export default {
 
     if (url.pathname === '/api/spin' && request.method === 'POST') {
       try {
-        const { initData, newBalance, betAmount } = await request.json();
+        // 🔥 ИСПРАВЛЕНИЕ ЗДЕСЬ: заменили const на let, чтобы можно было прибавить джекпот
+        let { initData, newBalance, betAmount } = await request.json();
+        
         if (!await validateTelegramData(initData, env.BOT_TOKEN)) return new Response('Forbidden', { status: 403 });
         const userId = JSON.parse(new URLSearchParams(initData).get('user')).id;
         
@@ -71,7 +72,7 @@ export default {
         if (Math.random() < 0.001) { 
           jackpotWon = true;
           winAmount = jackpot;
-          newBalance += jackpot;
+          newBalance += jackpot; // Теперь это работает, т.к. newBalance - это let
           jackpot = 50000; 
         }
         
