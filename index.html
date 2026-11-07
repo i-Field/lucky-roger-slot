@@ -6,24 +6,21 @@
 <title>Lucky Roger</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#0a0e17;--panel:#1a2333;--panel2:#232e42;--gold:#d4af37;--goldL:#ffd966;--goldD:#8a6d1a;--red:#c0392b;--green:#27ae60;--text:#f0f4f8;--muted:#8899aa}
+:root{--bg:#0a0e17;--panel:#1a2333;--panel2:#232e42;--gold:#d4af37;--goldL:#ffd966;--goldD:#8a6d1a;--red:#c0392b;--green:#27ae60;--text:#f0f4f8;--muted:#8899aa;--purple:#af52de}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
-
-/* ИСПОЛЬЗУЕМ 100dvh ДЛЯ ТОЧНОЙ ВЫСОТЫ БЕЗ СКРОЛЛА */
 html,body{height:100%;overflow:hidden;}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  background:radial-gradient(ellipse at top,#1a2744 0%,#0a0e17 70%);
-  color:var(--text);display:flex;justify-content:center;
-  height:100dvh;padding:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom));
-}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:radial-gradient(ellipse at top,#1a2744 0%,#0a0e17 70%);color:var(--text);display:flex;justify-content:center;height:100dvh;padding:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom))}
 .app{width:100%;max-width:440px;display:flex;flex-direction:column;justify-content:space-between;height:100%;gap:4px}
 
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:2px}
+.left-top{display:flex;gap:4px;align-items:center}
+.right-top{display:flex;gap:4px;align-items:center}
 .lang-switch{display:flex;gap:4px;background:var(--panel);border:1px solid #2c3a52;border-radius:8px;padding:2px}
 .lang-btn{background:transparent;color:var(--muted);border:none;padding:4px 8px;font-size:10px;font-weight:800;border-radius:5px;cursor:pointer}
 .lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--goldD));color:#1a1200}
-.sound-btn{background:var(--panel);border:1px solid #2c3a52;color:var(--gold);padding:6px 10px;border-radius:8px;font-size:14px;cursor:pointer}
+.icon-btn{background:var(--panel);border:1px solid #2c3a52;color:var(--goldL);padding:6px 10px;border-radius:8px;font-size:14px;cursor:pointer;position:relative}
+.red-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#e74c3c;border-radius:50%;border:1px solid #fff;display:none}
+.red-dot.show{display:block}
 
 .title-box{text-align:center;padding:2px 0}
 .title{font-size:22px;font-weight:900;letter-spacing:2px;color:#ffd966;font-family:Georgia,serif;text-shadow:0 0 10px #ffd966,0 0 20px rgba(255,217,102,.5)}
@@ -39,21 +36,10 @@ body{
 .stat .val{font-size:15px;font-weight:900;color:var(--goldL)}
 .stat.win .val{color:var(--green)}
 
-/* ГОЛОГРАФИЧЕСКИЙ АВТОМАТ */
-.machine{
-  background: linear-gradient(135deg, rgba(0, 255, 255, 0.05), rgba(255, 0, 255, 0.05), rgba(255, 217, 102, 0.05));
-  background-size: 200% 200%;
-  animation: holoBg 4s ease infinite;
-  border: 2px solid rgba(0, 255, 255, 0.4);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(255, 0, 255, 0.2), 0 5px 20px rgba(0,0,0,0.8);
-  border-radius: 12px; padding: 6px; position: relative; overflow: hidden;
-  flex-shrink: 0;
-}
+.machine{background:linear-gradient(135deg, rgba(0, 255, 255, 0.05), rgba(255, 0, 255, 0.05), rgba(255, 217, 102, 0.05));background-size: 200% 200%;animation: holoBg 4s ease infinite;border: 2px solid rgba(0, 255, 255, 0.4);box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(255, 0, 255, 0.2), 0 5px 20px rgba(0,0,0,0.8);border-radius: 12px; padding: 6px; position: relative; overflow: hidden; flex-shrink: 0;}
 @keyframes holoBg { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-
 .reels-frame{background:linear-gradient(180deg,#050810,#1a1f2c);border-radius:8px;padding:4px;box-shadow:inset 0 0 20px #000;}
 .reels{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:relative;z-index:1}
-/* ЖЕСТКО ФИКСИРУЕМ ВЫСОТУ БАРАБАНА ПОД 3 СИМВОЛА */
 .reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:4px;height:223px;overflow:hidden;position:relative;box-shadow:inset 0 8px 10px -4px rgba(0,0,0,.7),inset 0 -8px 10px -4px rgba(0,0,0,.7);clip-path:inset(0)}
 .reel::before{content:"";position:absolute;left:0;right:0;top:0;height:25px;background:linear-gradient(180deg,rgba(0,0,0,.8),transparent);z-index:3;pointer-events:none}
 .reel::after{content:"";position:absolute;left:0;right:0;bottom:0;height:25px;background:linear-gradient(0deg,rgba(0,0,0,.8),transparent);z-index:3;pointer-events:none}
@@ -64,7 +50,6 @@ body{
 .cell.win::before{content:"";position:absolute;inset:4px;border:2px solid #ffd966;border-radius:6px;background:radial-gradient(circle,rgba(255,217,102,.7),rgba(255,217,102,.15) 70%);pointer-events:none;box-shadow:0 0 10px rgba(255,217,102,1)}
 .lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
 
-/* КОМПАКТНЫЕ ПАНЕЛИ УПРАВЛЕНИЯ */
 .lines-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:8px;padding:4px 6px;display:flex;flex-direction:column;gap:4px}
 .lines-row{display:grid;grid-template-columns:36px 1fr 36px;gap:4px;align-items:center}
 .lines-arrow{background:#253247;color:var(--goldL);border:1px solid #455872;border-radius:6px;height:28px;font-size:16px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -87,7 +72,6 @@ body{
 .bet-total{font-size:10px;color:var(--muted);text-align:center;font-weight:700}
 .bet-total b{color:var(--goldL);font-size:12px}
 
-/* КНОПКА SPIN С 18+ */
 .spin-wrapper{position:relative;width:100%;display:flex;align-items:center;justify-content:center;margin-top:2px}
 .spin-btn{width:100%;background:linear-gradient(180deg,#e74c3c 0%,#c0392b 45%,#7a1c11 100%);border:2px solid #ff8a7a;color:#fff;font-size:20px;font-weight:900;letter-spacing:2px;padding:12px;border-radius:12px;cursor:pointer;text-shadow:0 2px 2px rgba(0,0,0,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 0 #4d0e07,0 6px 10px rgba(0,0,0,.5)}
 .spin-btn:active:not(:disabled){transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #4d0e07}
@@ -95,8 +79,8 @@ body{
 .spin-btn.stop-mode{background:linear-gradient(180deg,#f39c12 0%,#d35400 45%,#8a3400 100%);border-color:#ffb84d}
 .age-badge{position:absolute;right:6px;bottom:6px;background:linear-gradient(180deg,#ff4d4d,#b30000);color:#fff;font-size:12px;font-weight:900;padding:2px 6px;border-radius:6px;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.8);pointer-events:none}
 
-.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:2px}
-.act-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:8px;padding:6px 2px;font-size:9px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 2px 0 #0f1722}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:2px}
+.act-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:8px;padding:6px 2px;font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 2px 0 #0f1722}
 .act-btn:active{transform:translateY(1px);box-shadow:none}
 .act-btn .ico{font-size:16px}
 .act-btn.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0}
@@ -134,21 +118,23 @@ body{
 .modal-btn.red{background:#e74c3c}
 .modal-btn.gray{background:#576574}
 
-/* ЛИДЕРБОРД */
-.lb-list{width:100%;display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
-.lb-item{display:flex;justify-content:space-between;align-items:center;background:#1a2333;padding:8px 12px;border-radius:6px;border:1px solid #3a4a60}
-.lb-item.top-1{border-color:#ffd966;background:linear-gradient(90deg,#2a1a0a,#1a2333)}
-.lb-item.top-2{border-color:#bdc3c7}
-.lb-item.top-3{border-color:#d35400}
-.lb-place{font-size:14px;font-weight:900;color:var(--goldL);width:24px;text-align:left}
-.lb-name{font-size:12px;font-weight:700;flex:1;text-align:left;padding-left:8px;color:#fff}
-.lb-bal{font-size:13px;font-weight:900;color:var(--green)}
+/* ПРОФИЛЬ И ДРУЗЬЯ */
+.profile-card{background:#1a2333;border:1px solid #3a4a60;border-radius:10px;padding:15px;margin-bottom:10px}
+.p-avatar{font-size:50px;margin-bottom:10px}
+.p-name{font-size:16px;font-weight:900;color:#fff;margin-bottom:5px}
+.p-wallet{font-size:11px;color:var(--muted);font-family:monospace;background:#0a0e17;padding:6px;border-radius:6px;margin-bottom:10px;word-break:break-all}
+.p-status{font-size:12px;color:var(--green);font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px}
+.ref-link-box{display:flex;gap:5px;margin-top:10px}
+.ref-input{flex:1;background:#0a0e17;border:1px solid #3a4a60;color:#fff;padding:8px;border-radius:6px;font-size:11px}
+.ref-btn{background:var(--gold);color:#1a1200;border:none;padding:8px 12px;border-radius:6px;font-weight:800;cursor:pointer}
 
-/* NFT */
-.nft-card{background:linear-gradient(135deg,#1a0e05,#3a1a0a);border:2px solid #af52de;border-radius:12px;padding:15px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden}
-.nft-img{font-size:50px;margin-bottom:8px;filter:drop-shadow(0 0 15px #af52de)}
-.nft-title{color:#af52de;font-weight:900;font-size:16px;margin-bottom:4px}
-.nft-desc{color:#8899aa;font-size:11px;margin-bottom:12px}
+/* ЗАДАНИЯ */
+.task-item{display:flex;justify-content:space-between;align-items:center;background:#1a2333;padding:10px;border-radius:8px;border:1px solid #3a4a60;margin-bottom:6px}
+.task-info{text-align:left}
+.task-title{font-size:13px;font-weight:800;color:#fff}
+.task-reward{font-size:11px;color:var(--goldL)}
+.task-btn{background:var(--green);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer}
+.task-btn:disabled{background:#576574;color:#8899aa}
 
 .notif{position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:#27ae60;color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:800;box-shadow:0 5px 15px rgba(0,0,0,.5);transition:top .3s;z-index:999;max-width:90vw;text-align:center}
 .notif.show{top:15px}
@@ -180,12 +166,17 @@ body{
 
 <div class="app">
   <div class="topbar">
-    <div class="lang-switch">
-      <button class="lang-btn" data-lang="uk">UKR</button>
-      <button class="lang-btn active" data-lang="ru">RUS</button>
-      <button class="lang-btn" data-lang="en">ENG</button>
+    <div class="left-top">
+      <div class="lang-switch">
+        <button class="lang-btn" data-lang="uk">UKR</button>
+        <button class="lang-btn active" data-lang="ru">RUS</button>
+        <button class="lang-btn" data-lang="en">ENG</button>
+      </div>
     </div>
-    <button class="sound-btn" id="soundBtn">🔊</button>
+    <div class="right-top">
+      <button class="icon-btn" id="profileBtn">👤</button>
+      <button class="icon-btn" id="soundBtn">🔊</button>
+    </div>
   </div>
   
   <div class="title-box"><div class="title">LUCKY ROGER</div></div>
@@ -245,14 +236,73 @@ body{
 
   <div class="actions">
     <button class="act-btn gold" id="bonusBtn"><span class="ico">🎁</span>Бонус</button>
-    <button class="act-btn green" id="riskBtn"><span class="ico">🃏</span>Риск</button>
     <button class="act-btn blue" id="shopBtn"><span class="ico">⭐</span>Магазин</button>
-    <button class="act-btn purple" id="nftBtn"><span class="ico">💎</span>NFT</button>
-    <button class="act-btn" id="topBtn"><span class="ico">🏆</span>ТОП</button>
+    <button class="act-btn green" id="riskBtn"><span class="ico">🃏</span>Риск</button>
+    <button class="act-btn" id="tasksBtn" style="background:linear-gradient(180deg,#f39c12,#d35400);border-color:#ffb84d;position:relative"><span class="ico">📜</span>Задания<div class="red-dot show" id="tasksDot"></div></button>
+    <button class="act-btn purple" id="friendsBtn"><span class="ico">🤝</span>Друзья</button>
+    <button class="act-btn" id="topBtn" style="background:linear-gradient(180deg,#8e44ad,#5b2c6f);border-color:#9b59b6"><span class="ico">🏆</span>ТОП</button>
   </div>
 </div>
 
 <!-- МОДАЛКИ -->
+<div class="modal" id="profileModal">
+  <div class="modal-box">
+    <div class="modal-title" style="color:#3498db;">👤 ПРОФИЛЬ</div>
+    <div class="profile-card">
+      <div class="p-avatar">🏴‍☠️</div>
+      <div class="p-name" id="pName">Игрок</div>
+      <div class="p-wallet" id="pWallet">Кошелек не привязан</div>
+      <div class="p-status" id="pStatus" style="display:none;">✅ Кошелек подключен</div>
+      <button class="modal-btn green" style="width:100%; margin-top:10px;" id="connectWalletBtn">Привязать TON</button>
+    </div>
+    <button class="modal-close" onclick="closeModal('profileModal')">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="friendsModal">
+  <div class="modal-box">
+    <div class="modal-title" style="color:#2ecc71;">🤝 ДРУЗЬЯ</div>
+    <div class="modal-text">Приглашайте друзей и получайте по <b>5000 монет</b> за каждого!</div>
+    <div class="profile-card" style="text-align:center;">
+      <div style="font-size:40px; margin-bottom:10px;">🎁</div>
+      <div style="font-size:16px; font-weight:900; color:#fff; margin-bottom:5px;">Приглашено: <span id="refCountVal" style="color:#2ecc71;">0</span></div>
+      <div class="ref-link-box">
+        <input type="text" class="ref-input" id="refLinkInput" readonly value="https://t.me/LUCKY_RODGER_BOT?start=...">
+        <button class="ref-btn" id="copyRefBtn">Копировать</button>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeModal('friendsModal')">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="tasksModal">
+  <div class="modal-box">
+    <div class="modal-title" style="color:#f39c12;">📜 ЗАДАНИЯ</div>
+    <div class="task-item">
+      <div class="task-info">
+        <div class="task-title">Сделай 10 спинов</div>
+        <div class="task-reward">Награда: 1000 🪙</div>
+      </div>
+      <button class="task-btn" id="taskSpinBtn" onclick="claimTask('spin')">Забрать</button>
+    </div>
+    <div class="task-item">
+      <div class="task-info">
+        <div class="task-title">Подпишись на канал</div>
+        <div class="task-reward">Награда: 2000 🪙</div>
+      </div>
+      <button class="task-btn" style="background:#3498db;" onclick="window.open('https://t.me/telegram', '_blank')">Перейти</button>
+    </div>
+    <div class="task-item">
+      <div class="task-info">
+        <div class="task-title">Купи 100 звезд</div>
+        <div class="task-reward">Награда: 5000 🪙</div>
+      </div>
+      <button class="task-btn" style="background:var(--gold); color:#000;" onclick="closeModal('tasksModal'); openShop();">В магазин</button>
+    </div>
+    <button class="modal-close" onclick="closeModal('tasksModal')">Закрыть</button>
+  </div>
+</div>
+
 <div class="modal" id="topModal">
   <div class="modal-box">
     <div class="modal-title">🏆 ТОП-10 ИГРОКОВ</div>
@@ -261,23 +311,9 @@ body{
   </div>
 </div>
 
-<div class="modal" id="nftModal">
-  <div class="modal-box">
-    <div class="modal-title" style="color:#af52de;">💎 КОЛЛЕКЦИЯ NFT</div>
-    <div class="nft-card">
-      <div class="nft-img">🏴‍☠️</div>
-      <div class="nft-title">Lucky Roger Genesis</div>
-      <div class="nft-desc">Эксклюзивный статус от создателя игры. Привяжите TON кошелек, чтобы получить этот NFT в подарок и золотой статус в игре.</div>
-      <button class="modal-btn purple" style="background:linear-gradient(180deg,#9b59b6,#6c3483); width:100%;" onclick="mintNFT()">Привязать кошелек TON</button>
-    </div>
-    <button class="modal-close" onclick="closeModal('nftModal')">Закрыть</button>
-  </div>
-</div>
-
 <div class="modal" id="paytableModal">
   <div class="modal-box">
     <div class="modal-title">📋 ТАБЛИЦА ВЫПЛАТ</div>
-    <div class="modal-text">Выплаты за 1 монету ставки</div>
     <table class="pt-table"><thead><tr><th></th><th>×3</th><th>×4</th><th>×5</th></tr></thead><tbody id="ptBody"></tbody></table>
     <button class="modal-close" onclick="closeModal('paytableModal')">Закрыть</button>
   </div>
@@ -362,7 +398,7 @@ const I18N={
   en:{balance:'Balance',win:'Win',bet:'Bet',betPerLine:'Bet / line',totalBet:'Total',lines:'Lines',spin:'SPIN',spinActive:'SPINNING...',spinStop:'STOP',dailyBonus:'Bonus',risk:'Risk',shop:'Shop',paytable:'Payouts',startSub:'Pirate slot with treasures',startSound:'Play with sound',startMute:'Muted',notEnough:'Not enough coins',bonusTitle:'🏴‍☠️ PIRATE TREASURE',bonusText:'Pick a chest:',bonusWon:'Chest: +{n} 🪙!',riskTitle:'🃏 RISK GAME',riskText:'Risk {n} 🪙? Double or lose!',riskHigher:'HIGHER',riskLower:'LOWER',riskTake:'Take',riskWin:'🎉 Win! +{n}',riskLose:'❌ No luck.',riskNoWin:'Win first!',winMsg:'Win: +{n} 🪙',bigWin:'🔥 BIG WIN: +{n} 🪙!',dailyClaimed:'Bonus already claimed! Wait 24h',dailyGot:'🎁 Daily bonus: +100 🪙!',soundOn:'Sound ON',soundOff:'Sound OFF',langChanged:'Language: English',paytableTitle:'📋 PAYTABLE',paytableHint:'Payouts per 1 coin of line bet',close:'Close',shopTitle:'⭐ COIN SHOP',shopHint:'Purchase with Telegram Stars',paySuccess:'⭐ Payment received! +{n} 🪙',payTest:'⭐ Test: +{n} 🪙',payError:'Failed to create invoice'}
 };
 
-let state={balance:1000,betPerLine:1,lines:9,lang:'ru',sound:true,lastDaily:0};
+let state={balance:1000,betPerLine:1,lines:9,lang:'ru',sound:true,lastDaily:0, spins:0, refCount:0, wallet:''};
 let globalJackpot = 50000;
 let isSpinning=false, pendingRisk=0, stopRequested=false, autoStopTimer=null;
 const reelsEl=document.getElementById('reels');
@@ -375,8 +411,8 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_v16',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_v16');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_v17',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_v17');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
 function updateJackpotUI() {
@@ -599,7 +635,18 @@ function refresh(){
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===state.lang));
   document.querySelectorAll('.lp').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.lines)===state.lines));
   document.documentElement.lang=state.lang; updateJackpotUI();
+  
+  // Обновляем данные профиля
+  $('pWallet').textContent = state.wallet || 'Кошелек не привязан';
+  $('pStatus').style.display = state.wallet ? 'flex' : 'none';
+  $('connectWalletBtn').style.display = state.wallet ? 'none' : 'block';
+  $('refCountVal').textContent = state.refCount;
+  
+  // Задание на спины
+  if (state.spins >= 10) { $('taskSpinBtn').disabled = false; $('taskSpinBtn').textContent = 'Забрать'; }
+  else { $('taskSpinBtn').disabled = true; $('taskSpinBtn').textContent = `${state.spins}/10`; }
 }
+
 function applyI18n(){ document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)}); $('riskHigher').textContent=t('riskHigher'); $('riskLower').textContent=t('riskLower'); $('riskTake').textContent=t('riskTake'); refresh(); }
 function notif(msg,type=''){ const n=$('notif'); n.textContent=msg; n.className='notif show '+type; clearTimeout(n._t); n._t=setTimeout(()=>{n.className='notif '+type},2400); }
 function closeModal(id){ $(id).classList.remove('active'); }
@@ -644,6 +691,8 @@ async function requestStop() {
     const data = await res.json();
     if (data.ok) {
       globalJackpot = data.jackpot; updateJackpotUI();
+      state.spins++; // Увеличиваем счетчик для заданий
+      save(); refresh();
       if (data.jackpotWon) {
         state.balance = data.newBalance; save(); refresh(); sfx('bigwin'); haptic('heavy');
         $('jackpotWinAmount').textContent = '+' + fmt(data.winAmount) + ' 🪙'; $('jackpotModal').classList.add('active');
@@ -704,29 +753,91 @@ function openTop() {
     });
   }).catch(() => { lbList.innerHTML = '<div style="color:#e74c3c;text-align:center;padding:20px;">Ошибка загрузки</div>'; });
 }
-function openNFT() { $('nftModal').classList.add('active'); }
-function mintNFT() { notif('Кошелек TON привязан! NFT скоро появится', 'gold'); closeModal('nftModal'); }
+
+function openFriends() {
+  const tg = window.Telegram?.WebApp;
+  const userId = tg?.initDataUnsafe?.user?.id || '123';
+  const botLink = `https://t.me/LUCKY_RODGER_BOT?start=ref_${userId}`;
+  $('refLinkInput').value = botLink;
+  $('friendsModal').classList.add('active');
+}
+
+function copyRef() {
+  const copyText = $('refLinkInput');
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(copyText.value);
+  notif('Ссылка скопирована!', 'success');
+  haptic('light');
+}
+
+function openTasks() {
+  $('tasksDot').classList.remove('show'); // Убираем красную точку
+  $('tasksModal').classList.add('active');
+}
+
+function claimTask(type) {
+  if (type === 'spin') {
+    if (state.spins >= 10) {
+      state.spins = 0; // Сбрасываем
+      state.balance += 1000;
+      save(); refresh();
+      notif('Награда получена: +1000 🪙', 'gold');
+      sfx('coin'); haptic('success');
+      closeModal('tasksModal');
+    }
+  }
+}
+
+function openProfile() { $('profileModal').classList.add('active'); }
+
+function connectWallet() {
+  // Имитация подключения TON кошелька
+  const mockWallet = 'UQByTa' + Math.random().toString(36).substring(2, 15).toUpperCase();
+  state.wallet = mockWallet;
+  save(); refresh();
+  sfx('coin'); haptic('success');
+  notif('Кошелек TON успешно привязан!', 'gold');
+  
+  const tg = window.Telegram?.WebApp;
+  fetch('/api/connect_wallet', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ initData: tg?.initData || '', wallet: mockWallet })
+  }).catch(e => console.error(e));
+}
 
 function bind(){
   $('startSound').addEventListener('pointerdown',(e)=>{ e.preventDefault(); state.sound=true; save(); buildAudio(); warmupAudio(); setTimeout(()=>{ try{ playSfx('winPirate'); }catch(e){} }, 30); haptic('success'); setTimeout(()=>{ $('startOverlay').classList.add('hidden'); refresh(); }, 200); });
   $('startMute').addEventListener('pointerdown',(e)=>{ e.preventDefault(); state.sound=false; save(); buildAudio(); $('startOverlay').classList.add('hidden'); refresh(); });
+  
   $('linesDec').onclick=()=>changeLines(state.lines-1); $('linesInc').onclick=()=>changeLines(state.lines+1);
   document.querySelectorAll('.lp').forEach(b=>{ b.onclick=()=>changeLines(parseInt(b.dataset.lines)); });
+  
   $('betMin').onclick=()=>{ if(!isSpinning){state.betPerLine=1; sfx('click'); haptic('light'); save(); refresh()} };
   $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=1000; sfx('click'); haptic('light'); save(); refresh()} };
   $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); sfx('click'); haptic('light'); save(); refresh()} };
   $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(1000,state.betPerLine+1); sfx('click'); haptic('light'); save(); refresh()} };
+  
   $('spinBtn').onclick=()=>{ handleSpinClick(); };
   $('bonusBtn').onclick=()=>{ sfx('click'); haptic('light'); claimDaily(); };
   $('riskBtn').onclick=()=>{ sfx('click'); haptic('light'); openRisk(); };
   $('shopBtn').onclick=()=>{ sfx('click'); haptic('light'); openShop(); };
-  $('nftBtn').onclick=()=>{ sfx('click'); haptic('light'); openNFT(); };
   $('topBtn').onclick=()=>{ sfx('click'); haptic('light'); openTop(); };
+  $('tasksBtn').onclick=()=>{ sfx('click'); haptic('light'); openTasks(); };
+  $('friendsBtn').onclick=()=>{ sfx('click'); haptic('light'); openFriends(); };
+  $('profileBtn').onclick=()=>{ sfx('click'); haptic('light'); openProfile(); };
+  
+  $('copyRefBtn').onclick=()=>{ copyRef(); };
+  $('connectWalletBtn').onclick=()=>{ connectWallet(); };
+  
   $('soundBtn').onclick=()=>{ state.sound=!state.sound; if(state.sound){ buildAudio(); warmupAudio(); sfx('click'); haptic('light'); notif(t('soundOn')); } else { stopReelLoop(); notif(t('soundOff'),'error'); } save(); refresh(); };
   $('riskHigher').onclick=()=>riskChoose(true); $('riskLower').onclick=()=>riskChoose(false);
   $('riskTake').onclick=()=>{ $('riskModal').classList.remove('active'); pendingRisk=0; };
+  
   document.querySelectorAll('.lang-btn').forEach(b=>{ b.onclick=()=>{ state.lang=b.dataset.lang; save(); applyI18n(); sfx('click'); haptic('light'); notif(t('langChanged')); }; });
   document.querySelectorAll('.modal').forEach(m=>{ m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('active'); }); });
+  
   window.addEventListener('resize',()=>{ if(overlay.innerHTML && !isSpinning) clearLines(); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden) stopReelLoop(); });
 }
@@ -736,11 +847,30 @@ async function init() {
   if (tg) {
     tg.ready(); tg.expand(); tg.setHeaderColor?.('#0a0e17'); tg.setBackgroundColor?.('#0a0e17');
     const code = tg.initDataUnsafe?.user?.language_code; if (code) state.lang = code.startsWith('uk') ? 'uk' : code.startsWith('ru') ? 'ru' : 'en';
+    
+    // Меняем имя в профиле
+    if (tg.initDataUnsafe?.user?.first_name) {
+      $('pName').textContent = tg.initDataUnsafe.user.first_name;
+    }
+
     try {
-      const res = await fetch('/api/balance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ initData: tg.initData }) });
+      // Передаем start_param для рефералки
+      const startParam = tg.initDataUnsafe?.start_param || '';
+      const res = await fetch('/api/balance', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ initData: tg.initData, startParam: startParam }) 
+      });
       const data = await res.json();
       if (data.balance !== undefined) { state.balance = data.balance; save(); }
       if (data.jackpot !== undefined) { globalJackpot = data.jackpot; }
+      if (data.wallet !== undefined) { state.wallet = data.wallet; }
+      if (data.refCount !== undefined) { state.refCount = data.refCount; }
+      if (data.spins !== undefined) { state.spins = data.spins; }
+      
+      // Показываем красную точку на заданиях, если есть что забрать
+      if (state.spins >= 10) { $('tasksDot').classList.add('show'); }
+      
     } catch(e) { console.error('Balance sync error:', e); }
   }
   buildReels(); bind(); applyI18n();
