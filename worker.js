@@ -19,14 +19,26 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // Установка вебхука
     if (url.pathname === '/api/setup-webhook') {
       const webhookUrl = `https://lucky-roger-slot.qx420.workers.dev/api/webhook`;
       const res = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/setWebhook?url=${webhookUrl}`);
       return new Response(JSON.stringify(await res.json()), { headers: { 'Content-Type': 'application/json' } });
     }
 
-    // Получение баланса и текущего джекпота
+    // ТАБЛИЦА ЛИДЕРОВ
+    if (url.pathname === '/api/leaderboard') {
+      try {
+        const list = await env.LUCKY_DB.list({ prefix: 'user_' });
+        let users = [];
+        for (let key of list.keys) {
+          let bal = await env.LUCKY_DB.get(key.name);
+          if (bal) users.push({ id: key.name.replace('user_', ''), balance: parseInt(bal) });
+        }
+        users.sort((a, b) => b.balance - a.balance);
+        return new Response(JSON.stringify(users.slice(0, 10)), { headers: { 'Content-Type': 'application/json' } });
+      } catch(e) { return new Response('[]', { headers: { 'Content-Type': 'application/json' } }); }
+    }
+
     if (url.pathname === '/api/balance' && request.method === 'POST') {
       try {
         const { initData } = await request.json();
@@ -43,7 +55,6 @@ export default {
       } catch(e) { return new Response(JSON.stringify({ error: e.message }), { status: 500 }); }
     }
 
-    // Синхронизация после спина (сбор в джекпот и проверка выигрыша)
     if (url.pathname === '/api/spin' && request.method === 'POST') {
       try {
         const { initData, newBalance, betAmount } = await request.json();
@@ -51,30 +62,26 @@ export default {
         const userId = JSON.parse(new URLSearchParams(initData).get('user')).id;
         
         let jackpot = parseInt(await env.LUCKY_DB.get('global_jackpot') || '50000');
+        jackpot += Math.floor(betAmount * 0.02); // 2% в джекпот
         
-        // 1. Пополняем джекпот на 2% от ставки
-        jackpot += Math.floor(betAmount * 0.02);
-        
-        // 2. Шанс выиграть джекпот (0.1% на спин)
         let jackpotWon = false;
         let winAmount = 0;
         
+        // Шанс выиграть джекпот (0.1%)
         if (Math.random() < 0.001) { 
           jackpotWon = true;
           winAmount = jackpot;
           newBalance += jackpot;
-          jackpot = 50000; // Сбрасываем джекпот до базы
+          jackpot = 50000; 
         }
         
-        // Сохраняем новый баланс и джекпот
         await env.LUCKY_DB.put(`user_${userId}`, newBalance.toString());
         await env.LUCKY_DB.put('global_jackpot', jackpot.toString());
 
-        return new Response(JSON.stringify({ ok: true, jackpot, jackpotWon, winAmount }), { headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ ok: true, jackpot, jackpotWon, winAmount, newBalance }), { headers: { 'Content-Type': 'application/json' } });
       } catch(e) { return new Response(JSON.stringify({ error: e.message }), { status: 500 }); }
     }
 
-    // Создание счета Stars
     if (url.pathname === '/api/invoice' && request.method === 'POST') {
       try {
         const { initData, packageId } = await request.json();
@@ -92,7 +99,6 @@ export default {
       } catch(e) { return new Response(JSON.stringify({ error: e.message }), { status: 500 }); }
     }
 
-    // Вебхук от Telegram
     if (url.pathname === '/api/webhook' && request.method === 'POST') {
       try {
         const update = await request.json();
