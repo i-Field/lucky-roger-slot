@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Lucky Roger V15</title>
+<title>Lucky Roger V16</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0a0e17;--panel:#1a2333;--panel2:#232e42;--gold:#d4af37;--goldL:#ffd966;--goldD:#8a6d1a;--red:#c0392b;--green:#27ae60;--text:#f0f4f8;--muted:#8899aa}
@@ -12,6 +11,7 @@
 html,body{height:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:radial-gradient(ellipse at top,#1a2744 0%,#0a0e17 70%);background-attachment:fixed;color:var(--text);display:flex;justify-content:center;min-height:100vh;overflow-x:hidden;padding:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}
 .app{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px}
+
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;gap:6px}
 .lang-switch{display:flex;gap:4px;background:var(--panel);border:1px solid #2c3a52;border-radius:8px;padding:3px}
 .lang-btn{background:transparent;color:var(--muted);border:none;padding:5px 9px;font-size:11px;font-weight:800;border-radius:5px;cursor:pointer}
@@ -20,26 +20,118 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .sound-btn.off{color:var(--muted);opacity:.6}
 .title-box{text-align:center;padding:4px 0 2px}
 .title{font-size:26px;font-weight:900;letter-spacing:3px;color:#ffd966;font-family:Georgia,serif;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 12px rgba(212,175,55,.5)}
+
 .balance-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .stat{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
 .stat .val{font-size:17px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .stat.right{text-align:right}
 .stat.win .val{color:var(--green)}
-.machine{background:radial-gradient(ellipse at 50% 0,rgba(255,217,102,.08),transparent 60%),linear-gradient(180deg,#2d1d0f 0%,#1a0e05 100%);border:3px solid;border-image:linear-gradient(180deg,#ffe9a0,#b8860b,#ffe9a0) 1;border-radius:16px;padding:12px 10px 10px;box-shadow:0 0 0 1px #000,0 10px 30px rgba(0,0,0,.7),inset 0 0 40px rgba(0,0,0,.5);position:relative}
-.machine::before,.machine::after{content:"✦";position:absolute;font-size:20px;color:var(--gold);opacity:.7;text-shadow:0 0 8px rgba(212,175,55,.6)}
+
+/* ===== МАШИНА 3D ===== */
+.machine{background:radial-gradient(ellipse at 50% 0,rgba(255,217,102,.1),transparent 60%),linear-gradient(180deg,#3d2814 0%,#1a0e05 100%);border:4px solid;border-image:linear-gradient(180deg,#ffe9a0,#b8860b,#8a6d1a,#b8860b,#ffe9a0) 1;border-radius:18px;padding:14px 10px 10px;box-shadow:0 0 0 2px #000,0 14px 40px rgba(0,0,0,.8),inset 0 0 50px rgba(0,0,0,.6);position:relative}
+.machine::before,.machine::after{content:"✦";position:absolute;font-size:22px;color:var(--gold);opacity:.8;text-shadow:0 0 10px rgba(255,217,102,.9)}
 .machine::before{top:4px;left:8px}.machine::after{top:4px;right:8px}
-.reels-frame{background:linear-gradient(180deg,#050810,#1a1f2c);border-radius:10px;padding:6px;box-shadow:inset 0 4px 12px rgba(0,0,0,.9),0 0 0 1px #3a4a5c;position:relative}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:relative;z-index:1}
-.reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:6px;height:219px;overflow:hidden;position:relative;box-shadow:inset 0 8px 12px -6px rgba(0,0,0,.6),inset 0 -8px 12px -6px rgba(0,0,0,.6),0 0 0 1px #5a4a2a;clip-path:inset(0)}
-.reel::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
-.reel::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
-.reel-flash{position:absolute;inset:0;background:rgba(255,255,255,0);pointer-events:none;z-index:4;border-radius:6px;transition:background .1s}
-.reel-flash.flash{background:rgba(255,255,255,.85)}
-.track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0)}
-.cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0}
-.cell.win::before{content:"";position:absolute;inset:4px;border:2px solid #ffd966;border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.6),rgba(255,217,102,.15) 70%);pointer-events:none;box-shadow:0 0 10px rgba(255,217,102,.8)}
-.lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
+
+.reels-frame{
+  background:linear-gradient(180deg,#000 0%,#0a1220 50%,#000 100%);
+  border-radius:10px;padding:8px;
+  box-shadow:inset 0 8px 20px rgba(0,0,0,1),inset 0 -8px 20px rgba(0,0,0,1),0 0 0 2px #1a2434,0 4px 12px rgba(0,0,0,.8);
+  position:relative;
+}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;position:relative;z-index:1}
+
+/* БАРАБАН с 3D-эффектом */
+.reel{
+  position:relative;height:219px;overflow:hidden;
+  background:
+    /* Тёмная шапка сверху */
+    linear-gradient(180deg,
+      #000 0%,
+      #0a0a0a 6%,
+      #1a1a1a 12%,
+      #2a2420 18%,
+      #4a3f30 24%,
+      #d4c8a8 32%,
+      #f0e6c8 45%,
+      #f5edd0 50%,
+      #f0e6c8 55%,
+      #d4c8a8 68%,
+      #4a3f30 76%,
+      #2a2420 82%,
+      #1a1a1a 88%,
+      #0a0a0a 94%,
+      #000 100%
+    );
+  border-radius:6px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.9),0 0 0 1px #5a4a2a,0 0 0 2px #1a0e05;
+  clip-path:inset(0 round 6px);
+}
+
+/* Верхняя и нижняя тени (объём) */
+.reel::before,.reel::after{
+  content:"";position:absolute;left:0;right:0;height:35%;pointer-events:none;z-index:5;
+}
+.reel::before{top:0;background:linear-gradient(180deg,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 20%,rgba(0,0,0,.3) 60%,transparent 100%)}
+.reel::after{bottom:0;background:linear-gradient(0deg,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 20%,rgba(0,0,0,.3) 60%,transparent 100%)}
+
+/* Стеклянный блик */
+.reel-glass{
+  position:absolute;inset:0;pointer-events:none;z-index:6;
+  background:linear-gradient(115deg,
+    transparent 30%,
+    rgba(255,255,255,.12) 42%,
+    rgba(255,255,255,.22) 48%,
+    rgba(255,255,255,.12) 54%,
+    transparent 66%
+  );
+  border-radius:6px;
+}
+
+/* Слой маски для плавного края */
+.reel-mask{
+  position:absolute;inset:0;pointer-events:none;z-index:4;
+  background:linear-gradient(180deg,
+    rgba(10,18,32,.6) 0%,
+    transparent 20%,
+    transparent 80%,
+    rgba(10,18,32,.6) 100%
+  );
+}
+
+.reel-flash{position:absolute;inset:0;background:rgba(255,255,255,0);pointer-events:none;z-index:7;border-radius:6px;transition:background .08s}
+.reel-flash.flash{background:rgba(255,217,102,.9)}
+
+/* TRACK — сам трек с символами */
+.track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0);will-change:transform;z-index:2}
+.track.spinning{animation:reelSpin 0.28s linear infinite}
+
+/* КЛЮЧЕВОЙ МОМЕНТ: 3D-эффект на клетки */
+.cell{
+  height:73px;display:flex;align-items:center;justify-content:center;
+  font-size:46px;line-height:1;position:relative;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  flex-shrink:0;
+  text-shadow:0 2px 4px rgba(0,0,0,.5);
+}
+
+.cell.win::before{
+  content:"";position:absolute;inset:5px;border:2px solid #ffd966;border-radius:8px;
+  background:radial-gradient(circle,rgba(255,217,102,.7),rgba(255,217,102,.2) 70%);
+  pointer-events:none;
+  box-shadow:0 0 14px rgba(255,217,102,.9),inset 0 0 14px rgba(255,217,102,.6);
+  animation:winFlash .4s ease-in-out infinite alternate;
+}
+@keyframes winFlash{0%{opacity:.6}100%{opacity:1}}
+
+/* Анимация кручения — быстро, но повторяемо */
+@keyframes reelSpin {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -1095px, 0); }
+}
+
+/* SPIN/STOP кнопка */
+.lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:visible}
 .lines-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .lines-row{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center}
 .lines-arrow{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--goldL);border:1px solid #455872;border-radius:8px;width:40px;height:36px;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 2px 0 #0f1722;display:flex;align-items:center;justify-content:center}
@@ -62,9 +154,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .bet-mid .val{font-size:17px;font-weight:900;color:var(--goldL);font-variant-numeric:tabular-nums}
 .bet-total{font-size:11px;color:var(--muted);text-align:center;margin-top:4px;font-weight:700}
 .bet-total b{color:var(--goldL);font-size:13px}
-.spin-btn{background:linear-gradient(180deg,#e74c3c 0%,#c0392b 45%,#7a1c11 100%);border:2px solid #ff8a7a;color:#fff;font-size:22px;font-weight:900;letter-spacing:3px;padding:16px;border-radius:14px;cursor:pointer;text-shadow:0 2px 2px rgba(0,0,0,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #4d0e07,0 10px 20px rgba(0,0,0,.5)}
+
+/* SPIN/STOP кнопка */
+.spin-btn{
+  background:linear-gradient(180deg,#e74c3c 0%,#c0392b 45%,#7a1c11 100%);
+  border:2px solid #ff8a7a;color:#fff;font-size:22px;font-weight:900;letter-spacing:3px;
+  padding:16px;border-radius:14px;cursor:pointer;text-shadow:0 2px 2px rgba(0,0,0,.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #4d0e07,0 10px 20px rgba(0,0,0,.5);
+  transition:background .15s;
+}
 .spin-btn:active:not(:disabled){transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 0 #4d0e07}
-.spin-btn:disabled{filter:grayscale(.7) brightness(.6);cursor:not-allowed}
+.spin-btn.stop-mode{
+  background:linear-gradient(180deg,#f39c12 0%,#d35400 45%,#8a3400 100%);
+  border-color:#ffb84d;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #5a2200,0 10px 20px rgba(0,0,0,.5);
+  animation:stopPulse 0.7s ease-in-out infinite alternate;
+}
+@keyframes stopPulse{0%{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #5a2200,0 10px 20px rgba(0,0,0,.5),0 0 0 rgba(243,156,18,0)}100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 0 #5a2200,0 10px 20px rgba(0,0,0,.5),0 0 25px rgba(243,156,18,.7)}}
+
 .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .act-btn{background:linear-gradient(180deg,#3a4a60,#253247);color:var(--text);border:1px solid #455872;border-radius:10px;padding:10px 4px;font-size:10px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 3px 0 #0f1722,0 4px 8px rgba(0,0,0,.4)}
 .act-btn:active{transform:translateY(2px);box-shadow:none}
@@ -72,7 +179,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .act-btn.gold{background:linear-gradient(180deg,#ffd966,#b8860b);color:#1a1200;border-color:#ffe9a0;box-shadow:0 3px 0 #5a4410}
 .act-btn.green{background:linear-gradient(180deg,#2ecc71,#1a7d43);border-color:#58e896;box-shadow:0 3px 0 #0f3d22}
 .act-btn.blue{background:linear-gradient(180deg,#3498db,#1a5f8a);border-color:#5dade2;box-shadow:0 3px 0 #0f3d54}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s;padding:20px}
 .modal.active{opacity:1;pointer-events:auto}
 .modal-box{background:linear-gradient(180deg,var(--panel2),var(--panel));border:3px solid var(--gold);border-radius:18px;padding:22px 18px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.8);text-align:center;max-height:85vh;overflow-y:auto}
 .modal-title{font-size:20px;font-weight:900;color:var(--goldL);margin-bottom:12px;font-family:Georgia,serif}
@@ -112,7 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .start-emoji{font-size:80px;margin-bottom:10px}
 .start-title{font-size:32px;font-weight:900;letter-spacing:3px;color:#ffd966;margin-bottom:8px;font-family:Georgia,serif;text-shadow:0 2px 4px rgba(0,0,0,.8)}
 .start-sub{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.5}
-.start-btn{width:100%;background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 0 #0f3d22;position:relative;z-index:10}
+.start-btn{width:100%;background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 0 #0f3d22}
 .start-btn.muted{background:linear-gradient(180deg,#576574,#2c3a52);box-shadow:0 4px 0 #1a2333;font-size:13px;padding:11px}
 .start-btn:active{transform:translateY(3px);box-shadow:none}
 .version-badge{position:fixed;bottom:4px;right:4px;font-size:9px;color:#556680;background:rgba(10,14,23,.7);padding:2px 6px;border-radius:4px;z-index:997;font-family:monospace;pointer-events:none}
@@ -120,16 +228,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 </head>
 <body>
 
-<div class="version-badge">v15</div>
+<div class="version-badge">v16</div>
 
 <div class="start-overlay" id="startOverlay">
   <div class="start-box">
     <div class="start-emoji">🏴‍☠️</div>
     <div class="start-title">LUCKY ROGER</div>
-    <div class="start-sub" data-i18n="startSub">Пиратский слот с сокровищами</div>
-    <button class="start-btn" id="startSound">🔊 <span data-i18n="startSound">Играть со звуком</span></button>
-    <button class="start-btn muted" id="startMute">🔇 <span data-i18n="startMute">Без звука</span></button>
-    <div style="margin-top:12px;font-size:10px;color:#556680;font-family:monospace;">V15 · лента сверху вниз</div>
+    <div class="start-sub">Слот с 3D-барабанами<br>Wild 🦜 · Scatter 💣 · RTP 92%</div>
+    <button class="start-btn" id="startSound">🔊 Играть со звуком</button>
+    <button class="start-btn muted" id="startMute">🔇 Без звука</button>
+    <div style="margin-top:12px;font-size:10px;color:#556680;font-family:monospace;">V16 · Spin/Stop · 3D</div>
   </div>
 </div>
 
@@ -193,26 +301,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 
 <div class="modal" id="paytableModal">
   <div class="modal-box">
-    <div class="modal-title" data-i18n="paytableTitle">📋 ТАБЛИЦА ВЫПЛАТ</div>
-    <div class="modal-text" data-i18n="paytableHint">Выплаты за 1 монету ставки на линию</div>
+    <div class="modal-title">📋 ТАБЛИЦА ВЫПЛАТ</div>
+    <div class="modal-text">Выплаты × ставка на линию · 🦜 Wild · 💣 Scatter</div>
     <table class="pt-table"><thead><tr><th></th><th>×3</th><th>×4</th><th>×5</th></tr></thead><tbody id="ptBody"></tbody></table>
-    <button class="modal-close" onclick="closeModal('paytableModal')" data-i18n="close">Закрыть</button>
+    <button class="modal-close" onclick="closeModal('paytableModal')">Закрыть</button>
   </div>
 </div>
 
 <div class="modal" id="shopModal">
   <div class="modal-box">
-    <div class="modal-title" data-i18n="shopTitle">⭐ МАГАЗИН МОНЕТ</div>
-    <div class="modal-text" data-i18n="shopHint">Покупка за Telegram Stars</div>
+    <div class="modal-title">⭐ МАГАЗИН МОНЕТ</div>
+    <div class="modal-text">Покупка за Telegram Stars</div>
     <div class="shop-grid" id="shopGrid"></div>
-    <button class="modal-close" onclick="closeModal('shopModal')" data-i18n="close">Закрыть</button>
+    <button class="modal-close" onclick="closeModal('shopModal')">Закрыть</button>
   </div>
 </div>
 
 <div class="modal" id="bonusModal">
   <div class="modal-box">
-    <div class="modal-title" data-i18n="bonusTitle">🏴‍☠️ ПИРАТСКИЙ КЛАД</div>
-    <div class="modal-text" data-i18n="bonusText">Выберите сундук:</div>
+    <div class="modal-title">🏴‍☠️ ПИРАТСКИЙ КЛАД</div>
+    <div class="modal-text">Выберите сундук:</div>
     <div class="chests">
       <div class="chest" data-chest="0">📦</div>
       <div class="chest" data-chest="1">📦</div>
@@ -223,7 +331,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 
 <div class="modal" id="riskModal">
   <div class="modal-box">
-    <div class="modal-title" data-i18n="riskTitle">🃏 РИСК-ИГРА</div>
+    <div class="modal-title">🃏 РИСК-ИГРА</div>
     <div class="modal-text" id="riskText"></div>
     <div class="modal-btns">
       <button class="modal-btn green" id="riskHigher"></button>
@@ -236,7 +344,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 <div class="notif" id="notif"></div>
 
 <script>
-console.log('%c🏴‍☠️ Lucky Roger V15 LOADED', 'font-size:18px;color:#ffd966;font-weight:bold');
+console.log('%c🏴‍☠️ V16 — 3D reels, Spin/Stop, wild+scatter', 'font-size:16px;color:#ffd966;font-weight:bold');
 
 const CONFIG = {
   invoiceEndpoint: '/api/invoice',
@@ -249,14 +357,27 @@ const CONFIG = {
 };
 
 const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
-const FILLER = 15; // Количество рандомных символов сверху
-const DURATION_BASE = 800;
-const DURATION_STEP = 350;
-const START_STEP = 60;
+const FILLER = 15;
+const FILLER_H = FILLER * CELL_H; // 1095
+const SPIN_AUTO_STOP = 14000; // 14 сек
+const STOP_STAGGER = 250; // задержка между остановками
+const STOP_DURATION = 1200;
 
+// 🦜 = Wild, 💣 = Scatter
+const WILD = '🦜';
+const SCATTER = '💣';
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
-const WEIGHTS={'🏴‍☠️':2,'💎':4,'🦜':6,'🗺️':8,'⚓':12,'🗡️':14,'🪙':18,'💣':18};
-const PAYTABLE={'🏴‍☠️':[10,40,150],'💎':[5,20,60],'🦜':[3,12,40],'🗺️':[2,8,25],'⚓':[2,6,20],'🗡️':[1,4,12],'🪙':[1,3,8],'💣':[1,2,6]};
+const WEIGHTS={'🏴‍☠️':3,'💎':5,'🦜':8,'🗺️':12,'⚓':15,'🗡️':20,'🪙':32,'💣':5};
+const PAYTABLE={
+  '🏴‍☠️':[60,200,1000],
+  '💎':[40,140,600],
+  '🦜':[30,100,400],
+  '🗺️':[16,50,200],
+  '⚓':[10,30,120],
+  '🗡️':[8,24,80],
+  '🪙':[6,20,60],
+  '💣':[10,50,500]
+};
 const PAYLINES=[
   [[0,0],[1,0],[2,0],[3,0],[4,0]],[[0,1],[1,1],[2,1],[3,1],[4,1]],[[0,2],[1,2],[2,2],[3,2],[4,2]],
   [[0,0],[1,1],[2,2],[3,1],[4,0]],[[0,2],[1,1],[2,0],[3,1],[4,2]],[[0,0],[1,0],[2,1],[3,2],[4,2]],
@@ -270,13 +391,13 @@ const LINE_COLORS=['#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be','#30b0ff','
 const POOL=[];Object.entries(WEIGHTS).forEach(([s,w])=>{for(let i=0;i<w;i++)POOL.push(s)});
 
 const I18N={
-  ru:{balance:'Баланс',win:'Выигрыш',bet:'Ставка',betPerLine:'Ставка / линия',totalBet:'Всего',lines:'Линии',spin:'КРУТИТЬ',spinActive:'КРУТИМ...',dailyBonus:'Бонус',risk:'Риск',shop:'Магазин',paytable:'Выплаты',startSub:'Пиратский слот с сокровищами',startSound:'Играть со звуком',startMute:'Без звука',notEnough:'Недостаточно монет',bonusTitle:'🏴‍☠️ ПИРАТСКИЙ КЛАД',bonusText:'Выберите сундук:',bonusWon:'Сундук: +{n} 🪙!',riskTitle:'🃏 РИСК-ИГРА',riskText:'Рискнуть {n} 🪙? Удвойте или потеряйте!',riskHigher:'ВЫШЕ',riskLower:'НИЖЕ',riskTake:'Забрать',riskWin:'🎉 Победа! +{n}',riskLose:'❌ Не повезло.',riskNoWin:'Сначала выиграйте!',winMsg:'Выигрыш: +{n} 🪙',bigWin:'🔥 БОЛЬШОЙ ВЫИГРЫШ: +{n} 🪙!',dailyClaimed:'Бонус уже получен! Ждите 24ч',dailyGot:'🎁 Ежедневный бонус: +100 🪙!',soundOn:'Звук вкл',soundOff:'Звук выкл',langChanged:'Язык: Русский',paytableTitle:'📋 ТАБЛИЦА ВЫПЛАТ',paytableHint:'Выплаты за 1 монету ставки на линию',close:'Закрыть',shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Покупка за Telegram Stars',paySuccess:'⭐ Оплата получена! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не удалось создать счёт'},
-  uk:{balance:'Баланс',win:'Виграш',bet:'Ставка',betPerLine:'Ставка / лінія',totalBet:'Разом',lines:'Лінії',spin:'КРУТИТИ',spinActive:'КРУТИМО...',dailyBonus:'Бонус',risk:'Ризик',shop:'Магазин',paytable:'Виплати',startSub:'Піратський слот зі скарбами',startSound:'Грати зі звуком',startMute:'Без звуку',notEnough:'Недостатньо монет',bonusTitle:'🏴‍☠️ ПІРАТСЬКИЙ СКАРБ',bonusText:'Виберіть скриню:',bonusWon:'Скриня: +{n} 🪙!',riskTitle:'🃏 РИЗИК-ГРА',riskText:'Ризикнути {n} 🪙? Подвойте або втратите!',riskHigher:'ВИЩЕ',riskLower:'НИЖЧЕ',riskTake:'Забрати',riskWin:'🎉 Перемога! +{n}',riskLose:'❌ Не пощастило.',riskNoWin:'Спочатку виграйте!',winMsg:'Виграш: +{n} 🪙',bigWin:'🔥 ВЕЛИКИЙ ВИГРАШ: +{n} 🪙!',dailyClaimed:'Бонус вже отримано! Чекайте 24г',dailyGot:'🎁 Щоденний бонус: +100 🪙!',soundOn:'Звук увімк',soundOff:'Звук вимк',langChanged:'Мова: Українська',paytableTitle:'📋 ТАБЛИЦЯ ВИПЛАТ',paytableHint:'Виплати за 1 монету ставки на лінію',close:'Закрити',shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Купівля за Telegram Stars',paySuccess:'⭐ Оплату отримано! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не вдалося створити рахунок'},
-  en:{balance:'Balance',win:'Win',bet:'Bet',betPerLine:'Bet / line',totalBet:'Total',lines:'Lines',spin:'SPIN',spinActive:'SPINNING...',dailyBonus:'Bonus',risk:'Risk',shop:'Shop',paytable:'Payouts',startSub:'Pirate slot with treasures',startSound:'Play with sound',startMute:'Muted',notEnough:'Not enough coins',bonusTitle:'🏴‍☠️ PIRATE TREASURE',bonusText:'Pick a chest:',bonusWon:'Chest: +{n} 🪙!',riskTitle:'🃏 RISK GAME',riskText:'Risk {n} 🪙? Double or lose!',riskHigher:'HIGHER',riskLower:'LOWER',riskTake:'Take',riskWin:'🎉 Win! +{n}',riskLose:'❌ No luck.',riskNoWin:'Win first!',winMsg:'Win: +{n} 🪙',bigWin:'🔥 BIG WIN: +{n} 🪙!',dailyClaimed:'Bonus already claimed! Wait 24h',dailyGot:'🎁 Daily bonus: +100 🪙!',soundOn:'Sound ON',soundOff:'Sound OFF',langChanged:'Language: English',paytableTitle:'📋 PAYTABLE',paytableHint:'Payouts per 1 coin of line bet',close:'Close',shopTitle:'⭐ COIN SHOP',shopHint:'Purchase with Telegram Stars',paySuccess:'⭐ Payment received! +{n} 🪙',payTest:'⭐ Test: +{n} 🪙',payError:'Failed to create invoice'}
+  ru:{balance:'Баланс',win:'Выигрыш',bet:'Ставка',betPerLine:'Ставка / линия',totalBet:'Всего',lines:'Линии',spin:'КРУТИТЬ',spinActive:'КРУТИМ...',spinStop:'СТОП',dailyBonus:'Бонус',risk:'Риск',shop:'Магазин',paytable:'Выплаты',notEnough:'Недостаточно монет',riskHigher:'ВЫШЕ',riskLower:'НИЖЕ',riskTake:'Забрать',winMsg:'Выигрыш: +{n} 🪙',bigWin:'🔥 БОЛЬШОЙ ВЫИГРЫШ: +{n} 🪙!',scatterWin:'💣 SCATTER! +{n} 🪙',riskNoWin:'Сначала выиграйте!',soundOn:'Звук вкл',soundOff:'Звук выкл',dailyClaimed:'Бонус уже получен!',dailyGot:'🎁 Бонус: +100 🪙!',riskWin:'🎉 Победа! +{n}',riskLose:'❌ Не повезло.',bonusWon:'Сундук: +{n} 🪙!',paySuccess:'⭐ +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙'},
+  uk:{balance:'Баланс',win:'Виграш',bet:'Ставка',betPerLine:'Ставка / лінія',totalBet:'Разом',lines:'Лінії',spin:'КРУТИТИ',spinActive:'КРУТИМО...',spinStop:'СТОП',dailyBonus:'Бонус',risk:'Ризик',shop:'Магазин',paytable:'Виплати',notEnough:'Недостатньо монет',riskHigher:'ВИЩЕ',riskLower:'НИЖЧЕ',riskTake:'Забрати',winMsg:'Виграш: +{n} 🪙',bigWin:'🔥 ВЕЛИКИЙ ВИГРАШ: +{n} 🪙!',scatterWin:'💣 SCATTER! +{n} 🪙',riskNoWin:'Спочатку виграйте!',soundOn:'Звук увімк',soundOff:'Звук вимк',dailyClaimed:'Бонус вже отримано!',dailyGot:'🎁 Бонус: +100 🪙!',riskWin:'🎉 Перемога! +{n}',riskLose:'❌ Не пощастило.',bonusWon:'Скриня: +{n} 🪙!',paySuccess:'⭐ +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙'},
+  en:{balance:'Balance',win:'Win',bet:'Bet',betPerLine:'Bet / line',totalBet:'Total',lines:'Lines',spin:'SPIN',spinActive:'SPINNING...',spinStop:'STOP',dailyBonus:'Bonus',risk:'Risk',shop:'Shop',paytable:'Payouts',notEnough:'Not enough coins',riskHigher:'HIGHER',riskLower:'LOWER',riskTake:'Take',winMsg:'Win: +{n} 🪙',bigWin:'🔥 BIG WIN: +{n} 🪙!',scatterWin:'💣 SCATTER! +{n} 🪙',riskNoWin:'Win first!',soundOn:'Sound ON',soundOff:'Sound OFF',dailyClaimed:'Bonus already claimed!',dailyGot:'🎁 Bonus: +100 🪙!',riskWin:'🎉 Win! +{n}',riskLose:'❌ No luck.',bonusWon:'Chest: +{n} 🪙!',paySuccess:'⭐ +{n} 🪙',payTest:'⭐ Test: +{n} 🪙'}
 };
 
 let state={balance:1000,betPerLine:1,lines:9,lang:'ru',sound:true,lastDaily:0};
-let isSpinning=false, pendingRisk=0;
+let isSpinning=false, pendingRisk=0, stopRequested=false, autoStopTimer=null;
 const reelsEl=document.getElementById('reels');
 const overlay=document.getElementById('linesOverlay');
 const frame=document.getElementById('reelsFrame');
@@ -287,219 +408,234 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v15',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v15');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_v16',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_v16');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
-function haptic(type) {
-  const tg = window.Telegram?.WebApp;
-  if (tg?.HapticFeedback) {
-    try {
-      switch (type) {
-        case 'light': tg.HapticFeedback.impactOccurred('light'); return;
-        case 'medium': tg.HapticFeedback.impactOccurred('medium'); return;
-        case 'heavy': tg.HapticFeedback.impactOccurred('heavy'); return;
-        case 'success': tg.HapticFeedback.notificationOccurred('success'); return;
-        case 'error': tg.HapticFeedback.notificationOccurred('error'); return;
-        case 'select': tg.HapticFeedback.selectionChanged(); return;
-      }
-    } catch(e) {}
-  }
-  if (navigator.vibrate) {
-    try {
-      const map = { light: 10, medium: 20, heavy: 40, success: [10,40,10], error: [25,40,25], select: 5 };
-      navigator.vibrate(map[type] || 15);
-    } catch(e) {}
-  }
+function haptic(type){
+  const tg=window.Telegram?.WebApp;
+  if(tg?.HapticFeedback){try{
+    if(type==='light') tg.HapticFeedback.impactOccurred('light');
+    else if(type==='medium') tg.HapticFeedback.impactOccurred('medium');
+    else if(type==='heavy') tg.HapticFeedback.impactOccurred('heavy');
+    else if(type==='success') tg.HapticFeedback.notificationOccurred('success');
+    else if(type==='error') tg.HapticFeedback.notificationOccurred('error');
+    else if(type==='select') tg.HapticFeedback.selectionChanged();
+  }catch(e){}}
+  if(navigator.vibrate){try{navigator.vibrate({light:10,medium:20,heavy:40,success:[10,40,10],error:[25,40,25],select:5}[type]||15)}catch(e){}}
 }
 
-/* ============================================================
-   🎵 SFX (Звуки)
-   ============================================================ */
-const SFX = {};
-const reelStopPool = [];
-let reelStopIdx = 0;
-let audioReady = false;
+/* ===== AUDIO ===== */
+const SFX={}; const reelStopPool=[]; let reelStopIdx=0, audioReady=false;
 
-function makeWav(duration, sampler, sampleRate) {
-  sampleRate = sampleRate || 11025;
-  const numSamples = Math.floor(sampleRate * duration);
-  const bytes = new Uint8Array(44 + numSamples * 2);
-  const view = new DataView(bytes.buffer);
-  function w(off, str) { for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i)); }
-  w(0, 'RIFF'); view.setUint32(4, 36 + numSamples * 2, true);
-  w(8, 'WAVE'); w(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true);
-  view.setUint16(32, 2, true); view.setUint16(34, 16, true);
-  w(36, 'data'); view.setUint32(40, numSamples * 2, true);
-  for (let i = 0; i < numSamples; i++) {
-    let s = sampler(i / sampleRate);
-    if (s > 1) s = 1; else if (s < -1) s = -1;
-    view.setInt16(44 + i * 2, s * 0x7FFF, true);
-  }
-  let bin = '';
-  for (let i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
-  return 'data:audio/wav;base64,' + btoa(bin);
+function makeWav(duration,sampler,sr){
+  sr=sr||11025; const n=Math.floor(sr*duration);
+  const bytes=new Uint8Array(44+n*2), v=new DataView(bytes.buffer);
+  const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  ws(0,'RIFF'); v.setUint32(4,36+n*2,true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+  ws(36,'data'); v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){let s=sampler(i/sr); if(s>1)s=1; else if(s<-1)s=-1; v.setInt16(44+i*2,s*0x7FFF,true)}
+  let bin=''; for(let i=0;i<bytes.length;i+=8192) bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+8192));
+  return 'data:audio/wav;base64,'+btoa(bin);
 }
 
-function createAudio(url, volume=0.7) {
-  const a = new Audio();
-  a.preload = 'auto';
-  a.src = url;
-  a.volume = volume;
-  try { a.load(); } catch(e) {}
-  return a;
+function createAudio(url,vol){
+  const a=new Audio(); a.preload='auto'; a.src=url; a.volume=vol||0.7;
+  try{a.load()}catch(e){} return a;
 }
 
-function buildAudio() {
-  if (audioReady) return;
+function buildAudio(){
+  if(audioReady) return;
 
-  SFX.click = createAudio(makeWav(0.04, t => Math.sin(2*Math.PI*900*t) * Math.exp(-t*80) * 0.35), 0.5);
-  SFX.spinStart = createAudio(makeWav(0.35, t => {
-    const sweep = Math.sin(2*Math.PI*(180 + t*1800)*t) * Math.exp(-t*3.5) * 0.35;
-    const noise = (Math.random()*2-1) * Math.exp(-t*8) * 0.15;
-    return sweep + noise;
-  }), 0.7);
-  SFX.reelLoop = createAudio(makeWav(0.25, t => {
-    const ticks = [0, 0.062, 0.125, 0.187];
-    let v = 0;
-    for (const ts of ticks) {
-      const dt = t - ts;
-      if (dt >= 0 && dt < 0.015) {
-        v += (Math.random()*2-1) * Math.exp(-dt*150) * 0.35;
+  SFX.click = createAudio(makeWav(0.04,t=>Math.sin(2*Math.PI*900*t)*Math.exp(-t*80)*0.35), 0.5);
+
+  // Металлический старт + вжух
+  SFX.metalStart = createAudio(makeWav(0.6,t=>{
+    let v=0;
+    // Металлический лязг (шум + высокий звон)
+    if(t<0.05) v += (Math.random()*2-1)*Math.exp(-t*50)*0.6;
+    if(t<0.15) v += Math.sin(2*Math.PI*2400*t)*Math.exp(-t*25)*0.3;
+    // Механический вжух
+    const sweep = Math.sin(2*Math.PI*(200+t*2500)*t)*Math.exp(-t*4)*0.35;
+    return v + sweep;
+  }), 0.75);
+
+  // Loop тиканья (пока крутится)
+  SFX.spinLoop = createAudio(makeWav(0.3,t=>{
+    const ticks=[0,0.05,0.1,0.15,0.2,0.25];
+    let v=0;
+    for(const ts of ticks){
+      const dt=t-ts;
+      if(dt>=0&&dt<0.012){
+        v += (Math.random()*2-1)*Math.exp(-dt*150)*0.4;
+        v += Math.sin(2*Math.PI*1200*dt)*Math.exp(-dt*80)*0.2;
       }
     }
     return v;
-  }), 0.45);
-  SFX.reelLoop.loop = true;
+  }), 0.55);
+  SFX.spinLoop.loop = true;
 
-  const stopUrl = makeWav(0.12, t => {
-    const thump = Math.sin(2*Math.PI*80*t) * Math.exp(-t*20) * 0.5;
-    const click = (Math.random()*2-1) * Math.exp(-t*80) * 0.3;
-    return thump + click;
+  // Звонкий щелчок остановки (пул 5 для 5 барабанов)
+  const stopUrl = makeWav(0.15,t=>{
+    const thump = Math.sin(2*Math.PI*90*t)*Math.exp(-t*22)*0.55;
+    const click = (Math.random()*2-1)*Math.exp(-t*60)*0.35;
+    const ping  = Math.sin(2*Math.PI*1800*t)*Math.exp(-t*30)*0.15;
+    return thump + click + ping;
   });
-  for (let i = 0; i < 5; i++) {
-    reelStopPool.push(createAudio(stopUrl, 0.7));
-  }
+  for(let i=0;i<5;i++) reelStopPool.push(createAudio(stopUrl,0.75));
 
-  SFX.win = createAudio(makeWav(0.5, t => {
-    let v = 0;
-    [[523,0],[659,0.09],[784,0.18]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*8); });
-    return v * 0.42;
-  }), 0.7);
-  SFX.mediumWin = createAudio(makeWav(0.75, t => {
-    let v = 0;
-    [[523,0],[659,0.1],[784,0.2],[1047,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*6); });
-    return v * 0.4;
-  }), 0.7);
-  SFX.bigwin = createAudio(makeWav(1.2, t => {
-    let v = 0;
-    [[523,0],[659,0.1],[784,0.2],[1047,0.32],[1319,0.44],[1568,0.56]].forEach(([f,s]) => {
-      if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4) * 1.1;
+  // 🏴‍☠️ — пиратский горн
+  SFX.winPirate = createAudio(makeWav(1.0,t=>{
+    let v=0;
+    [[392,0],[523,0.12],[659,0.24],[784,0.36],[1047,0.48]].forEach(([f,s])=>{
+      if(t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*5)*0.8;
     });
-    return v * 0.36;
+    return v*0.45;
+  }), 0.85);
+
+  // 💎 — кристальный дзынь
+  SFX.winDiamond = createAudio(makeWav(0.9,t=>{
+    let v=0;
+    [[1047,0],[1319,0.1],[1568,0.2],[2093,0.3]].forEach(([f,s])=>{
+      if(t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*6)*0.7;
+    });
+    return v*0.42;
   }), 0.8);
-  SFX.lose = createAudio(makeWav(0.55, t => {
-    const v1 = t<0.28 ? Math.sin(2*Math.PI*220*t)*Math.exp(-t*6) : 0;
-    const v2 = t>=0.28 ? Math.sin(2*Math.PI*165*(t-0.28))*Math.exp(-(t-0.28)*6) : 0;
-    return (v1+v2)*0.32;
+
+  // 🦜 — свист (wild)
+  SFX.winParrot = createAudio(makeWav(0.7,t=>{
+    let v=0;
+    if(t<0.35){
+      const freq = 800 + t*1500;
+      v += Math.sin(2*Math.PI*freq*t)*Math.exp(-t*3)*0.6;
+    } else {
+      const tt=t-0.35;
+      const freq = 1200 - tt*800;
+      v += Math.sin(2*Math.PI*freq*tt)*Math.exp(-tt*5)*0.5;
+    }
+    return v*0.42;
+  }), 0.8);
+
+  // 🗺️ — флейта
+  SFX.winMap = createAudio(makeWav(0.7,t=>{
+    let v=0;
+    [[523,0],[587,0.15],[698,0.3]].forEach(([f,s])=>{
+      if(t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*4)*0.7;
+    });
+    return v*0.4;
+  }), 0.75);
+
+  // ⚓ — низкий гонг
+  SFX.winAnchor = createAudio(makeWav(0.9,t=>{
+    const v = Math.sin(2*Math.PI*130*t)*Math.exp(-t*3)*0.7;
+    const v2 = Math.sin(2*Math.PI*260*t)*Math.exp(-t*5)*0.3;
+    return (v+v2)*0.45;
+  }), 0.85);
+
+  // 🗡️ — металлический скрежет
+  SFX.winDagger = createAudio(makeWav(0.5,t=>{
+    const v = (Math.random()*2-1)*Math.exp(-t*6)*0.4;
+    const v2 = Math.sin(2*Math.PI*1400*t)*Math.exp(-t*10)*0.3;
+    const v3 = Math.sin(2*Math.PI*2100*t)*Math.exp(-t*12)*0.2;
+    return v+v2+v3;
+  }), 0.75);
+
+  // 🪙 — звон монет
+  SFX.winCoin = createAudio(makeWav(0.6,t=>{
+    let v=0;
+    [[1568,0],[2093,0.06],[2637,0.12]].forEach(([f,s])=>{
+      if(t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*9)*0.6;
+    });
+    return v*0.42;
+  }), 0.8);
+
+  // 💣 — взрыв (scatter)
+  SFX.winScatter = createAudio(makeWav(1.0,t=>{
+    const noise = (Math.random()*2-1)*Math.exp(-t*3)*0.55;
+    const boom = Math.sin(2*Math.PI*60*t)*Math.exp(-t*4)*0.6;
+    const echo = t>0.15 ? Math.sin(2*Math.PI*100*(t-0.15))*Math.exp(-(t-0.15)*5)*0.3 : 0;
+    return noise + boom + echo;
+  }), 0.85);
+
+  // Проигрыш
+  SFX.lose = createAudio(makeWav(0.5,t=>{
+    const v1 = t<0.25 ? Math.sin(2*Math.PI*220*t)*Math.exp(-t*6) : 0;
+    const v2 = t>=0.25 ? Math.sin(2*Math.PI*165*(t-0.25))*Math.exp(-(t-0.25)*6) : 0;
+    return (v1+v2)*0.4;
   }), 0.6);
-  SFX.bonus = createAudio(makeWav(0.9, t => {
-    let v = 0;
-    [[784,0],[988,0.1],[1175,0.2],[1568,0.32]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
-    return v * 0.44;
+
+  // Бонус / сундук / монета
+  SFX.bonus = createAudio(makeWav(0.9,t=>{
+    let v=0;
+    [[784,0],[988,0.1],[1175,0.2],[1568,0.32]].forEach(([f,s])=>{if(t>=s)v+=Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*5)});
+    return v*0.44;
   }), 0.8);
-  SFX.chest = createAudio(makeWav(0.55, t => {
-    let v = 0;
-    [[400,0],[800,0.08],[1200,0.16],[1600,0.24]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*9); });
-    return v * 0.4;
+  SFX.chest = createAudio(makeWav(0.55,t=>{
+    let v=0;
+    [[400,0],[800,0.08],[1200,0.16],[1600,0.24]].forEach(([f,s])=>{if(t>=s)v+=Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*9)});
+    return v*0.4;
   }), 0.7);
-  SFX.coin = createAudio(makeWav(0.25, t => {
-    const v1 = Math.sin(2*Math.PI*1568*t)*Math.exp(-t*12);
-    const v2 = t>0.05 ? Math.sin(2*Math.PI*2093*(t-0.05))*Math.exp(-(t-0.05)*9) : 0;
+  SFX.coin = createAudio(makeWav(0.25,t=>{
+    const v1=Math.sin(2*Math.PI*1568*t)*Math.exp(-t*12);
+    const v2=t>0.05?Math.sin(2*Math.PI*2093*(t-0.05))*Math.exp(-(t-0.05)*9):0;
     return (v1+v2)*0.42;
   }), 0.7);
-  SFX.riskWin = createAudio(makeWav(0.65, t => {
-    let v = 0;
-    [[659,0],[880,0.12],[1175,0.24],[1568,0.36]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
-    return v * 0.42;
+  SFX.riskWin = createAudio(makeWav(0.65,t=>{
+    let v=0;
+    [[659,0],[880,0.12],[1175,0.24],[1568,0.36]].forEach(([f,s])=>{if(t>=s)v+=Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*5)});
+    return v*0.42;
   }), 0.7);
-  SFX.riskLose = createAudio(makeWav(0.7, t => {
-    let v = 0;
-    [[440,0],[349,0.15],[262,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4); });
-    return v * 0.36;
+  SFX.riskLose = createAudio(makeWav(0.7,t=>{
+    let v=0;
+    [[440,0],[349,0.15],[262,0.3]].forEach(([f,s])=>{if(t>=s)v+=Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*4)});
+    return v*0.36;
   }), 0.6);
 
   audioReady = true;
 }
 
-// Разогрев (безопасный, без обрыва)
-function warmupAudio() {
-  const all = [...Object.values(SFX), ...reelStopPool];
-  all.forEach(a => {
-    if (!a || !a.play) return;
-    const orig = a.volume;
-    try {
-      a.volume = 0;
-      const p = a.play();
-      if (p && p.then) {
-        p.then(() => {
-          try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
-        }).catch(() => {
-          try { a.volume = orig; } catch(e) {}
-        });
-      } else {
-        try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
-      }
-    } catch(e) {
-      try { a.volume = orig; } catch(e) {}
-    }
+function warmupAudio(){
+  const all=[...Object.values(SFX),...reelStopPool];
+  all.forEach(a=>{
+    if(!a||!a.play)return;
+    const o=a.volume;
+    try{
+      a.volume=0;
+      const p=a.play();
+      if(p&&p.then){p.then(()=>{try{a.pause();a.currentTime=0;a.volume=o}catch(e){}}).catch(()=>{try{a.volume=o}catch(e){}});}
+      else{try{a.pause();a.currentTime=0;a.volume=o}catch(e){}}
+    }catch(e){try{a.volume=o}catch(e){}}
   });
 }
 
-function playSfx(name) {
-  if (!state.sound) return;
-  if (!audioReady) buildAudio();
-  const a = SFX[name];
-  if (!a) return;
-  try { a.currentTime = 0; a.play().catch(()=>{}); } catch(e) {}
+function playSfx(name){
+  if(!state.sound) return;
+  if(!audioReady) buildAudio();
+  const a=SFX[name]; if(!a) return;
+  try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}
 }
-
-function playReelStop() {
-  if (!state.sound || !reelStopPool.length) return;
-  try {
-    const a = reelStopPool[reelStopIdx++ % reelStopPool.length];
-    a.currentTime = 0;
-    a.play().catch(()=>{});
-  } catch(e) {}
+function playReelStop(){
+  if(!state.sound||!reelStopPool.length) return;
+  try{const a=reelStopPool[reelStopIdx++%reelStopPool.length]; a.currentTime=0; a.play().catch(()=>{})}catch(e){}
 }
-
-function startReelLoop() {
-  if (!state.sound || !SFX.reelLoop) return;
-  try {
-    SFX.reelLoop.volume = 0.45;
-    SFX.reelLoop.currentTime = 0;
-    SFX.reelLoop.play().catch(()=>{});
-  } catch(e) {}
+function startSpinLoop(){
+  if(!state.sound||!SFX.spinLoop) return;
+  try{SFX.spinLoop.volume=0.5; SFX.spinLoop.currentTime=0; SFX.spinLoop.play().catch(()=>{})}catch(e){}
 }
-
-function stopReelLoop() {
-  if (!SFX.reelLoop) return;
-  try {
-    SFX.reelLoop.volume = 0;
-    SFX.reelLoop.pause();
-    SFX.reelLoop.currentTime = 0;
-  } catch(e) {}
+function stopSpinLoop(){
+  if(!SFX.spinLoop) return;
+  try{SFX.spinLoop.volume=0; SFX.spinLoop.pause(); SFX.spinLoop.currentTime=0}catch(e){}
 }
+function sfx(name){ if(name==='reelStop') playReelStop(); else playSfx(name); }
 
-function sfx(name) {
-  if (name === 'reelStop') playReelStop();
-  else playSfx(name);
-}
+const WIN_SOUND = {
+  '🏴‍☠️':'winPirate', '💎':'winDiamond', '🦜':'winParrot', '🗺️':'winMap',
+  '⚓':'winAnchor', '🗡️':'winDagger', '🪙':'winCoin', '💣':'winScatter'
+};
 
-/* ============================================================
-   REELS
-   ============================================================ */
+/* ===== REELS ===== */
 function randSym(){return POOL[Math.floor(Math.random()*POOL.length)]}
 function buildReels(){
   reelsEl.innerHTML=''; tracks.length=0; flashes.length=0;
@@ -507,8 +643,12 @@ function buildReels(){
     const reel=document.createElement('div'); reel.className='reel';
     const track=document.createElement('div'); track.className='track';
     track.innerHTML=Array.from({length:ROWS},()=>`<div class="cell">${randSym()}</div>`).join('');
+    const mask=document.createElement('div'); mask.className='reel-mask';
+    const glass=document.createElement('div'); glass.className='reel-glass';
     const flash=document.createElement('div'); flash.className='reel-flash';
     reel.appendChild(track);
+    reel.appendChild(mask);
+    reel.appendChild(glass);
     reel.appendChild(flash);
     reelsEl.appendChild(reel);
     tracks.push(track);
@@ -516,75 +656,75 @@ function buildReels(){
   }
 }
 
-/* ============================================================
-   🎰 АНИМАЦИЯ (СВЕРХУ ВНИЗ)
-   ============================================================ */
-function animateReel(track, final3, idx) {
-  return new Promise(resolve => {
-    try {
-      // Финальные символы в КОНЦЕ трека (внизу), рандом сверху.
-      // При движении трека ВВЕРХ (translateY уменьшается), картинки визуально едут ВНИЗ.
-      let html = '';
-      for (let i = 0; i < FILLER; i++) html += `<div class="cell">${randSym()}</div>`;
-      final3.forEach(s => html += `<div class="cell">${s}</div>`);
-      track.innerHTML = html;
+/* ===== СПИН + СТОП ===== */
+function startSpinAnim(track){
+  // Бесконечное кручение через CSS animation
+  let html='';
+  for(let i=0;i<FILLER;i++) html += `<div class="cell">${randSym()}</div>`;
+  html += `<div class="cell">${randSym()}</div><div class="cell">${randSym()}</div><div class="cell">${randSym()}</div>`;
+  track.innerHTML = html;
+  track.style.animation = 'none';
+  track.style.transform = 'translate3d(0,0,0)';
+  track.getBoundingClientRect();
+  track.style.animation = `reelSpin 0.28s linear infinite`;
+}
 
-      const startY = 0;
-      const endY = -(FILLER * CELL_H);
+function stopReelAnim(track, final3, idx){
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      try {
+        // Текущая позиция
+        const m = new DOMMatrix(getComputedStyle(track).transform);
+        const currentY = m.m42 || 0;
+        track.style.animation = 'none';
+        track.style.transform = `translate3d(0,${currentY}px,0)`;
+        track.getBoundingClientRect();
 
-      track.style.transition = 'none';
-      track.style.transform = `translate3d(0, ${startY}px, 0)`;
-      track.getBoundingClientRect(); // reflow
+        // Куда едем: final3 должны оказаться в верхних 3-х клетках
+        // После спина final3 в конце трека.
+        // Значит нужен translate Y = -FILLER_H + N*(-FILLER_H - 3*CELL_H)? Нет.
+        // Трек: [15 filler][3 final] = 18 клеток.
+        // Видимая область = 3 клетки.
+        // Чтобы final3 были видны (в позициях 0..2): translateY = -15*73 = -1095
+        // Добавим ещё полный оборот: -(1095 + 18*73) = -(1095+1314) = -2409
+        // Ещё: -3723, -5037
+        // Хочу: targetY < currentY - 100, но targetY ≡ -1095 (mod 1314)
+        // То есть targetY = -1095 - k*1314 для k=1,2,3...
 
-      const startDelay = idx * START_STEP;
-      const dur = DURATION_BASE + idx * DURATION_STEP;
+        let targetY = -FILLER_H; // -1095
+        // Пока targetY > currentY - 5*CELL_H → сдвигаем на оборот
+        while (targetY > currentY - 5*CELL_H) {
+          targetY -= (FILLER + ROWS) * CELL_H; // -1314
+        }
 
-      // Старт
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
-            track.style.transform = `translate3d(0, ${endY}px, 0)`;
-          });
-        });
-      }, startDelay);
+        track.style.transition = `transform ${STOP_DURATION}ms cubic-bezier(0.18, 0.9, 0.25, 1)`;
+        track.style.transform = `translate3d(0,${targetY}px,0)`;
 
-      // Финализация
-      setTimeout(() => {
-        try {
+        setTimeout(()=>{
           track.style.transition = 'none';
           track.style.transform = 'translate3d(0,0,0)';
-          track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
-        } catch(e) {}
-
-        // Вспышка
-        try {
-          const flash = flashes[idx];
-          if (flash) {
-            flash.classList.add('flash');
-            setTimeout(() => flash.classList.remove('flash'), 100);
-          }
-        } catch(e) {}
-
-        sfx('reelStop');
-        haptic('light');
-        resolve();
-      }, startDelay + dur + 60);
-    } catch(e) {
-      console.error('animateReel error:', e);
-      try {
+          track.innerHTML = final3.map(s=>`<div class="cell">${s}</div>`).join('');
+          try{
+            const f = flashes[idx];
+            if(f){ f.classList.add('flash'); setTimeout(()=>f.classList.remove('flash'), 90); }
+          }catch(e){}
+          sfx('reelStop');
+          haptic('light');
+          resolve();
+        }, STOP_DURATION + 40);
+      } catch(e){
+        console.error('stopReel error:', e);
+        track.style.animation = 'none';
         track.style.transition = 'none';
         track.style.transform = 'translate3d(0,0,0)';
-        track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
-      } catch(err) {}
-      resolve();
-    }
+        track.innerHTML = final3.map(s=>`<div class="cell">${s}</div>`).join('');
+        resolve();
+      }
+    }, idx * STOP_STAGGER);
   });
 }
 
-/* ============================================================
-   LOGIC
-   ============================================================ */
+/* ===== ЛОГИКА (WILD + SCATTER) ===== */
 function genGrid(){
   const g=[];
   for(let r=0;r<REELS;r++){
@@ -594,35 +734,81 @@ function genGrid(){
   }
   return g;
 }
-function calcWins(grid,perLine){
-  const cells=new Set(), wins=[]; let total=0;
-  PAYLINES.slice(0, state.lines).forEach((line,idx)=>{
-    const syms=line.map(([r,row])=>grid[r][row]);
-    const first=syms[0];
-    let count=1;
-    for(let i=1;i<REELS;i++){ if(syms[i]===first) count++; else break; }
-    if(count>=3){
-      const mult=PAYTABLE[first][count-3];
-      if(mult>0){
-        const win=mult*perLine;
-        total+=win;
-        wins.push({idx,line,sym:first,count,mult,win});
-        for(let i=0;i<count;i++) cells.add(`${line[i][0]},${line[i][1]}`);
+
+function checkLineWins(syms){
+  // Найти первый не-wild, не-scatter символ
+  let target = null;
+  for(const s of syms){
+    if(s !== WILD && s !== SCATTER){ target = s; break; }
+  }
+  // Все wild
+  if(target === null){
+    if(syms.every(s => s === WILD)) return { sym: WILD, count: 5 };
+    return null;
+  }
+  // Считаем с начала с учётом wild
+  let count = 0;
+  for(const s of syms){
+    if(s === target || s === WILD) count++;
+    else break;
+  }
+  if(count >= 3) return { sym: target, count };
+  return null;
+}
+
+function calcWins(grid, betPerLine, betTotal){
+  const cells = new Set();
+  const wins = [];
+  let total = 0;
+  let mainSym = null;
+
+  // Линии
+  PAYLINES.slice(0, state.lines).forEach((line, idx) => {
+    const syms = line.map(([r,row]) => grid[r][row]);
+    const res = checkLineWins(syms);
+    if (res) {
+      const [m3, m4, m5] = PAYTABLE[res.sym] || [0,0,0];
+      const mult = res.count === 3 ? m3 : res.count === 4 ? m4 : m5;
+      if (mult > 0) {
+        const win = mult * betPerLine;
+        total += win;
+        wins.push({ idx, line, sym: res.sym, count: res.count, mult, win });
+        for (let i = 0; i < res.count; i++) {
+          cells.add(`${line[i][0]},${line[i][1]}`);
+        }
+        // Запоминаем главный символ (первый крупный выигрыш)
+        if (!mainSym || win > (wins[0]?.win || 0)) mainSym = res.sym;
       }
     }
   });
-  return {total, cells, wins};
+
+  // Scatter (по всему экрану)
+  let scatterCount = 0;
+  const scatterCells = [];
+  for (let r = 0; r < REELS; r++) {
+    for (let row = 0; row < ROWS; row++) {
+      if (grid[r][row] === SCATTER) {
+        scatterCount++;
+        scatterCells.push(`${r},${row}`);
+      }
+    }
+  }
+  if (scatterCount >= 3) {
+    const mult = scatterCount === 3 ? 10 : scatterCount === 4 ? 50 : 500;
+    const win = mult * betTotal;
+    total += win;
+    scatterCells.forEach(c => cells.add(c));
+    wins.push({ scatter: true, count: scatterCount, mult, win });
+    mainSym = SCATTER;
+  }
+
+  return { total, cells, wins, mainSym };
 }
 
-/* ============================================================
-   LINES PREVIEW
-   ============================================================ */
+/* ===== LINES PREVIEW ===== */
 let previewTimeout=null, previewFadeTimeout=null;
-
 function clearLines(){
-  overlay.innerHTML='';
-  overlay.style.transition='none';
-  overlay.style.opacity='1';
+  overlay.innerHTML=''; overlay.style.transition='none'; overlay.style.opacity='1';
   if(previewTimeout){clearTimeout(previewTimeout);previewTimeout=null}
   if(previewFadeTimeout){clearTimeout(previewFadeTimeout);previewFadeTimeout=null}
 }
@@ -633,6 +819,7 @@ function drawWinLines(wins){
   overlay.setAttribute('width',fRect.width);
   overlay.setAttribute('height',fRect.height);
   wins.forEach(w=>{
+    if (w.scatter) return; // scatter не рисуем линией
     const pts=[];
     for(let i=0;i<w.count;i++){
       const [r,row]=w.line[i];
@@ -669,10 +856,7 @@ function previewActiveLines(){
   overlay.setAttribute('width', fRect.width);
   overlay.setAttribute('height', fRect.height);
   overlay.style.opacity = '1';
-
-  const lines = PAYLINES.slice(0, state.lines);
-
-  lines.forEach((line, idx) => {
+  PAYLINES.slice(0, state.lines).forEach((line, idx) => {
     const pts = [];
     for (const [r, row] of line) {
       const cell = tracks[r].children[row];
@@ -699,7 +883,6 @@ function previewActiveLines(){
       requestAnimationFrame(() => { poly.style.strokeDashoffset = 0; });
     } catch(e) {}
   });
-
   previewTimeout = setTimeout(() => {
     overlay.style.transition = 'opacity 0.5s';
     overlay.style.opacity = '0';
@@ -711,16 +894,22 @@ function previewActiveLines(){
   }, 1600);
 }
 
-/* ============================================================
-   UI
-   ============================================================ */
+/* ===== UI ===== */
 function refresh(){
   $('balanceVal').textContent=fmt(state.balance)+' 🪙';
   $('betVal').textContent=fmt(state.betPerLine)+' 🪙';
   $('totalBetVal').textContent=fmt(totalBet());
   $('linesVal').textContent=state.lines;
-  $('spinBtn').textContent=isSpinning?t('spinActive'):t('spin');
-  $('spinBtn').disabled=isSpinning;
+  const sb = $('spinBtn');
+  if (isSpinning) {
+    sb.textContent = t('spinStop');
+    sb.classList.add('stop-mode');
+    sb.disabled = false;
+  } else {
+    sb.textContent = t('spin');
+    sb.classList.remove('stop-mode');
+    sb.disabled = false;
+  }
   $('betMin').disabled=isSpinning||state.betPerLine<=1;
   $('betDec').disabled=isSpinning||state.betPerLine<=1;
   $('betInc').disabled=isSpinning||state.betPerLine>=100;
@@ -745,281 +934,163 @@ function notif(msg,type=''){
   n.textContent=msg;
   n.className='notif show '+type;
   clearTimeout(n._t);
-  n._t=setTimeout(()=>{n.className='notif '+type},2200);
+  n._t=setTimeout(()=>{n.className='notif '+type},2400);
 }
 function closeModal(id){ $(id).classList.remove('active'); }
 window.closeModal=closeModal;
 
-/* ============================================================
-   SPIN
-   ============================================================ */
-async function spin(){
-  if(isSpinning) return;
-  const bet=totalBet();
-  if(state.balance<bet){ notif(t('notEnough'),'error'); sfx('lose'); haptic('error'); return; }
-  isSpinning=true;
+/* ===== КНОПКА SPIN / STOP ===== */
+async function handleSpinClick(){
+  if (!isSpinning) {
+    await startSpin();
+  } else {
+    requestStop();
+  }
+}
+
+async function startSpin(){
+  const bet = totalBet();
+  if (state.balance < bet) { notif(t('notEnough'),'error'); sfx('lose'); haptic('error'); return; }
+  
+  isSpinning = true;
+  stopRequested = false;
   clearLines();
   document.querySelectorAll('.cell.win').forEach(c=>c.classList.remove('win'));
-  state.balance-=bet;
-  $('winVal').textContent='0 🪙';
+  state.balance -= bet;
+  $('winVal').textContent = '0 🪙';
   save(); refresh();
 
-  sfx('spinStart');
-  startReelLoop();
+  sfx('metalStart');
+  setTimeout(()=>{ if (isSpinning) startSpinLoop(); }, 150);
   haptic('medium');
 
-  const perLine=state.betPerLine;
-  const finalGrid=genGrid();
+  // Стартуем все барабаны крутиться
+  tracks.forEach(tr => startSpinAnim(tr));
 
-  try {
-    await Promise.all(tracks.map((tr,r)=>animateReel(tr,finalGrid[r],r)));
-  } catch(e) {
-    console.error('spin anim failed:', e);
-  }
+  // Автостоп через 14 сек
+  autoStopTimer = setTimeout(()=>{
+    if (isSpinning && !stopRequested) requestStop();
+  }, SPIN_AUTO_STOP);
+}
 
-  stopReelLoop();
+async function requestStop(){
+  if (!isSpinning || stopRequested) return;
+  stopRequested = true;
+  if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
 
-  const {total,cells,wins}=calcWins(finalGrid,perLine);
-  if(total>0){
-    state.balance+=total;
-    $('winVal').textContent='+'+fmt(total)+' 🪙';
-    cells.forEach(key=>{
-      const [r,row]=key.split(',').map(Number);
-      const c=tracks[r].children[row];
-      if(c) c.classList.add('win');
+  stopSpinLoop();
+
+  const finalGrid = genGrid();
+  const promises = tracks.map((tr, i) => stopReelAnim(tr, finalGrid[i], i));
+
+  await Promise.all(promises);
+
+  // Подсчёт выигрыша
+  const { total, cells, wins, mainSym } = calcWins(finalGrid, state.betPerLine, totalBet());
+  
+  if (total > 0) {
+    state.balance += total;
+    $('winVal').textContent = '+' + fmt(total) + ' 🪙';
+    cells.forEach(key => {
+      const [r, row] = key.split(',').map(Number);
+      const c = tracks[r].children[row];
+      if (c) c.classList.add('win');
     });
-    setTimeout(()=>drawWinLines(wins),150);
+    setTimeout(() => drawWinLines(wins), 180);
 
-    const ratio = total / bet;
-    let winSound = 'win';
-    if (ratio >= 20) winSound = 'bigwin';
-    else if (ratio >= 5) winSound = 'mediumWin';
-    sfx(winSound);
+    // 🎵 Разный звук по символу
+    const soundName = WIN_SOUND[mainSym] || 'winCoin';
+    setTimeout(() => sfx(soundName), 200);
 
+    const ratio = total / totalBet();
     haptic(ratio >= 10 ? 'heavy' : 'success');
     notif(ratio >= 10 ? tF('bigWin',{n:fmt(total)}) : tF('winMsg',{n:fmt(total)}), ratio >= 10 ? 'gold' : '');
-    if(total>=bet*2) pendingRisk=total;
-  }else{
+    if (total >= totalBet() * 2) pendingRisk = total;
+  } else {
     sfx('lose');
     haptic('error');
   }
 
-  if(Math.random()<0.03) setTimeout(triggerBonus,500);
+  // Шанс на бонус
+  if (Math.random() < 0.03) setTimeout(triggerBonus, 600);
 
-  isSpinning=false;
+  isSpinning = false;
   save(); refresh();
 }
 
-/* ============================================================
-   PAYTABLE / SHOP
-   ============================================================ */
+/* ===== PAYTABLE / SHOP ===== */
 function buildPaytable(){
-  const tbody=$('ptBody');
-  tbody.innerHTML='';
-  SYMBOLS.forEach(sym=>{
-    const [p3,p4,p5]=PAYTABLE[sym];
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="pt-sym">${sym}</td><td class="pt-val">${p3}</td><td class="pt-val">${p4}</td><td class="pt-val">${p5}</td>`;
+  const tbody = $('ptBody');
+  tbody.innerHTML = '';
+  ['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'].forEach(sym => {
+    const [p3,p4,p5] = PAYTABLE[sym];
+    const tr = document.createElement('tr');
+    const label = sym === '🦜' ? 'WILD' : sym === '💣' ? 'SCATTER' : '';
+    tr.innerHTML = `<td class="pt-sym">${sym} <small style="color:#8899aa;font-size:9px">${label}</small></td>
+      <td class="pt-val">${p3}</td><td class="pt-val">${p4}</td><td class="pt-val">${p5}</td>`;
     tbody.appendChild(tr);
   });
 }
 function openPaytable(){ buildPaytable(); $('paytableModal').classList.add('active'); }
+
 function buildShop(){
-  const grid=$('shopGrid');
-  grid.innerHTML='';
-  CONFIG.packages.forEach(pkg=>{
-    const card=document.createElement('div');
-    card.className='shop-card'+(pkg.featured?' featured':'');
-    card.innerHTML=`
+  const grid = $('shopGrid'); grid.innerHTML = '';
+  CONFIG.packages.forEach(pkg => {
+    const card = document.createElement('div');
+    card.className = 'shop-card' + (pkg.featured ? ' featured' : '');
+    card.innerHTML = `
       <div class="shop-left">
         <div class="shop-name">${pkg.name}</div>
         <div class="shop-coins">${fmt(pkg.coins)} 🪙</div>
-        ${pkg.bonus?`<div class="shop-bonus">${pkg.bonus}</div>`:''}
+        ${pkg.bonus ? `<div class="shop-bonus">${pkg.bonus}</div>` : ''}
       </div>
       <div class="shop-price">${pkg.stars} ⭐</div>`;
-    card.onclick=()=>buyPackage(pkg);
+    card.onclick = () => buyPackage(pkg);
     grid.appendChild(card);
   });
 }
 function openShop(){ buildShop(); $('shopModal').classList.add('active'); }
 
 async function buyPackage(pkg){
-  const tg=window.Telegram?.WebApp;
-  try{
-    const res=await fetch(CONFIG.invoiceEndpoint,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({packageId:pkg.id, stars:pkg.stars, coins:pkg.coins, userId:tg?.initDataUnsafe?.user?.id||0, initData:tg?.initData||''})
+  const tg = window.Telegram?.WebApp;
+  try {
+    const res = await fetch(CONFIG.invoiceEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({packageId: pkg.id, stars: pkg.stars, coins: pkg.coins,
+        userId: tg?.initDataUnsafe?.user?.id || 0, initData: tg?.initData || ''})
     });
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const { invoiceLink, error } = await res.json();
-    if(error) throw new Error(error);
-    if(!invoiceLink) throw new Error('no invoiceLink');
-    if(tg?.openInvoice){
-      tg.openInvoice(invoiceLink,(status)=>{
-        if(status==='paid'){
-          state.balance+=pkg.coins; save(); refresh(); sfx('coin'); haptic('success');
-          notif(tF('paySuccess',{n:fmt(pkg.coins)}),'gold');
+    if (error) throw new Error(error);
+    if (!invoiceLink) throw new Error('no invoiceLink');
+    if (tg?.openInvoice) {
+      tg.openInvoice(invoiceLink, (status) => {
+        if (status === 'paid') {
+          state.balance += pkg.coins; save(); refresh(); sfx('coin'); haptic('success');
+          notif(tF('paySuccess', {n: fmt(pkg.coins)}), 'gold');
           closeModal('shopModal');
         }
       });
-    }else{
-      window.open(invoiceLink,'_blank');
-    }
-  }catch(e){
-    state.balance+=pkg.coins; save(); refresh(); sfx('coin'); haptic('success');
-    notif(tF('payTest',{n:fmt(pkg.coins)}),'gold');
+    } else window.open(invoiceLink, '_blank');
+  } catch(e) {
+    state.balance += pkg.coins; save(); refresh(); sfx('coin'); haptic('success');
+    notif(tF('payTest', {n: fmt(pkg.coins)}), 'gold');
     closeModal('shopModal');
   }
 }
 
-/* ============================================================
-   BONUS / RISK / DAILY
-   ============================================================ */
+/* ===== BONUS / RISK / DAILY ===== */
 function triggerBonus(){
   sfx('bonus'); haptic('success');
-  document.querySelectorAll('.chest').forEach(c=>{
-    c.textContent='📦'; c.classList.remove('opened');
-    c.onclick=()=>pickChest(c);
+  document.querySelectorAll('.chest').forEach(c => {
+    c.textContent = '📦'; c.classList.remove('opened');
+    c.onclick = () => pickChest(c);
   });
   $('bonusModal').classList.add('active');
 }
 function pickChest(el){
-  if(el.classList.contains('opened')) return;
+  if (el.classList.contains('opened')) return;
   sfx('chest'); haptic('medium');
-  const prizes=[50,100,200,300,500,1000];
-  const prize=prizes[Math.floor(Math.random()*prizes.length)];
-  el.textContent='💎'; el.classList.add('opened');
-  state.balance+=prize; save(); refresh();
-  notif(tF('bonusWon',{n:fmt(prize)}),'gold');
-  document.querySelectorAll('.chest').forEach(c=>{
-    if(c!==el && !c.classList.contains('opened')){ c.textContent='🕳️'; c.classList.add('opened'); }
-  });
-  setTimeout(()=>$('bonusModal').classList.remove('active'),1500);
-}
-function openRisk(){
-  if(pendingRisk<=0){ notif(t('riskNoWin'),'error'); return; }
-  $('riskText').textContent=tF('riskText',{n:fmt(pendingRisk)});
-  $('riskModal').classList.add('active');
-}
-function riskChoose(win){
-  const won=Math.random()<0.5 ? win : !win;
-  $('riskModal').classList.remove('active');
-  if(won){
-    state.balance+=pendingRisk;
-    sfx('riskWin'); haptic('success');
-    notif(tF('riskWin',{n:fmt(pendingRisk)}),'gold');
-  }else{
-    state.balance-=pendingRisk;
-    sfx('riskLose'); haptic('error');
-    notif(t('riskLose'),'error');
-  }
-  pendingRisk=0; save(); refresh();
-}
-function claimDaily(){
-  const now=Date.now();
-  if(now-state.lastDaily<24*3600*1000){ notif(t('dailyClaimed'),'error'); return; }
-  state.lastDaily=now; state.balance+=100;
-  save(); refresh(); sfx('bonus'); haptic('success');
-  notif(t('dailyGot'),'gold');
-}
-function changeLines(newCount){
-  if (isSpinning) return;
-  newCount = Math.max(1, Math.min(MAX_LINES, newCount));
-  if (newCount === state.lines) { previewActiveLines(); return; }
-  state.lines = newCount;
-  save(); refresh();
-  sfx('click'); haptic('select');
-  previewActiveLines();
-}
-
-/* ============================================================
-   EVENTS
-   ============================================================ */
-function bind(){
-  $('startSound').addEventListener('pointerdown',(e)=>{
-    e.preventDefault();
-    state.sound=true; save();
-    buildAudio();
-    warmupAudio();
-    setTimeout(()=>{ try{ playSfx('bigwin'); }catch(e){} }, 30);
-    haptic('success');
-    setTimeout(()=>{ $('startOverlay').classList.add('hidden'); refresh(); }, 200);
-  });
-  $('startMute').addEventListener('pointerdown',(e)=>{
-    e.preventDefault();
-    state.sound=false; save();
-    buildAudio();
-    $('startOverlay').classList.add('hidden');
-    refresh();
-  });
-
-  $('linesDec').onclick=()=>changeLines(state.lines-1);
-  $('linesInc').onclick=()=>changeLines(state.lines+1);
-  document.querySelectorAll('.lp').forEach(b=>{
-    b.onclick=()=>changeLines(parseInt(b.dataset.lines));
-  });
-
-  $('betMin').onclick=()=>{ if(!isSpinning){state.betPerLine=1; sfx('click'); haptic('light'); save(); refresh()} };
-  $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=100; sfx('click'); haptic('light'); save(); refresh()} };
-  $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); sfx('click'); haptic('light'); save(); refresh()} };
-  $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); sfx('click'); haptic('light'); save(); refresh()} };
-
-  $('spinBtn').onclick=()=>{ spin(); };
-
-  $('bonusBtn').onclick=()=>{ sfx('click'); haptic('light'); claimDaily(); };
-  $('riskBtn').onclick=()=>{ sfx('click'); haptic('light'); openRisk(); };
-  $('shopBtn').onclick=()=>{ sfx('click'); haptic('light'); openShop(); };
-  $('paytableBtn').onclick=()=>{ sfx('click'); haptic('light'); openPaytable(); };
-
-  $('soundBtn').onclick=()=>{
-    state.sound=!state.sound;
-    if(state.sound){
-      buildAudio();
-      warmupAudio();
-      sfx('click'); haptic('light'); notif(t('soundOn'));
-    } else {
-      stopReelLoop();
-      notif(t('soundOff'),'error');
-    }
-    save(); refresh();
-  };
-
-  $('riskHigher').onclick=()=>riskChoose(true);
-  $('riskLower').onclick=()=>riskChoose(false);
-  $('riskTake').onclick=()=>{ $('riskModal').classList.remove('active'); pendingRisk=0; };
-
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.onclick=()=>{ state.lang=b.dataset.lang; save(); applyI18n(); sfx('click'); haptic('light'); notif(t('langChanged')); };
-  });
-
-  document.querySelectorAll('.modal').forEach(m=>{
-    m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('active'); });
-  });
-
-  window.addEventListener('resize',()=>{ if(overlay.innerHTML && !isSpinning) clearLines(); });
-
-  document.addEventListener('visibilitychange',()=>{
-    if(document.hidden) stopReelLoop();
-  });
-}
-
-/* ============================================================
-   INIT
-   ============================================================ */
-function init(){
-  load();
-  const tg=window.Telegram?.WebApp;
-  if(tg){
-    const code=tg.initDataUnsafe?.user?.language_code;
-    if(code) state.lang=code.startsWith('uk')?'uk':code.startsWith('ru')?'ru':'en';
-    tg.ready(); tg.expand();
-    tg.setHeaderColor?.('#0a0e17'); tg.setBackgroundColor?.('#0a0e17');
-  }
-  buildReels(); bind(); applyI18n();
-  setTimeout(()=>{ try{ buildAudio(); }catch(e){} }, 100);
-}
-init();
-</script>
-</body>
-</html>
+  const prizes = [50, 100, 200, 300, 500, 1000];
+  const prize =
