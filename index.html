@@ -36,9 +36,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .reel-flash{position:absolute;inset:0;background:rgba(255,255,255,0);pointer-events:none;z-index:4;border-radius:6px;transition:background .08s}
 .reel-flash.flash{background:rgba(255,217,102,.9)}
 .track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0)}
+.track.spinning{animation:reelSpinLoop 0.15s linear infinite}
+@keyframes reelSpinLoop { from { transform: translate3d(0,0,0); } to { transform: translate3d(0,-1095px,0); } }
 .cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0}
 .cell.win::before{content:"";position:absolute;inset:4px;border:2px solid #ffd966;border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.6),rgba(255,217,102,.15) 70%);pointer-events:none;box-shadow:0 0 10px rgba(255,217,102,.8)}
-@keyframes winFlash{0%{opacity:.6}100%{opacity:1}}
 .lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
 .lines-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .lines-row{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center}
@@ -245,10 +246,7 @@ const CONFIG = {
 };
 
 const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
-const FILLER = 15;
-const DURATION_BASE = 800;
-const DURATION_STEP = 350;
-const START_STEP = 60;
+const AUTO_STOP_TIME = 7000; // 7 секунд
 
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
 const WEIGHTS={'🏴‍☠️':2,'💎':4,'🦜':6,'🗺️':8,'⚓':12,'🗡️':14,'🪙':18,'💣':18};
@@ -266,13 +264,13 @@ const LINE_COLORS=['#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be','#30b0ff','
 const POOL=[];Object.entries(WEIGHTS).forEach(([s,w])=>{for(let i=0;i<w;i++)POOL.push(s)});
 
 const I18N={
-  ru:{balance:'Баланс',win:'Выигрыш',bet:'Ставка',betPerLine:'Ставка / линия',totalBet:'Всего',lines:'Линии',spin:'КРУТИТЬ',spinActive:'КРУТИМ...',dailyBonus:'Бонус',risk:'Риск',shop:'Магазин',paytable:'Выплаты',startSub:'Пиратский слот с сокровищами',startSound:'Играть со звуком',startMute:'Без звука',notEnough:'Недостаточно монет',bonusTitle:'🏴‍☠️ ПИРАТСКИЙ КЛАД',bonusText:'Выберите сундук:',bonusWon:'Сундук: +{n} 🪙!',riskTitle:'🃏 РИСК-ИГРА',riskText:'Рискнуть {n} 🪙? Удвойте или потеряйте!',riskHigher:'ВЫШЕ',riskLower:'НИЖЕ',riskTake:'Забрать',riskWin:'🎉 Победа! +{n}',riskLose:'❌ Не повезло.',riskNoWin:'Сначала выиграйте!',winMsg:'Выигрыш: +{n} 🪙',bigWin:'🔥 БОЛЬШОЙ ВЫИГРЫШ: +{n} 🪙!',dailyClaimed:'Бонус уже получен! Ждите 24ч',dailyGot:'🎁 Ежедневный бонус: +100 🪙!',soundOn:'Звук вкл',soundOff:'Звук выкл',langChanged:'Язык: Русский',paytableTitle:'📋 ТАБЛИЦА ВЫПЛАТ',paytableHint:'Выплаты за 1 монету ставки на линию',close:'Закрыть',shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Покупка за Telegram Stars',paySuccess:'⭐ Оплата получена! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не удалось создать счёт'},
-  uk:{balance:'Баланс',win:'Виграш',bet:'Ставка',betPerLine:'Ставка / лінія',totalBet:'Разом',lines:'Лінії',spin:'КРУТИТИ',spinActive:'КРУТИМО...',dailyBonus:'Бонус',risk:'Ризик',shop:'Магазин',paytable:'Виплати',startSub:'Піратський слот зі скарбами',startSound:'Грати зі звуком',startMute:'Без звуку',notEnough:'Недостатньо монет',bonusTitle:'🏴‍☠️ ПІРАТСЬКИЙ СКАРБ',bonusText:'Виберіть скриню:',bonusWon:'Скриня: +{n} 🪙!',riskTitle:'🃏 РИЗИК-ГРА',riskText:'Ризикнути {n} 🪙? Подвойте або втратите!',riskHigher:'ВИЩЕ',riskLower:'НИЖЧЕ',riskTake:'Забрати',riskWin:'🎉 Перемога! +{n}',riskLose:'❌ Не пощастило.',riskNoWin:'Спочатку виграйте!',winMsg:'Виграш: +{n} 🪙',bigWin:'🔥 ВЕЛИКИЙ ВИГРАШ: +{n} 🪙!',dailyClaimed:'Бонус вже отримано! Чекайте 24г',dailyGot:'🎁 Щоденний бонус: +100 🪙!',soundOn:'Звук увімк',soundOff:'Звук вимк',langChanged:'Мова: Українська',paytableTitle:'📋 ТАБЛИЦЯ ВИПЛАТ',paytableHint:'Виплати за 1 монету ставки на лінію',close:'Закрити',shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Купівля за Telegram Stars',paySuccess:'⭐ Оплату отримано! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не вдалося створити рахунок'},
-  en:{balance:'Balance',win:'Win',bet:'Bet',betPerLine:'Bet / line',totalBet:'Total',lines:'Lines',spin:'SPIN',spinActive:'SPINNING...',dailyBonus:'Bonus',risk:'Risk',shop:'Shop',paytable:'Payouts',startSub:'Pirate slot with treasures',startSound:'Play with sound',startMute:'Muted',notEnough:'Not enough coins',bonusTitle:'🏴‍☠️ PIRATE TREASURE',bonusText:'Pick a chest:',bonusWon:'Chest: +{n} 🪙!',riskTitle:'🃏 RISK GAME',riskText:'Risk {n} 🪙? Double or lose!',riskHigher:'HIGHER',riskLower:'LOWER',riskTake:'Take',riskWin:'🎉 Win! +{n}',riskLose:'❌ No luck.',riskNoWin:'Win first!',winMsg:'Win: +{n} 🪙',bigWin:'🔥 BIG WIN: +{n} 🪙!',dailyClaimed:'Bonus already claimed! Wait 24h',dailyGot:'🎁 Daily bonus: +100 🪙!',soundOn:'Sound ON',soundOff:'Sound OFF',langChanged:'Language: English',paytableTitle:'📋 PAYTABLE',paytableHint:'Payouts per 1 coin of line bet',close:'Close',shopTitle:'⭐ COIN SHOP',shopHint:'Purchase with Telegram Stars',paySuccess:'⭐ Payment received! +{n} 🪙',payTest:'⭐ Test: +{n} 🪙',payError:'Failed to create invoice'}
+  ru:{balance:'Баланс',win:'Выигрыш',bet:'Ставка',betPerLine:'Ставка / линия',totalBet:'Всего',lines:'Линии',spin:'КРУТИТЬ',spinActive:'КРУТИМ...',spinStop:'СТОП',dailyBonus:'Бонус',risk:'Риск',shop:'Магазин',paytable:'Выплаты',startSub:'Пиратский слот с сокровищами',startSound:'Играть со звуком',startMute:'Без звука',notEnough:'Недостаточно монет',bonusTitle:'🏴‍☠️ ПИРАТСКИЙ КЛАД',bonusText:'Выберите сундук:',bonusWon:'Сундук: +{n} 🪙!',riskTitle:'🃏 РИСК-ИГРА',riskText:'Рискнуть {n} 🪙? Удвойте или потеряйте!',riskHigher:'ВЫШЕ',riskLower:'НИЖЕ',riskTake:'Забрать',riskWin:'🎉 Победа! +{n}',riskLose:'❌ Не повезло.',riskNoWin:'Сначала выиграйте!',winMsg:'Выигрыш: +{n} 🪙',bigWin:'🔥 БОЛЬШОЙ ВЫИГРЫШ: +{n} 🪙!',dailyClaimed:'Бонус уже получен! Ждите 24ч',dailyGot:'🎁 Ежедневный бонус: +100 🪙!',soundOn:'Звук вкл',soundOff:'Звук выкл',langChanged:'Язык: Русский',paytableTitle:'📋 ТАБЛИЦА ВЫПЛАТ',paytableHint:'Выплаты за 1 монету ставки на линию',close:'Закрыть',shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Покупка за Telegram Stars',paySuccess:'⭐ Оплата получена! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не удалось создать счёт'},
+  uk:{balance:'Баланс',win:'Виграш',bet:'Ставка',betPerLine:'Ставка / лінія',totalBet:'Разом',lines:'Лінії',spin:'КРУТИТИ',spinActive:'КРУТИМО...',spinStop:'СТОП',dailyBonus:'Бонус',risk:'Ризик',shop:'Магазин',paytable:'Виплати',startSub:'Піратський слот зі скарбами',startSound:'Грати зі звуком',startMute:'Без звуку',notEnough:'Недостатньо монет',bonusTitle:'🏴‍☠️ ПІРАТСЬКИЙ СКАРБ',bonusText:'Виберіть скриню:',bonusWon:'Скриня: +{n} 🪙!',riskTitle:'🃏 РИЗИК-ГРА',riskText:'Ризикнути {n} 🪙? Подвойте або втратите!',riskHigher:'ВИЩЕ',riskLower:'НИЖЧЕ',riskTake:'Забрати',riskWin:'🎉 Перемога! +{n}',riskLose:'❌ Не пощастило.',riskNoWin:'Спочатку виграйте!',winMsg:'Виграш: +{n} 🪙',bigWin:'🔥 ВЕЛИКИЙ ВИГРАШ: +{n} 🪙!',dailyClaimed:'Бонус вже отримано! Чекайте 24г',dailyGot:'🎁 Щоденний бонус: +100 🪙!',soundOn:'Звук увімк',soundOff:'Звук вимк',langChanged:'Мова: Українська',paytableTitle:'📋 ТАБЛИЦЯ ВИПЛАТ',paytableHint:'Виплати за 1 монету ставки на лінію',close:'Закрити',shopTitle:'⭐ МАГАЗИН МОНЕТ',shopHint:'Купівля за Telegram Stars',paySuccess:'⭐ Оплату отримано! +{n} 🪙',payTest:'⭐ Тест: +{n} 🪙',payError:'Не вдалося створити рахунок'},
+  en:{balance:'Balance',win:'Win',bet:'Bet',betPerLine:'Bet / line',totalBet:'Total',lines:'Lines',spin:'SPIN',spinActive:'SPINNING...',spinStop:'STOP',dailyBonus:'Bonus',risk:'Risk',shop:'Shop',paytable:'Payouts',startSub:'Pirate slot with treasures',startSound:'Play with sound',startMute:'Muted',notEnough:'Not enough coins',bonusTitle:'🏴‍☠️ PIRATE TREASURE',bonusText:'Pick a chest:',bonusWon:'Chest: +{n} 🪙!',riskTitle:'🃏 RISK GAME',riskText:'Risk {n} 🪙? Double or lose!',riskHigher:'HIGHER',riskLower:'LOWER',riskTake:'Take',riskWin:'🎉 Win! +{n}',riskLose:'❌ No luck.',riskNoWin:'Win first!',winMsg:'Win: +{n} 🪙',bigWin:'🔥 BIG WIN: +{n} 🪙!',dailyClaimed:'Bonus already claimed! Wait 24h',dailyGot:'🎁 Daily bonus: +100 🪙!',soundOn:'Sound ON',soundOff:'Sound OFF',langChanged:'Language: English',paytableTitle:'📋 PAYTABLE',paytableHint:'Payouts per 1 coin of line bet',close:'Close',shopTitle:'⭐ COIN SHOP',shopHint:'Purchase with Telegram Stars',paySuccess:'⭐ Payment received! +{n} 🪙',payTest:'⭐ Test: +{n} 🪙',payError:'Failed to create invoice'}
 };
 
 let state={balance:1000,betPerLine:1,lines:9,lang:'ru',sound:true,lastDaily:0};
-let isSpinning=false, pendingRisk=0;
+let isSpinning=false, pendingRisk=0, stopRequested=false, autoStopTimer=null;
 const reelsEl=document.getElementById('reels');
 const overlay=document.getElementById('linesOverlay');
 const frame=document.getElementById('reelsFrame');
@@ -514,61 +512,59 @@ function buildReels(){
 /* ============================================================
    🎰 АНИМАЦИЯ (СВЕРХУ ВНИЗ)
    ============================================================ */
-function animateReel(track, final3, idx) {
+function startReelSpin(track) {
+  let html = '';
+  for (let i = 0; i < 15; i++) html += `<div class="cell">${randSym()}</div>`;
+  track.innerHTML = html;
+  track.style.transition = 'none';
+  track.style.transform = 'translate3d(0,0,0)';
+  track.getBoundingClientRect();
+  track.classList.add('spinning');
+}
+
+function stopReelAnim(track, final3, idx) {
   return new Promise(resolve => {
-    try {
-      let html = '';
-      for (let i = 0; i < FILLER; i++) html += `<div class="cell">${randSym()}</div>`;
-      final3.forEach(s => html += `<div class="cell">${s}</div>`);
-      track.innerHTML = html;
-
-      const startY = 0;
-      const endY = -(FILLER * CELL_H);
-
-      track.style.transition = 'none';
-      track.style.transform = `translate3d(0, ${startY}px, 0)`;
-      track.getBoundingClientRect();
-
-      const startDelay = idx * START_STEP;
-      const dur = DURATION_BASE + idx * DURATION_STEP;
-
-      setTimeout(() => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
-            track.style.transform = `translate3d(0, ${endY}px, 0)`;
-          });
-        });
-      }, startDelay);
-
-      setTimeout(() => {
-        try {
+    setTimeout(() => {
+      try {
+        const currentY = new DOMMatrix(getComputedStyle(track).transform).m42 || 0;
+        track.classList.remove('spinning');
+        track.style.transition = 'none';
+        track.style.transform = `translate3d(0,${currentY}px,0)`;
+        track.getBoundingClientRect();
+        
+        let html = '';
+        for (let i = 0; i < 15; i++) html += `<div class="cell">${randSym()}</div>`;
+        final3.forEach(s => html += `<div class="cell">${s}</div>`);
+        track.innerHTML = html;
+        
+        let targetY = -15 * CELL_H;
+        while (targetY > currentY - 8 * CELL_H) targetY -= 15 * CELL_H;
+        
+        const dur = 1000 + idx * 250;
+        track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
+        track.style.transform = `translate3d(0,${targetY}px,0)`;
+        
+        setTimeout(() => {
           track.style.transition = 'none';
           track.style.transform = 'translate3d(0,0,0)';
           track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
-        } catch(e) {}
-
-        try {
-          const flash = flashes[idx];
-          if (flash) {
-            flash.classList.add('flash');
-            setTimeout(() => flash.classList.remove('flash'), 100);
-          }
-        } catch(e) {}
-
-        sfx('reelStop');
-        haptic('light');
-        resolve();
-      }, startDelay + dur + 60);
-    } catch(e) {
-      console.error('animateReel error:', e);
-      try {
+          try {
+            const f = flashes[idx];
+            if (f) { f.classList.add('flash'); setTimeout(()=>f.classList.remove('flash'), 100); }
+          } catch(e) {}
+          sfx('reelStop');
+          haptic('light');
+          resolve();
+        }, dur + 50);
+      } catch(e) {
+        console.error(e);
+        track.classList.remove('spinning');
         track.style.transition = 'none';
         track.style.transform = 'translate3d(0,0,0)';
         track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
-      } catch(err) {}
-      resolve();
-    }
+        resolve();
+      }
+    }, idx * 250);
   });
 }
 
@@ -743,68 +739,83 @@ function notif(msg,type=''){
   n.textContent=msg;
   n.className='notif show '+type;
   clearTimeout(n._t);
-  n._t=setTimeout(()=>{n.className='notif '+type},2200);
+  n._t=setTimeout(()=>{n.className='notif '+type},2400);
 }
 function closeModal(id){ $(id).classList.remove('active'); }
 window.closeModal=closeModal;
 
 /* ============================================================
-   SPIN
+   SPIN / STOP
    ============================================================ */
-async function spin(){
-  if(isSpinning) return;
-  const bet=totalBet();
-  if(state.balance<bet){ notif(t('notEnough'),'error'); sfx('lose'); haptic('error'); return; }
-  isSpinning=true;
+async function handleSpinClick() {
+  if (isSpinning) {
+    requestStop();
+  } else {
+    await startSpinAction();
+  }
+}
+
+async function startSpinAction() {
+  const bet = totalBet();
+  if (state.balance < bet) { notif(t('notEnough'),'error'); sfx('lose'); haptic('error'); return; }
+  
+  isSpinning = true;
+  stopRequested = false;
   clearLines();
   document.querySelectorAll('.cell.win').forEach(c=>c.classList.remove('win'));
-  state.balance-=bet;
-  $('winVal').textContent='0 🪙';
+  state.balance -= bet;
+  $('winVal').textContent = '0 🪙';
   save(); refresh();
-
+  
   sfx('spinStart');
-  startReelLoop();
+  setTimeout(()=>{ if (isSpinning) startReelLoop(); }, 150);
   haptic('medium');
+  
+  tracks.forEach(tr => startReelSpin(tr));
+  
+  // Автостоп через 7 секунд
+  autoStopTimer = setTimeout(() => requestStop(), AUTO_STOP_TIME);
+}
 
-  const perLine=state.betPerLine;
-  const finalGrid=genGrid();
-
-  try {
-    await Promise.all(tracks.map((tr,r)=>animateReel(tr,finalGrid[r],r)));
-  } catch(e) {
-    console.error('spin anim failed:', e);
-  }
-
+async function requestStop() {
+  if (!isSpinning || stopRequested) return;
+  stopRequested = true;
+  if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
+  
   stopReelLoop();
-
-  const {total,cells,wins}=calcWins(finalGrid,perLine);
-  if(total>0){
-    state.balance+=total;
-    $('winVal').textContent='+'+fmt(total)+' 🪙';
+  
+  const bet = totalBet();
+  const perLine = state.betPerLine;
+  const finalGrid = genGrid();
+  
+  await Promise.all(tracks.map((tr, i) => stopReelAnim(tr, finalGrid[i], i)));
+  
+  const {total,cells,wins} = calcWins(finalGrid, perLine);
+  if (total > 0) {
+    state.balance += total;
+    $('winVal').textContent = '+' + fmt(total) + ' 🪙';
     cells.forEach(key=>{
       const [r,row]=key.split(',').map(Number);
       const c=tracks[r].children[row];
       if(c) c.classList.add('win');
     });
-    setTimeout(()=>drawWinLines(wins),150);
-
+    setTimeout(()=>drawWinLines(wins), 150);
     const ratio = total / bet;
     let winSound = 'win';
     if (ratio >= 20) winSound = 'bigwin';
     else if (ratio >= 5) winSound = 'mediumWin';
     sfx(winSound);
-
     haptic(ratio >= 10 ? 'heavy' : 'success');
     notif(ratio >= 10 ? tF('bigWin',{n:fmt(total)}) : tF('winMsg',{n:fmt(total)}), ratio >= 10 ? 'gold' : '');
-    if(total>=bet*2) pendingRisk=total;
-  }else{
+    if (total >= bet * 2) pendingRisk = total;
+  } else {
     sfx('lose');
     haptic('error');
   }
-
-  if(Math.random()<0.03) setTimeout(triggerBonus,500);
-
-  isSpinning=false;
+  
+  if (Math.random() < 0.03) setTimeout(triggerBonus, 500);
+  
+  isSpinning = false;
   save(); refresh();
 }
 
@@ -970,7 +981,7 @@ function bind(){
   $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); sfx('click'); haptic('light'); save(); refresh()} };
   $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); sfx('click'); haptic('light'); save(); refresh()} };
 
-  $('spinBtn').onclick=()=>{ spin(); };
+  $('spinBtn').onclick=()=>{ handleSpinClick(); };
 
   $('bonusBtn').onclick=()=>{ sfx('click'); haptic('light'); claimDaily(); };
   $('riskBtn').onclick=()=>{ sfx('click'); haptic('light'); openRisk(); };
