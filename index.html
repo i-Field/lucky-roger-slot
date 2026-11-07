@@ -1093,4 +1093,121 @@ function pickChest(el){
   if (el.classList.contains('opened')) return;
   sfx('chest'); haptic('medium');
   const prizes = [50, 100, 200, 300, 500, 1000];
-  const prize =
+  const prize = prizes[Math.floor(Math.random() * prizes.length)];
+  el.textContent = '💎'; el.classList.add('opened');
+  state.balance += prize; save(); refresh();
+  notif(tF('bonusWon', {n: fmt(prize)}), 'gold');
+  document.querySelectorAll('.chest').forEach(c => {
+    if (c !== el && !c.classList.contains('opened')) { c.textContent = '🕳️'; c.classList.add('opened'); }
+  });
+  setTimeout(() => $('bonusModal').classList.remove('active'), 1500);
+}
+function openRisk(){
+  if (pendingRisk <= 0) { notif(t('riskNoWin'), 'error'); return; }
+  $('riskText').textContent = tF('riskText', {n: fmt(pendingRisk)});
+  $('riskModal').classList.add('active');
+}
+function riskChoose(win){
+  const won = Math.random() < 0.5 ? win : !win;
+  $('riskModal').classList.remove('active');
+  if (won) {
+    state.balance += pendingRisk;
+    sfx('riskWin'); haptic('success');
+    notif(tF('riskWin', {n: fmt(pendingRisk)}), 'gold');
+  } else {
+    state.balance -= pendingRisk;
+    sfx('riskLose'); haptic('error');
+    notif(t('riskLose'), 'error');
+  }
+  pendingRisk = 0; save(); refresh();
+}
+function claimDaily(){
+  const now = Date.now();
+  if (now - state.lastDaily < 24 * 3600 * 1000) { notif(t('dailyClaimed'), 'error'); return; }
+  state.lastDaily = now; state.balance += 100;
+  save(); refresh(); sfx('bonus'); haptic('success');
+  notif(t('dailyGot'), 'gold');
+}
+function changeLines(newCount){
+  if (isSpinning) return;
+  newCount = Math.max(1, Math.min(MAX_LINES, newCount));
+  if (newCount === state.lines) { previewActiveLines(); return; }
+  state.lines = newCount; save(); refresh();
+  sfx('click'); haptic('select');
+  previewActiveLines();
+}
+
+/* ===== EVENTS ===== */
+function bind(){
+  $('startSound').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    state.sound = true; save();
+    buildAudio(); warmupAudio();
+    setTimeout(() => { try { playSfx('winPirate'); } catch(e){} }, 30);
+    haptic('success');
+    setTimeout(() => { $('startOverlay').classList.add('hidden'); refresh(); }, 200);
+  });
+  $('startMute').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    state.sound = false; save();
+    buildAudio();
+    $('startOverlay').classList.add('hidden');
+    refresh();
+  });
+
+  $('linesDec').onclick = () => changeLines(state.lines - 1);
+  $('linesInc').onclick = () => changeLines(state.lines + 1);
+  document.querySelectorAll('.lp').forEach(b => b.onclick = () => changeLines(parseInt(b.dataset.lines)));
+
+  $('betMin').onclick = () => { if(!isSpinning){ state.betPerLine = 1; sfx('click'); haptic('light'); save(); refresh(); } };
+  $('betMax').onclick = () => { if(!isSpinning){ state.betPerLine = 100; sfx('click'); haptic('light'); save(); refresh(); } };
+  $('betDec').onclick = () => { if(!isSpinning){ state.betPerLine = Math.max(1, state.betPerLine - 1); sfx('click'); haptic('light'); save(); refresh(); } };
+  $('betInc').onclick = () => { if(!isSpinning){ state.betPerLine = Math.min(100, state.betPerLine + 1); sfx('click'); haptic('light'); save(); refresh(); } };
+
+  $('spinBtn').onclick = () => { handleSpinClick(); };
+
+  $('bonusBtn').onclick = () => { sfx('click'); haptic('light'); claimDaily(); };
+  $('riskBtn').onclick = () => { sfx('click'); haptic('light'); openRisk(); };
+  $('shopBtn').onclick = () => { sfx('click'); haptic('light'); openShop(); };
+  $('paytableBtn').onclick = () => { sfx('click'); haptic('light'); openPaytable(); };
+
+  $('soundBtn').onclick = () => {
+    state.sound = !state.sound;
+    if (state.sound) { buildAudio(); warmupAudio(); sfx('click'); haptic('light'); notif(t('soundOn')); }
+    else { stopSpinLoop(); notif(t('soundOff'), 'error'); }
+    save(); refresh();
+  };
+
+  $('riskHigher').onclick = () => riskChoose(true);
+  $('riskLower').onclick = () => riskChoose(false);
+  $('riskTake').onclick = () => { $('riskModal').classList.remove('active'); pendingRisk = 0; };
+
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.onclick = () => { state.lang = b.dataset.lang; save(); applyI18n(); sfx('click'); haptic('light'); };
+  });
+
+  document.querySelectorAll('.modal').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); });
+  });
+
+  window.addEventListener('resize', () => { if (overlay.innerHTML && !isSpinning) clearLines(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopSpinLoop(); });
+}
+
+/* ===== INIT ===== */
+function init(){
+  load();
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    const code = tg.initDataUnsafe?.user?.language_code;
+    if (code) state.lang = code.startsWith('uk') ? 'uk' : code.startsWith('ru') ? 'ru' : 'en';
+    tg.ready(); tg.expand();
+    tg.setHeaderColor?.('#0a0e17'); tg.setBackgroundColor?.('#0a0e17');
+  }
+  buildReels(); bind(); applyI18n();
+  setTimeout(() => { try { buildAudio(); } catch(e){} }, 100);
+}
+init();
+</script>
+</body>
+</html>
