@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>Lucky Roger V14</title>
+<title>Lucky Roger V15</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0a0e17;--panel:#1a2333;--panel2:#232e42;--gold:#d4af37;--goldL:#ffd966;--goldD:#8a6d1a;--red:#c0392b;--green:#27ae60;--text:#f0f4f8;--muted:#8899aa}
@@ -41,13 +39,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0)}
 .cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0}
 .cell.win::before{content:"";position:absolute;inset:4px;border:2px solid #ffd966;border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.6),rgba(255,217,102,.15) 70%);pointer-events:none;box-shadow:0 0 10px rgba(255,217,102,.8)}
-
-/* 🎰 KEYFRAME АНИМАЦИЯ — СВЕРХУ ВНИЗ */
-@keyframes reelSpinDown {
-  0%   { transform: translate3d(0, -730px, 0); }
-  100% { transform: translate3d(0, 0, 0); }
-}
-
 .lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
 .lines-bar{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid #34455f;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 3px 6px rgba(0,0,0,.3)}
 .lines-row{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center}
@@ -121,7 +112,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .start-emoji{font-size:80px;margin-bottom:10px}
 .start-title{font-size:32px;font-weight:900;letter-spacing:3px;color:#ffd966;margin-bottom:8px;font-family:Georgia,serif;text-shadow:0 2px 4px rgba(0,0,0,.8)}
 .start-sub{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.5}
-.start-btn{width:100%;background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 0 #0f3d22}
+.start-btn{width:100%;background:linear-gradient(180deg,#2ecc71,#1a7d43);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:8px;box-shadow:0 4px 0 #0f3d22;position:relative;z-index:10}
 .start-btn.muted{background:linear-gradient(180deg,#576574,#2c3a52);box-shadow:0 4px 0 #1a2333;font-size:13px;padding:11px}
 .start-btn:active{transform:translateY(3px);box-shadow:none}
 .version-badge{position:fixed;bottom:4px;right:4px;font-size:9px;color:#556680;background:rgba(10,14,23,.7);padding:2px 6px;border-radius:4px;z-index:997;font-family:monospace;pointer-events:none}
@@ -129,7 +120,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 </head>
 <body>
 
-<div class="version-badge">v14</div>
+<div class="version-badge">v15</div>
 
 <div class="start-overlay" id="startOverlay">
   <div class="start-box">
@@ -138,7 +129,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
     <div class="start-sub" data-i18n="startSub">Пиратский слот с сокровищами</div>
     <button class="start-btn" id="startSound">🔊 <span data-i18n="startSound">Играть со звуком</span></button>
     <button class="start-btn muted" id="startMute">🔇 <span data-i18n="startMute">Без звука</span></button>
-    <div style="margin-top:12px;font-size:10px;color:#556680;font-family:monospace;">V14 · keyframe · направление ↓</div>
+    <div style="margin-top:12px;font-size:10px;color:#556680;font-family:monospace;">V15 · лента сверху вниз</div>
   </div>
 </div>
 
@@ -245,7 +236,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 <div class="notif" id="notif"></div>
 
 <script>
-console.log('%c🏴‍☠️ Lucky Roger V14 LOADED — keyframe direction test', 'font-size:18px;color:#ffd966;font-weight:bold');
+console.log('%c🏴‍☠️ Lucky Roger V15 LOADED', 'font-size:18px;color:#ffd966;font-weight:bold');
 
 const CONFIG = {
   invoiceEndpoint: '/api/invoice',
@@ -258,10 +249,10 @@ const CONFIG = {
 };
 
 const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
-const FILLER_CELLS = 10;
-const STAGGER_START = 80;
-const STAGGER_DURATION = 380;
-const BASE_DURATION = 750;
+const FILLER = 15; // Количество рандомных символов сверху
+const DURATION_BASE = 800;
+const DURATION_STEP = 350;
+const START_STEP = 60;
 
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
 const WEIGHTS={'🏴‍☠️':2,'💎':4,'🦜':6,'🗺️':8,'⚓':12,'🗡️':14,'🪙':18,'💣':18};
@@ -296,8 +287,8 @@ function $(id){return document.getElementById(id)}
 function fmt(n){return Math.round(n).toLocaleString('ru-RU')}
 function t(k){return (I18N[state.lang]&&I18N[state.lang][k])||I18N.ru[k]||k}
 function tF(k,v){let s=t(k);Object.entries(v).forEach(([a,b])=>s=s.replaceAll('{'+a+'}',b));return s}
-function save(){try{localStorage.setItem('lucky_roger_v14',JSON.stringify(state))}catch(e){}}
-function load(){try{const r=localStorage.getItem('lucky_roger_v14');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem('lucky_roger_v15',JSON.stringify(state))}catch(e){}}
+function load(){try{const r=localStorage.getItem('lucky_roger_v15');if(r)Object.assign(state,JSON.parse(r))}catch(e){}}
 function totalBet(){return state.lines*state.betPerLine}
 
 function haptic(type) {
@@ -323,7 +314,7 @@ function haptic(type) {
 }
 
 /* ============================================================
-   🎵 SFX — с гарантированным preload
+   🎵 SFX (Звуки)
    ============================================================ */
 const SFX = {};
 const reelStopPool = [];
@@ -351,10 +342,11 @@ function makeWav(duration, sampler, sampleRate) {
   return 'data:audio/wav;base64,' + btoa(bin);
 }
 
-function createAudio(url) {
+function createAudio(url, volume=0.7) {
   const a = new Audio();
   a.preload = 'auto';
   a.src = url;
+  a.volume = volume;
   try { a.load(); } catch(e) {}
   return a;
 }
@@ -362,12 +354,12 @@ function createAudio(url) {
 function buildAudio() {
   if (audioReady) return;
 
-  SFX.click = createAudio(makeWav(0.04, t => Math.sin(2*Math.PI*900*t) * Math.exp(-t*80) * 0.35));
+  SFX.click = createAudio(makeWav(0.04, t => Math.sin(2*Math.PI*900*t) * Math.exp(-t*80) * 0.35), 0.5);
   SFX.spinStart = createAudio(makeWav(0.35, t => {
     const sweep = Math.sin(2*Math.PI*(180 + t*1800)*t) * Math.exp(-t*3.5) * 0.35;
     const noise = (Math.random()*2-1) * Math.exp(-t*8) * 0.15;
     return sweep + noise;
-  }));
+  }), 0.7);
   SFX.reelLoop = createAudio(makeWav(0.25, t => {
     const ticks = [0, 0.062, 0.125, 0.187];
     let v = 0;
@@ -378,9 +370,8 @@ function buildAudio() {
       }
     }
     return v;
-  }));
+  }), 0.45);
   SFX.reelLoop.loop = true;
-  SFX.reelLoop.volume = 0.45;
 
   const stopUrl = makeWav(0.12, t => {
     const thump = Math.sin(2*Math.PI*80*t) * Math.exp(-t*20) * 0.5;
@@ -388,68 +379,61 @@ function buildAudio() {
     return thump + click;
   });
   for (let i = 0; i < 5; i++) {
-    const a = createAudio(stopUrl);
-    a.volume = 0.7;
-    reelStopPool.push(a);
+    reelStopPool.push(createAudio(stopUrl, 0.7));
   }
 
   SFX.win = createAudio(makeWav(0.5, t => {
     let v = 0;
     [[523,0],[659,0.09],[784,0.18]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*8); });
     return v * 0.42;
-  }));
+  }), 0.7);
   SFX.mediumWin = createAudio(makeWav(0.75, t => {
     let v = 0;
     [[523,0],[659,0.1],[784,0.2],[1047,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*6); });
     return v * 0.4;
-  }));
+  }), 0.7);
   SFX.bigwin = createAudio(makeWav(1.2, t => {
     let v = 0;
     [[523,0],[659,0.1],[784,0.2],[1047,0.32],[1319,0.44],[1568,0.56]].forEach(([f,s]) => {
       if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4) * 1.1;
     });
     return v * 0.36;
-  }));
+  }), 0.8);
   SFX.lose = createAudio(makeWav(0.55, t => {
     const v1 = t<0.28 ? Math.sin(2*Math.PI*220*t)*Math.exp(-t*6) : 0;
     const v2 = t>=0.28 ? Math.sin(2*Math.PI*165*(t-0.28))*Math.exp(-(t-0.28)*6) : 0;
     return (v1+v2)*0.32;
-  }));
+  }), 0.6);
   SFX.bonus = createAudio(makeWav(0.9, t => {
     let v = 0;
     [[784,0],[988,0.1],[1175,0.2],[1568,0.32]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
     return v * 0.44;
-  }));
+  }), 0.8);
   SFX.chest = createAudio(makeWav(0.55, t => {
     let v = 0;
     [[400,0],[800,0.08],[1200,0.16],[1600,0.24]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*9); });
     return v * 0.4;
-  }));
+  }), 0.7);
   SFX.coin = createAudio(makeWav(0.25, t => {
     const v1 = Math.sin(2*Math.PI*1568*t)*Math.exp(-t*12);
     const v2 = t>0.05 ? Math.sin(2*Math.PI*2093*(t-0.05))*Math.exp(-(t-0.05)*9) : 0;
     return (v1+v2)*0.42;
-  }));
+  }), 0.7);
   SFX.riskWin = createAudio(makeWav(0.65, t => {
     let v = 0;
     [[659,0],[880,0.12],[1175,0.24],[1568,0.36]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
     return v * 0.42;
-  }));
+  }), 0.7);
   SFX.riskLose = createAudio(makeWav(0.7, t => {
     let v = 0;
     [[440,0],[349,0.15],[262,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4); });
     return v * 0.36;
-  }));
-
-  Object.entries(SFX).forEach(([name, a]) => {
-    if (name === 'reelLoop') return;
-    a.volume = 0.7;
-  });
+  }), 0.6);
 
   audioReady = true;
 }
 
-// 🔥 Гарантированный разогрев: ВСЕГДА, без флага
+// Разогрев (безопасный, без обрыва)
 function warmupAudio() {
   const all = [...Object.values(SFX), ...reelStopPool];
   all.forEach(a => {
@@ -460,4 +444,582 @@ function warmupAudio() {
       const p = a.play();
       if (p && p.then) {
         p.then(() => {
-          try
+          try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
+        }).catch(() => {
+          try { a.volume = orig; } catch(e) {}
+        });
+      } else {
+        try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
+      }
+    } catch(e) {
+      try { a.volume = orig; } catch(e) {}
+    }
+  });
+}
+
+function playSfx(name) {
+  if (!state.sound) return;
+  if (!audioReady) buildAudio();
+  const a = SFX[name];
+  if (!a) return;
+  try { a.currentTime = 0; a.play().catch(()=>{}); } catch(e) {}
+}
+
+function playReelStop() {
+  if (!state.sound || !reelStopPool.length) return;
+  try {
+    const a = reelStopPool[reelStopIdx++ % reelStopPool.length];
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+  } catch(e) {}
+}
+
+function startReelLoop() {
+  if (!state.sound || !SFX.reelLoop) return;
+  try {
+    SFX.reelLoop.volume = 0.45;
+    SFX.reelLoop.currentTime = 0;
+    SFX.reelLoop.play().catch(()=>{});
+  } catch(e) {}
+}
+
+function stopReelLoop() {
+  if (!SFX.reelLoop) return;
+  try {
+    SFX.reelLoop.volume = 0;
+    SFX.reelLoop.pause();
+    SFX.reelLoop.currentTime = 0;
+  } catch(e) {}
+}
+
+function sfx(name) {
+  if (name === 'reelStop') playReelStop();
+  else playSfx(name);
+}
+
+/* ============================================================
+   REELS
+   ============================================================ */
+function randSym(){return POOL[Math.floor(Math.random()*POOL.length)]}
+function buildReels(){
+  reelsEl.innerHTML=''; tracks.length=0; flashes.length=0;
+  for(let r=0;r<REELS;r++){
+    const reel=document.createElement('div'); reel.className='reel';
+    const track=document.createElement('div'); track.className='track';
+    track.innerHTML=Array.from({length:ROWS},()=>`<div class="cell">${randSym()}</div>`).join('');
+    const flash=document.createElement('div'); flash.className='reel-flash';
+    reel.appendChild(track);
+    reel.appendChild(flash);
+    reelsEl.appendChild(reel);
+    tracks.push(track);
+    flashes.push(flash);
+  }
+}
+
+/* ============================================================
+   🎰 АНИМАЦИЯ (СВЕРХУ ВНИЗ)
+   ============================================================ */
+function animateReel(track, final3, idx) {
+  return new Promise(resolve => {
+    try {
+      // Финальные символы в КОНЦЕ трека (внизу), рандом сверху.
+      // При движении трека ВВЕРХ (translateY уменьшается), картинки визуально едут ВНИЗ.
+      let html = '';
+      for (let i = 0; i < FILLER; i++) html += `<div class="cell">${randSym()}</div>`;
+      final3.forEach(s => html += `<div class="cell">${s}</div>`);
+      track.innerHTML = html;
+
+      const startY = 0;
+      const endY = -(FILLER * CELL_H);
+
+      track.style.transition = 'none';
+      track.style.transform = `translate3d(0, ${startY}px, 0)`;
+      track.getBoundingClientRect(); // reflow
+
+      const startDelay = idx * START_STEP;
+      const dur = DURATION_BASE + idx * DURATION_STEP;
+
+      // Старт
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
+            track.style.transform = `translate3d(0, ${endY}px, 0)`;
+          });
+        });
+      }, startDelay);
+
+      // Финализация
+      setTimeout(() => {
+        try {
+          track.style.transition = 'none';
+          track.style.transform = 'translate3d(0,0,0)';
+          track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
+        } catch(e) {}
+
+        // Вспышка
+        try {
+          const flash = flashes[idx];
+          if (flash) {
+            flash.classList.add('flash');
+            setTimeout(() => flash.classList.remove('flash'), 100);
+          }
+        } catch(e) {}
+
+        sfx('reelStop');
+        haptic('light');
+        resolve();
+      }, startDelay + dur + 60);
+    } catch(e) {
+      console.error('animateReel error:', e);
+      try {
+        track.style.transition = 'none';
+        track.style.transform = 'translate3d(0,0,0)';
+        track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
+      } catch(err) {}
+      resolve();
+    }
+  });
+}
+
+/* ============================================================
+   LOGIC
+   ============================================================ */
+function genGrid(){
+  const g=[];
+  for(let r=0;r<REELS;r++){
+    const col=[];
+    for(let row=0;row<ROWS;row++) col.push(randSym());
+    g.push(col);
+  }
+  return g;
+}
+function calcWins(grid,perLine){
+  const cells=new Set(), wins=[]; let total=0;
+  PAYLINES.slice(0, state.lines).forEach((line,idx)=>{
+    const syms=line.map(([r,row])=>grid[r][row]);
+    const first=syms[0];
+    let count=1;
+    for(let i=1;i<REELS;i++){ if(syms[i]===first) count++; else break; }
+    if(count>=3){
+      const mult=PAYTABLE[first][count-3];
+      if(mult>0){
+        const win=mult*perLine;
+        total+=win;
+        wins.push({idx,line,sym:first,count,mult,win});
+        for(let i=0;i<count;i++) cells.add(`${line[i][0]},${line[i][1]}`);
+      }
+    }
+  });
+  return {total, cells, wins};
+}
+
+/* ============================================================
+   LINES PREVIEW
+   ============================================================ */
+let previewTimeout=null, previewFadeTimeout=null;
+
+function clearLines(){
+  overlay.innerHTML='';
+  overlay.style.transition='none';
+  overlay.style.opacity='1';
+  if(previewTimeout){clearTimeout(previewTimeout);previewTimeout=null}
+  if(previewFadeTimeout){clearTimeout(previewFadeTimeout);previewFadeTimeout=null}
+}
+
+function drawWinLines(wins){
+  overlay.innerHTML='';
+  const fRect=frame.getBoundingClientRect();
+  overlay.setAttribute('width',fRect.width);
+  overlay.setAttribute('height',fRect.height);
+  wins.forEach(w=>{
+    const pts=[];
+    for(let i=0;i<w.count;i++){
+      const [r,row]=w.line[i];
+      const cell=tracks[r].children[row];
+      if(!cell) continue;
+      const cr=cell.getBoundingClientRect();
+      pts.push([cr.left+cr.width/2-fRect.left, cr.top+cr.height/2-fRect.top]);
+    }
+    if(pts.length<2) return;
+    const color=LINE_COLORS[w.idx%LINE_COLORS.length];
+    const poly=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    poly.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
+    poly.setAttribute('stroke',color);
+    poly.setAttribute('stroke-width','5');
+    poly.setAttribute('fill','none');
+    poly.setAttribute('stroke-linecap','round');
+    poly.setAttribute('stroke-linejoin','round');
+    overlay.appendChild(poly);
+    try{
+      const len=poly.getTotalLength();
+      poly.style.strokeDasharray=len;
+      poly.style.strokeDashoffset=len;
+      poly.style.transition='stroke-dashoffset 0.45s ease-out';
+      poly.getBoundingClientRect();
+      requestAnimationFrame(()=>{poly.style.strokeDashoffset=0});
+    }catch(e){}
+  });
+}
+
+function previewActiveLines(){
+  clearLines();
+  if (state.lines === 0) return;
+  const fRect = frame.getBoundingClientRect();
+  overlay.setAttribute('width', fRect.width);
+  overlay.setAttribute('height', fRect.height);
+  overlay.style.opacity = '1';
+
+  const lines = PAYLINES.slice(0, state.lines);
+
+  lines.forEach((line, idx) => {
+    const pts = [];
+    for (const [r, row] of line) {
+      const cell = tracks[r].children[row];
+      if (!cell) continue;
+      const cr = cell.getBoundingClientRect();
+      pts.push([cr.left + cr.width/2 - fRect.left, cr.top + cr.height/2 - fRect.top]);
+    }
+    if (pts.length < 2) return;
+    const color = LINE_COLORS[idx % LINE_COLORS.length];
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    poly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
+    poly.setAttribute('stroke', color);
+    poly.setAttribute('stroke-width', '3.5');
+    poly.setAttribute('fill', 'none');
+    poly.setAttribute('stroke-linecap', 'round');
+    poly.setAttribute('stroke-linejoin', 'round');
+    overlay.appendChild(poly);
+    try {
+      const len = poly.getTotalLength();
+      poly.style.strokeDasharray = len;
+      poly.style.strokeDashoffset = len;
+      poly.style.transition = 'stroke-dashoffset 1s ease-out';
+      poly.getBoundingClientRect();
+      requestAnimationFrame(() => { poly.style.strokeDashoffset = 0; });
+    } catch(e) {}
+  });
+
+  previewTimeout = setTimeout(() => {
+    overlay.style.transition = 'opacity 0.5s';
+    overlay.style.opacity = '0';
+    previewFadeTimeout = setTimeout(() => {
+      overlay.innerHTML = '';
+      overlay.style.opacity = '1';
+      overlay.style.transition = 'none';
+    }, 500);
+  }, 1600);
+}
+
+/* ============================================================
+   UI
+   ============================================================ */
+function refresh(){
+  $('balanceVal').textContent=fmt(state.balance)+' 🪙';
+  $('betVal').textContent=fmt(state.betPerLine)+' 🪙';
+  $('totalBetVal').textContent=fmt(totalBet());
+  $('linesVal').textContent=state.lines;
+  $('spinBtn').textContent=isSpinning?t('spinActive'):t('spin');
+  $('spinBtn').disabled=isSpinning;
+  $('betMin').disabled=isSpinning||state.betPerLine<=1;
+  $('betDec').disabled=isSpinning||state.betPerLine<=1;
+  $('betInc').disabled=isSpinning||state.betPerLine>=100;
+  $('betMax').disabled=isSpinning||state.betPerLine>=100;
+  $('linesDec').disabled=isSpinning||state.lines<=1;
+  $('linesInc').disabled=isSpinning||state.lines>=MAX_LINES;
+  $('soundBtn').textContent=state.sound?'🔊':'🔇';
+  $('soundBtn').classList.toggle('off',!state.sound);
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===state.lang));
+  document.querySelectorAll('.lp').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.lines)===state.lines));
+  document.documentElement.lang=state.lang;
+}
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  $('riskHigher').textContent=t('riskHigher');
+  $('riskLower').textContent=t('riskLower');
+  $('riskTake').textContent=t('riskTake');
+  refresh();
+}
+function notif(msg,type=''){
+  const n=$('notif');
+  n.textContent=msg;
+  n.className='notif show '+type;
+  clearTimeout(n._t);
+  n._t=setTimeout(()=>{n.className='notif '+type},2200);
+}
+function closeModal(id){ $(id).classList.remove('active'); }
+window.closeModal=closeModal;
+
+/* ============================================================
+   SPIN
+   ============================================================ */
+async function spin(){
+  if(isSpinning) return;
+  const bet=totalBet();
+  if(state.balance<bet){ notif(t('notEnough'),'error'); sfx('lose'); haptic('error'); return; }
+  isSpinning=true;
+  clearLines();
+  document.querySelectorAll('.cell.win').forEach(c=>c.classList.remove('win'));
+  state.balance-=bet;
+  $('winVal').textContent='0 🪙';
+  save(); refresh();
+
+  sfx('spinStart');
+  startReelLoop();
+  haptic('medium');
+
+  const perLine=state.betPerLine;
+  const finalGrid=genGrid();
+
+  try {
+    await Promise.all(tracks.map((tr,r)=>animateReel(tr,finalGrid[r],r)));
+  } catch(e) {
+    console.error('spin anim failed:', e);
+  }
+
+  stopReelLoop();
+
+  const {total,cells,wins}=calcWins(finalGrid,perLine);
+  if(total>0){
+    state.balance+=total;
+    $('winVal').textContent='+'+fmt(total)+' 🪙';
+    cells.forEach(key=>{
+      const [r,row]=key.split(',').map(Number);
+      const c=tracks[r].children[row];
+      if(c) c.classList.add('win');
+    });
+    setTimeout(()=>drawWinLines(wins),150);
+
+    const ratio = total / bet;
+    let winSound = 'win';
+    if (ratio >= 20) winSound = 'bigwin';
+    else if (ratio >= 5) winSound = 'mediumWin';
+    sfx(winSound);
+
+    haptic(ratio >= 10 ? 'heavy' : 'success');
+    notif(ratio >= 10 ? tF('bigWin',{n:fmt(total)}) : tF('winMsg',{n:fmt(total)}), ratio >= 10 ? 'gold' : '');
+    if(total>=bet*2) pendingRisk=total;
+  }else{
+    sfx('lose');
+    haptic('error');
+  }
+
+  if(Math.random()<0.03) setTimeout(triggerBonus,500);
+
+  isSpinning=false;
+  save(); refresh();
+}
+
+/* ============================================================
+   PAYTABLE / SHOP
+   ============================================================ */
+function buildPaytable(){
+  const tbody=$('ptBody');
+  tbody.innerHTML='';
+  SYMBOLS.forEach(sym=>{
+    const [p3,p4,p5]=PAYTABLE[sym];
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="pt-sym">${sym}</td><td class="pt-val">${p3}</td><td class="pt-val">${p4}</td><td class="pt-val">${p5}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function openPaytable(){ buildPaytable(); $('paytableModal').classList.add('active'); }
+function buildShop(){
+  const grid=$('shopGrid');
+  grid.innerHTML='';
+  CONFIG.packages.forEach(pkg=>{
+    const card=document.createElement('div');
+    card.className='shop-card'+(pkg.featured?' featured':'');
+    card.innerHTML=`
+      <div class="shop-left">
+        <div class="shop-name">${pkg.name}</div>
+        <div class="shop-coins">${fmt(pkg.coins)} 🪙</div>
+        ${pkg.bonus?`<div class="shop-bonus">${pkg.bonus}</div>`:''}
+      </div>
+      <div class="shop-price">${pkg.stars} ⭐</div>`;
+    card.onclick=()=>buyPackage(pkg);
+    grid.appendChild(card);
+  });
+}
+function openShop(){ buildShop(); $('shopModal').classList.add('active'); }
+
+async function buyPackage(pkg){
+  const tg=window.Telegram?.WebApp;
+  try{
+    const res=await fetch(CONFIG.invoiceEndpoint,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({packageId:pkg.id, stars:pkg.stars, coins:pkg.coins, userId:tg?.initDataUnsafe?.user?.id||0, initData:tg?.initData||''})
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const { invoiceLink, error } = await res.json();
+    if(error) throw new Error(error);
+    if(!invoiceLink) throw new Error('no invoiceLink');
+    if(tg?.openInvoice){
+      tg.openInvoice(invoiceLink,(status)=>{
+        if(status==='paid'){
+          state.balance+=pkg.coins; save(); refresh(); sfx('coin'); haptic('success');
+          notif(tF('paySuccess',{n:fmt(pkg.coins)}),'gold');
+          closeModal('shopModal');
+        }
+      });
+    }else{
+      window.open(invoiceLink,'_blank');
+    }
+  }catch(e){
+    state.balance+=pkg.coins; save(); refresh(); sfx('coin'); haptic('success');
+    notif(tF('payTest',{n:fmt(pkg.coins)}),'gold');
+    closeModal('shopModal');
+  }
+}
+
+/* ============================================================
+   BONUS / RISK / DAILY
+   ============================================================ */
+function triggerBonus(){
+  sfx('bonus'); haptic('success');
+  document.querySelectorAll('.chest').forEach(c=>{
+    c.textContent='📦'; c.classList.remove('opened');
+    c.onclick=()=>pickChest(c);
+  });
+  $('bonusModal').classList.add('active');
+}
+function pickChest(el){
+  if(el.classList.contains('opened')) return;
+  sfx('chest'); haptic('medium');
+  const prizes=[50,100,200,300,500,1000];
+  const prize=prizes[Math.floor(Math.random()*prizes.length)];
+  el.textContent='💎'; el.classList.add('opened');
+  state.balance+=prize; save(); refresh();
+  notif(tF('bonusWon',{n:fmt(prize)}),'gold');
+  document.querySelectorAll('.chest').forEach(c=>{
+    if(c!==el && !c.classList.contains('opened')){ c.textContent='🕳️'; c.classList.add('opened'); }
+  });
+  setTimeout(()=>$('bonusModal').classList.remove('active'),1500);
+}
+function openRisk(){
+  if(pendingRisk<=0){ notif(t('riskNoWin'),'error'); return; }
+  $('riskText').textContent=tF('riskText',{n:fmt(pendingRisk)});
+  $('riskModal').classList.add('active');
+}
+function riskChoose(win){
+  const won=Math.random()<0.5 ? win : !win;
+  $('riskModal').classList.remove('active');
+  if(won){
+    state.balance+=pendingRisk;
+    sfx('riskWin'); haptic('success');
+    notif(tF('riskWin',{n:fmt(pendingRisk)}),'gold');
+  }else{
+    state.balance-=pendingRisk;
+    sfx('riskLose'); haptic('error');
+    notif(t('riskLose'),'error');
+  }
+  pendingRisk=0; save(); refresh();
+}
+function claimDaily(){
+  const now=Date.now();
+  if(now-state.lastDaily<24*3600*1000){ notif(t('dailyClaimed'),'error'); return; }
+  state.lastDaily=now; state.balance+=100;
+  save(); refresh(); sfx('bonus'); haptic('success');
+  notif(t('dailyGot'),'gold');
+}
+function changeLines(newCount){
+  if (isSpinning) return;
+  newCount = Math.max(1, Math.min(MAX_LINES, newCount));
+  if (newCount === state.lines) { previewActiveLines(); return; }
+  state.lines = newCount;
+  save(); refresh();
+  sfx('click'); haptic('select');
+  previewActiveLines();
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+function bind(){
+  $('startSound').addEventListener('pointerdown',(e)=>{
+    e.preventDefault();
+    state.sound=true; save();
+    buildAudio();
+    warmupAudio();
+    setTimeout(()=>{ try{ playSfx('bigwin'); }catch(e){} }, 30);
+    haptic('success');
+    setTimeout(()=>{ $('startOverlay').classList.add('hidden'); refresh(); }, 200);
+  });
+  $('startMute').addEventListener('pointerdown',(e)=>{
+    e.preventDefault();
+    state.sound=false; save();
+    buildAudio();
+    $('startOverlay').classList.add('hidden');
+    refresh();
+  });
+
+  $('linesDec').onclick=()=>changeLines(state.lines-1);
+  $('linesInc').onclick=()=>changeLines(state.lines+1);
+  document.querySelectorAll('.lp').forEach(b=>{
+    b.onclick=()=>changeLines(parseInt(b.dataset.lines));
+  });
+
+  $('betMin').onclick=()=>{ if(!isSpinning){state.betPerLine=1; sfx('click'); haptic('light'); save(); refresh()} };
+  $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=100; sfx('click'); haptic('light'); save(); refresh()} };
+  $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); sfx('click'); haptic('light'); save(); refresh()} };
+  $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); sfx('click'); haptic('light'); save(); refresh()} };
+
+  $('spinBtn').onclick=()=>{ spin(); };
+
+  $('bonusBtn').onclick=()=>{ sfx('click'); haptic('light'); claimDaily(); };
+  $('riskBtn').onclick=()=>{ sfx('click'); haptic('light'); openRisk(); };
+  $('shopBtn').onclick=()=>{ sfx('click'); haptic('light'); openShop(); };
+  $('paytableBtn').onclick=()=>{ sfx('click'); haptic('light'); openPaytable(); };
+
+  $('soundBtn').onclick=()=>{
+    state.sound=!state.sound;
+    if(state.sound){
+      buildAudio();
+      warmupAudio();
+      sfx('click'); haptic('light'); notif(t('soundOn'));
+    } else {
+      stopReelLoop();
+      notif(t('soundOff'),'error');
+    }
+    save(); refresh();
+  };
+
+  $('riskHigher').onclick=()=>riskChoose(true);
+  $('riskLower').onclick=()=>riskChoose(false);
+  $('riskTake').onclick=()=>{ $('riskModal').classList.remove('active'); pendingRisk=0; };
+
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.onclick=()=>{ state.lang=b.dataset.lang; save(); applyI18n(); sfx('click'); haptic('light'); notif(t('langChanged')); };
+  });
+
+  document.querySelectorAll('.modal').forEach(m=>{
+    m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('active'); });
+  });
+
+  window.addEventListener('resize',()=>{ if(overlay.innerHTML && !isSpinning) clearLines(); });
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) stopReelLoop();
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init(){
+  load();
+  const tg=window.Telegram?.WebApp;
+  if(tg){
+    const code=tg.initDataUnsafe?.user?.language_code;
+    if(code) state.lang=code.startsWith('uk')?'uk':code.startsWith('ru')?'ru':'en';
+    tg.ready(); tg.expand();
+    tg.setHeaderColor?.('#0a0e17'); tg.setBackgroundColor?.('#0a0e17');
+  }
+  buildReels(); bind(); applyI18n();
+  setTimeout(()=>{ try{ buildAudio(); }catch(e){} }, 100);
+}
+init();
+</script>
+</body>
+</html>
