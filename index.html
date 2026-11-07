@@ -28,16 +28,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;b
 .machine{background:radial-gradient(ellipse at 50% 0,rgba(255,217,102,.08),transparent 60%),linear-gradient(180deg,#2d1d0f 0%,#1a0e05 100%);border:3px solid;border-image:linear-gradient(180deg,#ffe9a0,#b8860b,#ffe9a0) 1;border-radius:16px;padding:12px 10px 10px;box-shadow:0 0 0 1px #000,0 10px 30px rgba(0,0,0,.7),inset 0 0 40px rgba(0,0,0,.5);position:relative}
 .machine::before,.machine::after{content:"✦";position:absolute;font-size:20px;color:var(--gold);opacity:.7;text-shadow:0 0 8px rgba(212,175,55,.6)}
 .machine::before{top:4px;left:8px}.machine::after{top:4px;right:8px}
-.reels-frame{background:linear-gradient(180deg,#050810,#1a1f2c);border-radius:10px;padding:6px;box-shadow:inset 0 4px 12px rgba(0,0,0,.9),0 0 0 1px #3a4a5c;position:relative}
+.reels-frame{background:linear-gradient(180deg,#050810,#1a1f2c);border-radius:10px;padding:6px;box-shadow:inset 0 4px 12px rgba(0,0,0,.9),0 0 0 1px #3a4a5c;position:relative;overflow:hidden}
 .reels{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:relative;z-index:1}
 .reel{background:linear-gradient(180deg,#fdf6e3 0%,#f0e6c8 45%,#e0d4b0 100%);border-radius:6px;height:219px;overflow:hidden;position:relative;box-shadow:inset 0 8px 12px -6px rgba(0,0,0,.6),inset 0 -8px 12px -6px rgba(0,0,0,.6),0 0 0 1px #5a4a2a;clip-path:inset(0)}
-.reel::before{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
-.reel::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent);z-index:3;pointer-events:none}
-.reel-flash{position:absolute;inset:0;background:rgba(255,255,255,0);pointer-events:none;z-index:4;border-radius:6px;transition:background .08s}
+.reel::before{content:"";position:absolute;left:0;right:0;top:0;height:30px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);z-index:3;pointer-events:none}
+.reel::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30px;background:linear-gradient(0deg,rgba(0,0,0,.7),transparent);z-index:3;pointer-events:none}
+.reel-flash{position:absolute;inset:0;background:rgba(255,255,255,0);pointer-events:none;z-index:4;border-radius:6px;transition:background .1s}
 .reel-flash.flash{background:rgba(255,217,102,.9)}
-.track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0)}
-.track.spinning{animation:reelSpinLoop 0.15s linear infinite}
-@keyframes reelSpinLoop { from { transform: translate3d(0,0,0); } to { transform: translate3d(0,-1095px,0); } }
+.track{position:absolute;left:0;right:0;top:0;transform:translate3d(0,0,0);will-change:transform}
 .cell{height:73px;display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1;position:relative;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;flex-shrink:0}
 .cell.win::before{content:"";position:absolute;inset:4px;border:2px solid #ffd966;border-radius:8px;background:radial-gradient(circle,rgba(255,217,102,.6),rgba(255,217,102,.15) 70%);pointer-events:none;box-shadow:0 0 10px rgba(255,217,102,.8)}
 .lines-overlay{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
@@ -249,7 +247,8 @@ const REELS=5, ROWS=3, CELL_H=73, MAX_LINES=21;
 const AUTO_STOP_TIME = 7000; // 7 секунд
 
 const SYMBOLS=['🏴‍☠️','💎','🦜','🗺️','⚓','🗡️','🪙','💣'];
-const WEIGHTS={'🏴‍☠️':2,'💎':4,'🦜':6,'🗺️':8,'⚓':12,'🗡️':14,'🪙':18,'💣':18};
+// Настроил веса чуть щедрее для выигрышей
+const WEIGHTS={'🏴‍☠️':3,'💎':5,'🦜':8,'🗺️':10,'⚓':14,'🗡️':16,'🪙':24,'💣':12};
 const PAYTABLE={'🏴‍☠️':[10,40,150],'💎':[5,20,60],'🦜':[3,12,40],'🗺️':[2,8,25],'⚓':[2,6,20],'🗡️':[1,4,12],'🪙':[1,3,8],'💣':[1,2,6]};
 const PAYLINES=[
   [[0,0],[1,0],[2,0],[3,0],[4,0]],[[0,1],[1,1],[2,1],[3,1],[4,1]],[[0,2],[1,2],[2,2],[3,2],[4,2]],
@@ -308,7 +307,7 @@ function haptic(type) {
 }
 
 /* ============================================================
-   🎵 SFX (Звуки)
+   🎵 SFX (Звуки 44.1kHz, длинные и глубокие)
    ============================================================ */
 const SFX = {};
 const reelStopPool = [];
@@ -316,7 +315,6 @@ let reelStopIdx = 0;
 let audioReady = false;
 
 function makeWav(duration, sampler, sampleRate) {
-  // Поднимаем качество до 44100 Гц (как на CD)
   sampleRate = sampleRate || 44100; 
   const numSamples = Math.floor(sampleRate * duration);
   const bytes = new Uint8Array(44 + numSamples * 2);
@@ -351,21 +349,14 @@ function createAudio(url, volume=0.7) {
 function buildAudio() {
   if (audioReady) return;
 
-  // 1. КЛИК (короткий, механический)
-  SFX.click = createAudio(makeWav(0.04, t => {
-    const noise = (Math.random()*2-1) * Math.exp(-t*200) * 0.4;
-    const tone = Math.sin(2*Math.PI*1200*t) * Math.exp(-t*100);
-    return (noise + tone) * 0.5;
-  }), 0.6);
+  SFX.click = createAudio(makeWav(0.04, t => (Math.random()*2-1) * Math.exp(-t*200) * 0.4 + Math.sin(2*Math.PI*1200*t) * Math.exp(-t*100)), 0.5);
 
-  // 2. СТАРТ СПИНА (нарастающий шум + металлический скрежет)
   SFX.spinStart = createAudio(makeWav(0.8, t => {
-    const noise = (Math.random()*2-1) * Math.exp(-t*2) * 0.2;
     const sweep = Math.sin(2*Math.PI*(100 + t*3000)*t) * Math.exp(-t*4) * 0.3;
-    return (noise + sweep);
+    const noise = (Math.random()*2-1) * Math.exp(-t*2) * 0.2;
+    return sweep + noise;
   }), 0.8);
 
-  // 3. ЦИКЛ ВРАЩЕНИЯ (треск шестеренок)
   SFX.reelLoop = createAudio(makeWav(0.4, t => {
     let v = 0;
     [0, 0.1, 0.2, 0.3].forEach(ts => {
@@ -373,62 +364,104 @@ function buildAudio() {
       if (dt >= 0 && dt < 0.02) v += (Math.random()*2-1) * Math.exp(-dt*100) * 0.4;
     });
     return v;
-  }), 0.5);
+  }), 0.4);
   SFX.reelLoop.loop = true;
 
-  // 4. ОСТАНОВКА (глухой удар + щелчок + металлический звон)
   const stopUrl = makeWav(0.2, t => {
-    const thump = Math.sin(2*Math.PI*60*t) * Math.exp(-t*30) * 0.8; // низкий бас
-    const click = (Math.random()*2-1) * Math.exp(-t*150) * 0.3;     // шум
-    const metal = Math.sin(2*Math.PI*800*t) * Math.exp(-t*40) * 0.2; // звон
+    const thump = Math.sin(2*Math.PI*60*t) * Math.exp(-t*30) * 0.8;
+    const click = (Math.random()*2-1) * Math.exp(-t*150) * 0.3;
+    const metal = Math.sin(2*Math.PI*800*t) * Math.exp(-t*40) * 0.2;
     return thump + click + metal;
   });
   for (let i = 0; i < 5; i++) reelStopPool.push(createAudio(stopUrl, 0.9));
 
-  // 5. ВЫИГРЫШ (Красивый аккорд с эхом)
-  SFX.win = createAudio(makeWav(1.0, t => {
+  // 🎵 Уникальные звуки для каждого символа
+  SFX.winPirate = createAudio(makeWav(1.2, t => {
     let v = 0;
-    // Аккорд До-мажор (C5, E5, G5) + эхо
-    const notes = [523.25, 659.25, 783.99];
-    notes.forEach(f => {
-      v += Math.sin(2*Math.PI*f*t) * Math.exp(-t*4) * 0.2;
-      // Эхо через 0.15 секунды
-      if (t > 0.15) v += Math.sin(2*Math.PI*f*(t-0.15)) * Math.exp(-(t-0.15)*5) * 0.1;
+    [[392,0],[523,0.12],[659,0.24],[784,0.36],[1047,0.48]].forEach(([f,s]) => {
+      if (t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*4)*0.7;
     });
-    return v;
+    return v*0.4;
+  }), 0.85);
+
+  SFX.winDiamond = createAudio(makeWav(0.9, t => {
+    let v = 0;
+    [[1047,0],[1319,0.1],[1568,0.2],[2093,0.3]].forEach(([f,s]) => {
+      if (t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*6)*0.6;
+    });
+    return v*0.4;
   }), 0.8);
 
-  // 6. БОЛЬШОЙ ВЫИГРЫШ (Долгая фанфара с переливом)
-  SFX.bigwin = createAudio(makeWav(1.8, t => {
+  SFX.winParrot = createAudio(makeWav(0.7, t => {
     let v = 0;
-    const melody = [
-      {f: 523.25, d: 0.0}, {f: 659.25, d: 0.15}, {f: 783.99, d: 0.3}, 
-      {f: 1046.5, d: 0.45}, {f: 783.99, d: 0.6}, {f: 1046.5, d: 0.75},
-      {f: 1318.5, d: 0.9}, {f: 1567.98, d: 1.2}
-    ];
-    melody.forEach(note => {
-      if (t >= note.d) {
-        const dt = t - note.d;
-        v += Math.sin(2*Math.PI*note.f*dt) * Math.exp(-dt*3) * 0.25;
-        v += Math.sin(2*Math.PI*(note.f/2)*dt) * Math.exp(-dt*3) * 0.1; // бас
-      }
+    if(t<0.35) { const f=800+t*1500; v+=Math.sin(2*Math.PI*f*t)*Math.exp(-t*3)*0.6; }
+    else { const tt=t-0.35; const f=1200-tt*800; v+=Math.sin(2*Math.PI*f*tt)*Math.exp(-tt*5)*0.5; }
+    return v*0.4;
+  }), 0.8);
+
+  SFX.winMap = createAudio(makeWav(0.8, t => {
+    let v = 0;
+    [[523,0],[587,0.15],[698,0.3]].forEach(([f,s]) => {
+      if (t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*4)*0.6;
     });
-    return v;
-  }), 0.9);
-  
-  // Звук бонуса и риск-игры (оставим похожими на фанфары)
-  SFX.bonus = SFX.win;
-  SFX.coin = SFX.win;
-  SFX.riskWin = SFX.bigwin;
-  SFX.riskLose = createAudio(makeWav(0.8, t => {
+    return v*0.4;
+  }), 0.75);
+
+  SFX.winAnchor = createAudio(makeWav(1.0, t => {
+    return (Math.sin(2*Math.PI*130*t)*Math.exp(-t*3)*0.7 + Math.sin(2*Math.PI*260*t)*Math.exp(-t*5)*0.3)*0.45;
+  }), 0.85);
+
+  SFX.winDagger = createAudio(makeWav(0.6, t => {
+    return ((Math.random()*2-1)*Math.exp(-t*6)*0.4 + Math.sin(2*Math.PI*1400*t)*Math.exp(-t*10)*0.3 + Math.sin(2*Math.PI*2100*t)*Math.exp(-t*12)*0.2);
+  }), 0.75);
+
+  SFX.winCoin = createAudio(makeWav(0.6, t => {
+    let v = 0;
+    [[1568,0],[2093,0.06],[2637,0.12]].forEach(([f,s]) => {
+      if (t>=s) v += Math.sin(2*Math.PI*f*(t-s))*Math.exp(-(t-s)*9)*0.6;
+    });
+    return v*0.4;
+  }), 0.8);
+
+  SFX.winBomb = createAudio(makeWav(1.0, t => {
+    const noise = (Math.random()*2-1)*Math.exp(-t*3)*0.55;
+    const boom = Math.sin(2*Math.PI*60*t)*Math.exp(-t*4)*0.6;
+    const echo = t>0.15 ? Math.sin(2*Math.PI*100*(t-0.15))*Math.exp(-(t-0.15)*5)*0.3 : 0;
+    return noise + boom + echo;
+  }), 0.85);
+
+  SFX.lose = createAudio(makeWav(0.8, t => {
     let v = 0;
     [392.00, 329.63, 261.63].forEach((f, i) => {
       const start = i * 0.2;
       if (t >= start) v += Math.sin(2*Math.PI*f*(t-start)) * Math.exp(-(t-start)*4) * 0.3;
     });
     return v;
+  }), 0.6);
+
+  SFX.bonus = createAudio(makeWav(0.9, t => {
+    let v = 0;
+    [[784,0],[988,0.1],[1175,0.2],[1568,0.32]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
+    return v * 0.44;
+  }), 0.8);
+
+  SFX.chest = createAudio(makeWav(0.55, t => {
+    let v = 0;
+    [[400,0],[800,0.08],[1200,0.16],[1600,0.24]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*9); });
+    return v * 0.4;
   }), 0.7);
-  SFX.lose = SFX.riskLose;
+
+  SFX.riskWin = createAudio(makeWav(0.65, t => {
+    let v = 0;
+    [[659,0],[880,0.12],[1175,0.24],[1568,0.36]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*5); });
+    return v * 0.42;
+  }), 0.7);
+
+  SFX.riskLose = createAudio(makeWav(0.7, t => {
+    let v = 0;
+    [[440,0],[349,0.15],[262,0.3]].forEach(([f,s]) => { if (t>=s) v += Math.sin(2*Math.PI*f*(t-s)) * Math.exp(-(t-s)*4); });
+    return v * 0.36;
+  }), 0.6);
 
   audioReady = true;
 }
@@ -442,17 +475,9 @@ function warmupAudio() {
       a.volume = 0;
       const p = a.play();
       if (p && p.then) {
-        p.then(() => {
-          try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
-        }).catch(() => {
-          try { a.volume = orig; } catch(e) {}
-        });
-      } else {
-        try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {}
-      }
-    } catch(e) {
-      try { a.volume = orig; } catch(e) {}
-    }
+        p.then(() => { try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {} }).catch(() => { try { a.volume = orig; } catch(e) {} });
+      } else { try { a.pause(); a.currentTime = 0; a.volume = orig; } catch(e) {} }
+    } catch(e) { try { a.volume = orig; } catch(e) {} }
   });
 }
 
@@ -496,6 +521,11 @@ function sfx(name) {
   else playSfx(name);
 }
 
+const WIN_SOUND = {
+  '🏴‍☠️':'winPirate', '💎':'winDiamond', '🦜':'winParrot', '🗺️':'winMap',
+  '⚓':'winAnchor', '🗡️':'winDagger', '🪙':'winCoin', '💣':'winBomb'
+};
+
 /* ============================================================
    REELS
    ============================================================ */
@@ -516,61 +546,89 @@ function buildReels(){
 }
 
 /* ============================================================
-   🎰 АНИМАЦИЯ (СВЕРХУ ВНИЗ)
+   🎰 РЕАЛИСТИЧНАЯ АНИМАЦИЯ (rAF)
    ============================================================ */
-function startReelSpin(track) {
+let reelAnimFrames = [null, null, null, null, null];
+let reelPositions = [0, 0, 0, 0, 0];
+
+function startReelSpin(r) {
+  const track = tracks[r];
+  // Генерируем очень длинную ленту, чтобы крутилось долго
   let html = '';
-  for (let i = 0; i < 15; i++) html += `<div class="cell">${randSym()}</div>`;
+  for (let i = 0; i < 40; i++) html += `<div class="cell">${randSym()}</div>`;
   track.innerHTML = html;
-  track.style.transition = 'none';
-  track.style.transform = 'translate3d(0,0,0)';
-  track.getBoundingClientRect();
-  track.classList.add('spinning');
+  
+  let lastTime = performance.now();
+  const speed = 2000; // пикселей в секунду
+  
+  function frame(now) {
+    if (!isSpinning) return; // Если остановили, выходим из цикла
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+    
+    reelPositions[r] -= speed * dt;
+    
+    // Зацикливаем: если уехали на 20 клеток вниз, возвращаем наверх
+    if (reelPositions[r] <= -(20 * CELL_H)) {
+      reelPositions[r] += 20 * CELL_H;
+    }
+    
+    track.style.transform = `translate3d(0, ${reelPositions[r]}px, 0)`;
+    reelAnimFrames[r] = requestAnimationFrame(frame);
+  }
+  reelAnimFrames[r] = requestAnimationFrame(frame);
 }
 
-function stopReelAnim(track, final3, idx) {
+function stopReelAnim(r, final3) {
   return new Promise(resolve => {
     setTimeout(() => {
-      try {
-        const currentY = new DOMMatrix(getComputedStyle(track).transform).m42 || 0;
-        track.classList.remove('spinning');
-        track.style.transition = 'none';
-        track.style.transform = `translate3d(0,${currentY}px,0)`;
-        track.getBoundingClientRect();
-        
-        let html = '';
-        for (let i = 0; i < 15; i++) html += `<div class="cell">${randSym()}</div>`;
-        final3.forEach(s => html += `<div class="cell">${s}</div>`);
-        track.innerHTML = html;
-        
-        let targetY = -15 * CELL_H;
-        while (targetY > currentY - 8 * CELL_H) targetY -= 15 * CELL_H;
-        
-        const dur = 1000 + idx * 250;
-        track.style.transition = `transform ${dur}ms cubic-bezier(0.15, 0.9, 0.25, 1)`;
-        track.style.transform = `translate3d(0,${targetY}px,0)`;
-        
-        setTimeout(() => {
-          track.style.transition = 'none';
-          track.style.transform = 'translate3d(0,0,0)';
-          track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
-          try {
-            const f = flashes[idx];
-            if (f) { f.classList.add('flash'); setTimeout(()=>f.classList.remove('flash'), 100); }
-          } catch(e) {}
-          sfx('reelStop');
-          haptic('light');
-          resolve();
-        }, dur + 50);
-      } catch(e) {
-        console.error(e);
-        track.classList.remove('spinning');
+      cancelAnimationFrame(reelAnimFrames[r]); // Останавливаем цикл
+      
+      const track = tracks[r];
+      const currentY = reelPositions[r];
+      
+      // Теперь формируем правильную ленту, которая будет тормозить
+      let html = '';
+      // Добавляем рандомные символы сверху, чтобы не было пустоты
+      for (let i = 0; i < 15; i++) html += `<div class="cell">${randSym()}</div>`;
+      // Добавляем выигрышные символы
+      final3.forEach(s => html += `<div class="cell">${s}</div>`);
+      // И еще немного снизу
+      for (let i = 0; i < 5; i++) html += `<div class="cell">${randSym()}</div>`;
+      track.innerHTML = html;
+      
+      // Ставим трек в текущую позицию, где он был (модуль 15 клеток)
+      let startY = currentY % (15 * CELL_H);
+      if(startY > 0) startY -= 15 * CELL_H;
+      
+      track.style.transition = 'none';
+      track.style.transform = `translate3d(0, ${startY}px, 0)`;
+      track.getBoundingClientRect(); // рефлоу
+      
+      // Едем вниз до финальных символов (они на позиции -15 клеток)
+      // Сделаем несколько оборотов для красоты
+      let targetY = -15 * CELL_H;
+      
+      // Длительность торможения (с задержкой по очереди для барабанов)
+      const dur = 800 + r * 200; 
+      
+      track.style.transition = `transform ${dur}ms cubic-bezier(0.1, 0.8, 0.2, 1)`;
+      track.style.transform = `translate3d(0, ${targetY}px, 0)`;
+      
+      setTimeout(() => {
         track.style.transition = 'none';
         track.style.transform = 'translate3d(0,0,0)';
         track.innerHTML = final3.map(s => `<div class="cell">${s}</div>`).join('');
+        try {
+          flashes[r].classList.add('flash');
+          setTimeout(()=>flashes[r].classList.remove('flash'), 100);
+        } catch(e) {}
+        
+        sfx('reelStop');
+        haptic('light');
         resolve();
-      }
-    }, idx * 250);
+      }, dur + 50);
+    }, r * 200); // Задержка старта остановки
   });
 }
 
@@ -586,8 +644,11 @@ function genGrid(){
   }
   return g;
 }
+
 function calcWins(grid,perLine){
   const cells=new Set(), wins=[]; let total=0;
+  const winSounds = [];
+
   PAYLINES.slice(0, state.lines).forEach((line,idx)=>{
     const syms=line.map(([r,row])=>grid[r][row]);
     const first=syms[0];
@@ -600,10 +661,12 @@ function calcWins(grid,perLine){
         total+=win;
         wins.push({idx,line,sym:first,count,mult,win});
         for(let i=0;i<count;i++) cells.add(`${line[i][0]},${line[i][1]}`);
+        // Добавляем звук этой линии
+        if (WIN_SOUND[first]) winSounds.push(WIN_SOUND[first]);
       }
     }
   });
-  return {total, cells, wins};
+  return {total, cells, wins, winSounds};
 }
 
 /* ============================================================
@@ -723,8 +786,8 @@ function refresh(){
   }
   $('betMin').disabled=isSpinning||state.betPerLine<=1;
   $('betDec').disabled=isSpinning||state.betPerLine<=1;
-  $('betInc').disabled=isSpinning||state.betPerLine>=100;
-  $('betMax').disabled=isSpinning||state.betPerLine>=100;
+  $('betInc').disabled=isSpinning||state.betPerLine>=1000;
+  $('betMax').disabled=isSpinning||state.betPerLine>=1000;
   $('linesDec').disabled=isSpinning||state.lines<=1;
   $('linesInc').disabled=isSpinning||state.lines>=MAX_LINES;
   $('soundBtn').textContent=state.sound?'🔊':'🔇';
@@ -777,7 +840,9 @@ async function startSpinAction() {
   setTimeout(()=>{ if (isSpinning) startReelLoop(); }, 150);
   haptic('medium');
   
-  tracks.forEach(tr => startReelSpin(tr));
+  // Сбрасываем позиции перед стартом
+  reelPositions = [0, 0, 0, 0, 0];
+  tracks.forEach((tr, i) => startReelSpin(i));
   
   // Автостоп через 7 секунд
   autoStopTimer = setTimeout(() => requestStop(), AUTO_STOP_TIME);
@@ -794,23 +859,31 @@ async function requestStop() {
   const perLine = state.betPerLine;
   const finalGrid = genGrid();
   
-  await Promise.all(tracks.map((tr, i) => stopReelAnim(tr, finalGrid[i], i)));
+  // Останавливаем по очереди
+  await Promise.all(tracks.map((tr, i) => stopReelAnim(i, finalGrid[i])));
   
-  const {total,cells,wins} = calcWins(finalGrid, perLine);
+  const {total,cells,wins,winSounds} = calcWins(finalGrid, perLine);
+  
   if (total > 0) {
     state.balance += total;
     $('winVal').textContent = '+' + fmt(total) + ' 🪙';
+    
+    // Подсвечиваем клетки
     cells.forEach(key=>{
       const [r,row]=key.split(',').map(Number);
       const c=tracks[r].children[row];
       if(c) c.classList.add('win');
     });
     setTimeout(()=>drawWinLines(wins), 150);
+    
+    // 🎵 Проигрываем звуки выигравших линий по очереди
+    let delay = 200;
+    winSounds.forEach(snd => {
+      setTimeout(() => { sfx(snd); haptic('success'); }, delay);
+      delay += 300; // Задержка между звуками линий
+    });
+
     const ratio = total / bet;
-    let winSound = 'win';
-    if (ratio >= 20) winSound = 'bigwin';
-    else if (ratio >= 5) winSound = 'mediumWin';
-    sfx(winSound);
     haptic(ratio >= 10 ? 'heavy' : 'success');
     notif(ratio >= 10 ? tF('bigWin',{n:fmt(total)}) : tF('winMsg',{n:fmt(total)}), ratio >= 10 ? 'gold' : '');
     if (total >= bet * 2) pendingRisk = total;
@@ -964,7 +1037,7 @@ function bind(){
     state.sound=true; save();
     buildAudio();
     warmupAudio();
-    setTimeout(()=>{ try{ playSfx('bigwin'); }catch(e){} }, 30);
+    setTimeout(()=>{ try{ playSfx('winPirate'); }catch(e){} }, 30);
     haptic('success');
     setTimeout(()=>{ $('startOverlay').classList.add('hidden'); refresh(); }, 200);
   });
@@ -983,9 +1056,9 @@ function bind(){
   });
 
   $('betMin').onclick=()=>{ if(!isSpinning){state.betPerLine=1; sfx('click'); haptic('light'); save(); refresh()} };
-  $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=100; sfx('click'); haptic('light'); save(); refresh()} };
+  $('betMax').onclick=()=>{ if(!isSpinning){state.betPerLine=1000; sfx('click'); haptic('light'); save(); refresh()} };
   $('betDec').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.max(1,state.betPerLine-1); sfx('click'); haptic('light'); save(); refresh()} };
-  $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(100,state.betPerLine+1); sfx('click'); haptic('light'); save(); refresh()} };
+  $('betInc').onclick=()=>{ if(!isSpinning){state.betPerLine=Math.min(1000,state.betPerLine+1); sfx('click'); haptic('light'); save(); refresh()} };
 
   $('spinBtn').onclick=()=>{ handleSpinClick(); };
 
