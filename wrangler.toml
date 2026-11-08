@@ -7,3 +7,7 @@ directory = "./"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
 run_worker_first = ["/api/*"]
+
+[[kv_namespaces]]
+binding = "LUCKY_DB"
+id = "53aa33ac16844b3ab949108e9491c9e8"
