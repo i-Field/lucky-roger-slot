@@ -768,7 +768,8 @@ function refresh(){
     jb.querySelector('.val').textContent = fmt(globalJackpot) + ' 🪙';
     $('fsBanner').classList.remove('active');
   }
-
+}
+  
 function applyI18n(){ document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)}); $('riskHigher').textContent=t('riskHigher'); $('riskLower').textContent=t('riskLower'); $('riskTake').textContent=t('riskTake'); refresh(); }
 function notif(msg,type=''){ const n=$('notif'); n.textContent=msg; n.className='notif show '+type; clearTimeout(n._t); n._t=setTimeout(()=>{n.className='notif '+type},2400); }
 function closeModal(id){ $(id).classList.remove('active'); }
